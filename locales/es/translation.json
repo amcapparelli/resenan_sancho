@@ -1,0 +1,8 @@
+{
+  "form": {
+    "name": "Nombre",
+    "lastname": "Apellido",
+    "email": "Email",
+    "password": "Contraseña"
+  }
+}
