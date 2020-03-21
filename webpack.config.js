@@ -7,11 +7,13 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'build'),
     filename: 'bundle.js',
+    publicPath: '/',
   },
   devServer: {
     open: true, // abre el navegador por defecto
     overlay: true, // muestra errores en pantalla
     port: 3000, // puerto de escucha
+    historyApiFallback: true,
   },
   module: {
     rules: [

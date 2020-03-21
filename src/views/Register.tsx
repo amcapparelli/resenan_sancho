@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
-import TextField from '@material-ui/core/TextField';
 import styledComponents from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@material-ui/core';
-import { IUser } from '../interfaces/user';
+import { Button, TextField } from '@material-ui/core';
+import { UserRegister } from '../interfaces/user';
 import { register } from '../config/routes';
 
-
 const Register: React.FC = (): JSX.Element => {
-  const initUser: IUser = {
+  const initUserRegister: UserRegister = {
     name: '',
     lastName: '',
     email: '',
@@ -16,9 +14,8 @@ const Register: React.FC = (): JSX.Element => {
   };
 
   const { t } = useTranslation();
-  // const [state, dispatch] = useReducer(userRegister, initUser); // prueba con reducer
-  const [userInfo, setUserInfo] = useState<IUser>(initUser); // prueba con state
-  const [response, setResponse] = useState('');
+  const [userInfo, setUserInfo] = useState<UserRegister>(initUserRegister);
+  const [response, setResponse] = useState<string>('');
 
   const setRegisterValues = (
     name: string,
@@ -28,12 +25,8 @@ const Register: React.FC = (): JSX.Element => {
   const signup = (): void => {
     fetch(register, {
       method: 'post',
-      body: JSON.stringify({
-        ...userInfo,
-      }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      body: JSON.stringify({ ...userInfo }),
+      headers: { 'Content-Type': 'application/json' },
     })
       .then((res) => res.json())
       .then(({ message }) => setResponse(message))
