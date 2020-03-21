@@ -5,6 +5,8 @@
     "@babel/typescript"
   ],
   "plugins": [
-    "babel-plugin-styled-components"
+    "babel-plugin-styled-components",
+    "syntax-async-functions",
+    "@babel/plugin-transform-runtime"
   ]
 }
