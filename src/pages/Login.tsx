@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useHistory } from 'react-router-dom';
+import { useRouter } from 'next/router';
 import { Button, TextField } from '@material-ui/core';
 import { login } from '../config/routes';
 import UserContext from '../store/context/userContext/UserContext';
@@ -19,7 +19,7 @@ const Login: React.FC = (): JSX.Element => {
   const [response, setResponse] = useState<string>('');
   const [loginInfo, setLoginInfo] = useState<LoginInfo>(initLoginInfo);
   const { setUserLogged } = useContext(UserContext);
-  const history = useHistory();
+  const router = useRouter();
 
   const setLoginValues = (name: string, value: string): void => {
     setLoginInfo({ ...loginInfo, [name]: value });
@@ -41,7 +41,7 @@ const Login: React.FC = (): JSX.Element => {
       } = resJSON;
       setResponse(message);
       setUserLogged({ ...user, token });
-      if (success) history.push('/home');
+      if (success) router.push('/home');
     } catch (error) {
       setResponse(error);
     }

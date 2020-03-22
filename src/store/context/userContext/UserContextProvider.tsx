@@ -4,7 +4,7 @@ import { login } from '../../../config/routes';
 import { UserLogged } from '../../../interfaces/user';
 
 interface MyProps {
-  children: JSX.Element[],
+  children: JSX.Element,
 }
 
 const UserContextProvider: React.FC<MyProps> = (props: MyProps) => {

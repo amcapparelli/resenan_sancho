@@ -1,6 +1,6 @@
 {
   "presets": [
-    "@babel/env",
+    "next/babel",
     "@babel/react",
     "@babel/typescript"
   ],
