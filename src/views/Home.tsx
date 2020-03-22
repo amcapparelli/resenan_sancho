@@ -5,10 +5,17 @@ const Home: React.FC = (): JSX.Element => {
   const { user } = useContext(UserContext);
   return (
     <>
-      <h1>
-        Hola
-        {user.name}
-      </h1>
+      {user.token && (
+        <h1>
+          Hola
+          {user.name}
+        </h1>
+      )}
+      {!user.token && (
+        <h1>
+          No estás loguedo
+        </h1>
+      )}
     </>
   );
 };

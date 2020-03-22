@@ -1,6 +1,6 @@
 import { createContext } from 'react';
-import { UserLogged } from '../../../interfaces/user';
+import { IUserContext } from '../../../interfaces/user';
 
-const UserContext = createContext<UserLogged>(null);
+const UserContext = createContext<IUserContext>(null);
 
 export default UserContext;

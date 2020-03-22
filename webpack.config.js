@@ -41,5 +41,9 @@ module.exports = {
   devtool: 'source-map',
   resolve: {
     extensions: ['.js', '.ts', '.tsx'],
+    alias: {
+      'styled-components': path.resolve(__dirname, 'node_modules', 'styled-components'),
+      '@material-ui/styles': path.resolve(__dirname, 'node_modules', '@material-ui/styles'),
+    },
   },
 };

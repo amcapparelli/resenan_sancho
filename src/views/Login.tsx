@@ -33,9 +33,14 @@ const Login: React.FC = (): JSX.Element => {
         headers: { 'Content-Type': 'application/json' },
       });
       const resJSON = await res.json();
-      const { message, success, user } = resJSON;
+      const {
+        message,
+        success,
+        user,
+        token,
+      } = resJSON;
       setResponse(message);
-      setUserLogged(user);
+      setUserLogged({ ...user, token });
       if (success) history.push('/home');
     } catch (error) {
       setResponse(error);
@@ -52,9 +57,10 @@ const Login: React.FC = (): JSX.Element => {
         onChange={({ target: { name, value } }) => setLoginValues(name, value)}
       />
       <TextField
-        id="outlined-basic"
+        id="standard-password-input"
         label={t('form.password')}
         name="password"
+        type="password"
         variant="outlined"
         onChange={({ target: { name, value } }) => setLoginValues(name, value)}
       />

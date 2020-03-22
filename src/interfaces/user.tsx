@@ -1,5 +1,4 @@
 export interface User {
-  _id?: string,
   name: string,
   lastName: string,
   email: string,
@@ -9,7 +8,12 @@ export interface UserRegister extends User {
   password: string,
 }
 
-export interface UserLogged {
-  user: User
-  setUserLogged(userLogged: User): void,
+export interface UserLogged extends User {
+  _id: string,
+  token: string,
+}
+
+export interface IUserContext {
+  user: UserLogged
+  setUserLogged(userLogged: UserLogged): void,
 }

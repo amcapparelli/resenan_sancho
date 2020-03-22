@@ -57,9 +57,10 @@ const Register: React.FC = (): JSX.Element => {
         onChange={({ target: { name, value } }) => setRegisterValues(name, value)}
       />
       <TextField
-        id="outlined-basic"
+        id="standard-password-input"
         label={t('form.password')}
         name="password"
+        type="password"
         variant="outlined"
         onChange={({ target: { name, value } }) => setRegisterValues(name, value)}
       />
