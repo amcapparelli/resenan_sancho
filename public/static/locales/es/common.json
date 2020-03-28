@@ -4,5 +4,11 @@
     "lastname": "Apellido",
     "email": "Email",
     "password": "Contraseña"
+  },
+  "sidebar": {
+    "updateProfile": "Actualizar Perfil"
+  },
+  "titles": {
+    "updateProfile": "Actualizar Perfil"
   }
 }

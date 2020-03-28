@@ -1,4 +1,4 @@
-import { UserRegister } from '../../interfaces/userRegister';
+import { UserRegister } from '../../interfaces/user';
 
 interface IAction {
   type: string,

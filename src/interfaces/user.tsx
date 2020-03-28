@@ -16,4 +16,5 @@ export interface UserLogged extends User {
 export interface IUserContext {
   user: UserLogged
   setUserLogged(userLogged: UserLogged): void,
+  isLogged: boolean,
 }

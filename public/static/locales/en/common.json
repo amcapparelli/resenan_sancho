@@ -4,5 +4,11 @@
     "lastname": "Last Name",
     "email": "Email",
     "password": "Password"
+  },
+  "sidebar": {
+    "updateProfile": "Update Profile"
+  },
+  "titles": {
+    "updateProfile": "Update Profile"
   }
 }

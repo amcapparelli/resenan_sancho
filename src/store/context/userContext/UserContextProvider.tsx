@@ -16,6 +16,7 @@ const UserContextProvider: React.FC<MyProps> = (props: MyProps) => {
     email: undefined,
     token: undefined,
   });
+  const [isLogged, setIsLogged] = useState(user.token !== undefined);
   useEffect(() => {
     async function fetchUserSession() {
       const token = sessionStorage.getItem('token');
@@ -30,6 +31,7 @@ const UserContextProvider: React.FC<MyProps> = (props: MyProps) => {
       }
     }
     fetchUserSession();
+    if (user.token) setIsLogged(true);
   }, [user.token]);
 
   const setUserLogged = (userLogged: UserLogged): void => {
@@ -37,7 +39,7 @@ const UserContextProvider: React.FC<MyProps> = (props: MyProps) => {
     sessionStorage.setItem('token', userLogged.token);
   };
   return (
-    <UserContext.Provider value={{ user, setUserLogged }}>
+    <UserContext.Provider value={{ user, setUserLogged, isLogged }}>
       {children}
     </UserContext.Provider>
   );
