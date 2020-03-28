@@ -1,15 +1,13 @@
 import React, { useContext } from 'react';
 import UserContext from '../store/context/userContext/UserContext';
+import { BlogsLiterariosList } from '../components';
 
 const Home: React.FC = (): JSX.Element => {
   const { user } = useContext(UserContext);
   return (
     <>
       {user.token && (
-        <h1>
-          Hola
-          {user.name}
-        </h1>
+        <BlogsLiterariosList />
       )}
       {!user.token && (
         <h1>
