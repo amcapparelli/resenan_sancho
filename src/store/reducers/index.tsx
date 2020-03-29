@@ -1,2 +1,2 @@
 /* eslint-disable import/prefer-default-export */
-export { default as userRegister } from './userRegister';
+export { default as blogListLoad } from './blogListLoad';

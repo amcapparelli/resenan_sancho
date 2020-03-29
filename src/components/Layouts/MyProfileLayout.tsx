@@ -90,7 +90,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 }));
 
 interface MyProps {
-  children: JSX.Element,
+  children: JSX.Element[],
   title: string,
 }
 

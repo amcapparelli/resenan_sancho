@@ -1,5 +1,5 @@
 export interface User {
-  name: string,
+  [name: string]: string,
   lastName: string,
   email: string,
 }
@@ -9,6 +9,7 @@ export interface UserRegister extends User {
 }
 
 export interface UserLogged extends User {
+  name: string,
   _id: string,
   token: string,
 }

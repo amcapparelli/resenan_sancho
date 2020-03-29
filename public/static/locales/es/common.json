@@ -1,7 +1,7 @@
 {
   "form": {
     "name": "Nombre",
-    "lastname": "Apellido",
+    "lastName": "Apellido",
     "email": "Email",
     "password": "Contraseña"
   },

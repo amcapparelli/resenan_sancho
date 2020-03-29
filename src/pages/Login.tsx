@@ -3,13 +3,21 @@ import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import styledComponents from 'styled-components';
 import { Button, TextField } from '@material-ui/core';
+import Alert from '@material-ui/lab/Alert';
 import { login } from '../config/routes';
 import UserContext from '../store/context/userContext/UserContext';
 import useForm from '../utils/customHooks/useForm';
 
 const Login: React.FC = (): JSX.Element => {
+  interface Response {
+    success: boolean,
+    message: string
+  }
   const { t } = useTranslation();
-  const [response, setResponse] = useState<string>('');
+  const [response, setResponse] = useState<Response>({
+    success: undefined,
+    message: undefined,
+  });
   const [loginForm, setLoginForm] = useForm({});
   const { setUserLogged } = useContext(UserContext);
   const router = useRouter();
@@ -28,7 +36,7 @@ const Login: React.FC = (): JSX.Element => {
         user,
         token,
       } = resJSON;
-      setResponse(message);
+      setResponse({ message, success });
       setUserLogged({ ...user, token });
       if (success) router.push('/home');
     } catch (error) {
@@ -38,21 +46,16 @@ const Login: React.FC = (): JSX.Element => {
 
   return (
     <StyledForm>
-      <TextField
-        id="outlined-basic"
-        label={t('form.email')}
-        name="email"
-        variant="outlined"
-        onChange={({ target: { name, value } }) => setLoginForm(name, value)}
-      />
-      <TextField
-        id="standard-password-input"
-        label={t('form.password')}
-        name="password"
-        type="password"
-        variant="outlined"
-        onChange={({ target: { name, value } }) => setLoginForm(name, value)}
-      />
+      {['email', 'password'].map((text) => (
+        <TextField
+          id="standard-password-input"
+          label={t(`form.${text}`)}
+          name={text}
+          type={text}
+          variant="outlined"
+          onChange={({ target: { name, value } }) => setLoginForm(name, value)}
+        />
+      ))}
       <Button
         variant="contained"
         color="primary"
@@ -61,7 +64,14 @@ const Login: React.FC = (): JSX.Element => {
       >
         Login
       </Button>
-      <p>{response}</p>
+      {
+        response.message
+        && (
+          <Alert variant="filled" severity={response.success ? 'success' : 'error'}>
+            {response.message}
+          </Alert>
+        )
+      }
     </StyledForm>
   );
 };
