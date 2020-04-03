@@ -1,4 +1,7 @@
 {
+  "buttons": {
+    "update": "actualizar"
+  },
   "form": {
     "name": "Nombre",
     "lastName": "Apellido",

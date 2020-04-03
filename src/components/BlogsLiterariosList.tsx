@@ -21,10 +21,10 @@ const BlogsLiterariosList: React.FC = (): JSX.Element => {
           method: 'get',
           headers: { 'Content-Type': 'application/json' },
         });
-        const { blogs } = await response.json();
+        const blogs = await response.json();
         dispatch({
           type: 'BLOG_LIST_LOAD',
-          payload: { blogs },
+          payload: blogs,
         });
       } catch (error) {
         console.log(error);
