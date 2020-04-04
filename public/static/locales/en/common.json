@@ -1,6 +1,7 @@
 {
   "buttons": {
-    "update": "update"
+    "update": "update",
+    "registerBook": "Register Book"
   },
   "form": {
     "name": "Name",

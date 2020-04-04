@@ -1,7 +1,9 @@
-import React from 'react';
+/* eslint-disable no-underscore-dangle */
+import React, { useState, useContext } from 'react';
 import styledComponents from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import {
+  Button,
   Checkbox,
   FormControlLabel,
   FormGroup,
@@ -18,14 +20,27 @@ import {
   KeyboardDatePicker,
 } from '@material-ui/pickers';
 import useForm from '../utils/customHooks/useForm';
+import UserContext from '../store/context/userContext/UserContext';
 import { MyProfileLayout } from '../components/Layouts';
+import { registerBook as URL } from '../config/routes';
+
+interface Response {
+  success: boolean,
+  message: string
+}
 
 const Mybooks: React.FC = (): JSX.Element => {
   const { t } = useTranslation();
+  const { user } = useContext(UserContext);
+  const [response, setResponse] = useState<Response>({
+    success: undefined,
+    message: undefined,
+  });
   const [bookForm, setBookForm] = useForm({
     cover: undefined,
     formats: [],
     datePublished: undefined,
+    author: user._id,
   });
   const uploadCover = async ({ target }: any) => {
     const { files } = target;
@@ -33,13 +48,30 @@ const Mybooks: React.FC = (): JSX.Element => {
     data.append('file', files[0]);
     data.append('upload_preset', 'resenan_sancho');
 
-    const response = await fetch('https://api.cloudinary.com/v1_1/dnhkw9n4n/image/upload',
+    const imageResponse = await fetch('https://api.cloudinary.com/v1_1/dnhkw9n4n/image/upload',
       {
         method: 'POST',
         body: data,
       });
-    const file = await response.json();
+    const file = await imageResponse.json();
     setBookForm('cover', file.secure_url);
+  };
+  const registerBook = async (): Promise<void> => {
+    try {
+      const res = await fetch(URL, {
+        method: 'post',
+        body: JSON.stringify({ ...bookForm }),
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const resJSON = await res.json();
+      const {
+        message,
+        success,
+      } = resJSON;
+      setResponse({ message, success });
+    } catch (error) {
+      setResponse(error);
+    }
   };
   return (
     <MyProfileLayout
@@ -66,6 +98,8 @@ const Mybooks: React.FC = (): JSX.Element => {
           {['title', 'author', 'editorial'].map((text) => (
             <TextField
               id="outlined-basic"
+              disabled={text === 'author'}
+              defaultValue={text === 'author' ? `${user.name} ${user.lastName}` : undefined}
               label={t(`booksForm.${text}`)}
               name={text}
               fullWidth
@@ -147,6 +181,14 @@ const Mybooks: React.FC = (): JSX.Element => {
               />
             ))}
           </FormGroup>
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            onClick={registerBook}
+          >
+            {t('buttons.registerBook')}
+          </Button>
         </StyledThirdColumnContainer>
       </StyledFormContainer>
     </MyProfileLayout>

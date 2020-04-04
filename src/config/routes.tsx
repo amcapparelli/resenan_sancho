@@ -4,3 +4,4 @@ export const register: string = `${API_BASE_URL}register`;
 export const login: string = `${API_BASE_URL}login`;
 export const blogsLiterarios: string = `${API_BASE_URL}blogs_literarios`;
 export const update: string = `${API_BASE_URL}update`;
+export const registerBook: string = `${API_BASE_URL}registerBook`;
