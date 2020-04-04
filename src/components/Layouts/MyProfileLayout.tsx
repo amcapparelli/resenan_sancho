@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Link from 'next/link';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import {
@@ -24,6 +25,7 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import MenuIcon from '@material-ui/icons/Menu';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 
 const drawerWidth = 280;
 
@@ -145,10 +147,18 @@ const MyProfileLayout: React.FC<MyProps> = ({ children, title }: MyProps): JSX.E
           </div>
           <Divider />
           <List>
-            <ListItem button>
-              <ListItemIcon><AccountCircleIcon color="secondary" fontSize="large" /></ListItemIcon>
-              <ListItemText primary={t('sidebar.updateProfile').toUpperCase()} />
-            </ListItem>
+            <Link href="/myprofile">
+              <ListItem button>
+                <ListItemIcon><AccountCircleIcon color="secondary" fontSize="large" /></ListItemIcon>
+                <ListItemText primary={t('sidebar.updateProfile').toUpperCase()} />
+              </ListItem>
+            </Link>
+            <Link href="/mybooks">
+              <ListItem button>
+                <ListItemIcon><LibraryBooksIcon color="secondary" fontSize="large" /></ListItemIcon>
+                <ListItemText primary={t('sidebar.mybooks').toUpperCase()} />
+              </ListItem>
+            </Link>
           </List>
         </Drawer>
         <main className={classes.content}>

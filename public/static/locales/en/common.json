@@ -8,10 +8,17 @@
     "email": "Email",
     "password": "Password"
   },
+  "booksForm": {
+    "title": "Title",
+    "author": "Author",
+    "editorial": "Editorial"
+  },
   "sidebar": {
-    "updateProfile": "Update Profile"
+    "updateProfile": "Update Profile",
+    "mybooks": "My Books"
   },
   "titles": {
-    "updateProfile": "Update Profile"
+    "updateProfile": "Update Profile",
+    "mybooks": "My Books"
   }
 }

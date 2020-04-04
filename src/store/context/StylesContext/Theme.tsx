@@ -7,17 +7,27 @@ enum Palette {
   contrastText = '#DE4A10'
 }
 
+const {
+  main,
+  dark,
+  light,
+  contrastText,
+} = Palette;
+
 export const StyledTheme = {
-  main: Palette.main,
+  main,
+  dark,
+  light,
+  contrastText,
 };
 
 export const MuiTheme = createMuiTheme({
   palette: {
     primary: {
-      main: Palette.main,
-      dark: Palette.dark,
-      light: Palette.light,
-      contrastText: Palette.contrastText,
+      main,
+      dark,
+      light,
+      contrastText,
     },
   },
   spacing: 8,

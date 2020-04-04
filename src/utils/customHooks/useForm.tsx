@@ -1,6 +1,12 @@
 import { useState } from 'react';
 
-const useForm = (props: any): [Object, Function] => {
+interface Form {
+  cover?: string
+  formats?: Array<string>
+  datePublished: string
+}
+
+const useForm = (props: any): [Form, Function] => {
   const [form, setForm] = useState(props);
   const setFormValues = (
     name: string,
