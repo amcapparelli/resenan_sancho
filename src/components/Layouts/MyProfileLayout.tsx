@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import Link from 'next/link';
+import styledComponents from 'styled-components';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import {
@@ -26,6 +27,7 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import MenuIcon from '@material-ui/icons/Menu';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
+import UserContext from '../../store/context/userContext/UserContext';
 
 const drawerWidth = 280;
 
@@ -98,6 +100,7 @@ interface MyProps {
 
 const MyProfileLayout: React.FC<MyProps> = ({ children, title }: MyProps): JSX.Element => {
   const { t } = useTranslation();
+  const { isLogged } = useContext(UserContext);
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = useState(false);
@@ -125,6 +128,9 @@ const MyProfileLayout: React.FC<MyProps> = ({ children, title }: MyProps): JSX.E
             <Typography color="secondary" variant="h6" noWrap>
               {title}
             </Typography>
+            <Link href="/home">
+              <StyledLink>Home</StyledLink>
+            </Link>
           </Toolbar>
         </AppBar>
         <Drawer
@@ -163,11 +169,24 @@ const MyProfileLayout: React.FC<MyProps> = ({ children, title }: MyProps): JSX.E
         </Drawer>
         <main className={classes.content}>
           <div className={classes.toolbar} />
-          {children}
+          {
+            isLogged ? children : <p>No estás logueado</p>
+          }
         </main>
       </CssBaseline>
     </div>
   );
 };
+
+const StyledLink = styledComponents.a`
+  text-decoration: none;
+  align-self: center;
+  justify-self: center;
+  margin-left: 70%;
+  :hover{
+    cursor: pointer;
+  }
+  color: ${(props) => props.theme.contrastText};
+`;
 
 export default MyProfileLayout;

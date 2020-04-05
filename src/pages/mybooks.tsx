@@ -4,16 +4,20 @@ import styledComponents from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import {
   Button,
+  Collapse,
   Checkbox,
   FormControlLabel,
   FormGroup,
   FormLabel,
   Grid,
+  IconButton,
   InputLabel,
   MenuItem,
   Select,
   TextField,
 } from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
+import Alert from '@material-ui/lab/Alert';
 import DateFnsUtils from '@date-io/date-fns';
 import {
   MuiPickersUtilsProvider,
@@ -42,6 +46,7 @@ const Mybooks: React.FC = (): JSX.Element => {
     datePublished: undefined,
     author: user._id,
   });
+  const [open, setOpen] = useState(false);
   const uploadCover = async ({ target }: any) => {
     const { files } = target;
     const data = new FormData();
@@ -69,8 +74,10 @@ const Mybooks: React.FC = (): JSX.Element => {
         success,
       } = resJSON;
       setResponse({ message, success });
+      setOpen(true);
     } catch (error) {
       setResponse(error);
+      setOpen(true);
     }
   };
   return (
@@ -189,7 +196,33 @@ const Mybooks: React.FC = (): JSX.Element => {
           >
             {t('buttons.registerBook')}
           </Button>
+          {
+            response.message
+            && (
+              <Collapse in={open}>
+                <Alert
+                  action={(
+                    <IconButton
+                      aria-label="close"
+                      color="inherit"
+                      size="small"
+                      onClick={() => {
+                        setOpen(false);
+                      }}
+                    >
+                      <CloseIcon fontSize="inherit" />
+                    </IconButton>
+                  )}
+                  variant="filled"
+                  severity={response.success ? 'success' : 'error'}
+                >
+                  {response.message}
+                </Alert>
+              </Collapse>
+            )
+          }
         </StyledThirdColumnContainer>
+
       </StyledFormContainer>
     </MyProfileLayout>
   );
@@ -212,6 +245,7 @@ const StyledSecondColumnContainer = styledComponents.div`
   display: grid;
   grid-template-rows: 1fr;
   grid-gap: 1rem;
+  padding: 3% 3% 3% 0;
 `;
 
 const StyledThirdColumnContainer = styledComponents.div`

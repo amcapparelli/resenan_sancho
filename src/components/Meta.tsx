@@ -13,6 +13,7 @@ const Meta = ({ children }: MyProps): JSX.Element => (
       <meta charSet="utf-8" />
       <link rel="shortcut icon" href="/static/favicon.jpg" />
       <title>Reseñan Sancho</title>
+      <link href="https://fonts.googleapis.com/css?family=Rambla&display=swap" rel="stylesheet" />
     </Head>
     {children}
   </>

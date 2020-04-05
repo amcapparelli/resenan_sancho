@@ -22,6 +22,9 @@ export const StyledTheme = {
 };
 
 export const MuiTheme = createMuiTheme({
+  typography: {
+    fontFamily: 'Rambla',
+  },
   palette: {
     primary: {
       main,

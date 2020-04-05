@@ -1,2 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 export { default as blogListLoad } from './blogListLoad';
+export { default as booksListLoad } from './booksListLoad';
+export { default as bookLoad } from './bookLoad';
