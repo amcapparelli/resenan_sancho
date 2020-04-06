@@ -17,12 +17,18 @@ const initialState: Book = {
     lastName: undefined,
   },
   cover: undefined,
+  synopsis: undefined,
 };
 
 const BookItem = (props: Props) => {
   const [state, dispatch] = useReducer(bookLoad, initialState);
   const { id } = props;
-  const { title, author, cover } = state;
+  const {
+    title,
+    author,
+    cover,
+    synopsis,
+  } = state;
   useEffect(() => {
     async function fetchBook() {
       try {
@@ -48,6 +54,7 @@ const BookItem = (props: Props) => {
         <div>
           <Typography variant="h2">{title}</Typography>
           <Typography variant="subtitle1">{`${author.name} ${author.lastName}`}</Typography>
+          <Typography variant="body1">{synopsis}</Typography>
         </div>
         <StyledImageContainer src={cover} />
       </StyledCardContentContainer>

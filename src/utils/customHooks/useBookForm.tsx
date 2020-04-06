@@ -1,6 +1,7 @@
 import { useState } from 'react';
+import { BookForm } from '../../interfaces/books';
 
-const useForm = (props: any): [Object, Function] => {
+const useForm = (props: any): [BookForm, Function] => {
   const [form, setForm] = useState(props);
   const setFormValues = (
     name: string,

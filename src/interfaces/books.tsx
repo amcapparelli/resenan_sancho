@@ -6,4 +6,26 @@ export interface Book {
     lastName: string,
   },
   cover: string,
+  synopsis: string,
+}
+
+export interface BookForm {
+  [key: string]: any,
+  title: string,
+  cover: string,
+  formats: Array<string>,
+  datePublished: string,
+  author: string,
+  synopsis: string,
+}
+
+export interface BookFormErrors {
+  [key: string]: any,
+  title: string,
+  cover: string,
+  formats: string,
+  datePublished: string,
+  author: string,
+  synopsis: string,
+  editorial: string,
 }

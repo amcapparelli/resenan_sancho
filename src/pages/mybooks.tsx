@@ -23,30 +23,48 @@ import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
-import useForm from '../utils/customHooks/useForm';
+import useBookForm from '../utils/customHooks/useBookForm';
 import UserContext from '../store/context/userContext/UserContext';
 import { MyProfileLayout } from '../components/Layouts';
 import { registerBook as URL } from '../config/routes';
+import { BookForm, BookFormErrors } from '../interfaces/books';
 
 interface Response {
   success: boolean,
-  message: string
+  message: string,
 }
 
 const Mybooks: React.FC = (): JSX.Element => {
   const { t } = useTranslation();
   const { user } = useContext(UserContext);
+
+  const initErrors: BookFormErrors = {
+    title: '',
+    cover: '',
+    formats: '',
+    datePublished: '',
+    author: '',
+    synopsis: '',
+    editorial: '',
+  };
+
+  const initForm: BookForm = {
+    title: undefined,
+    cover: undefined,
+    formats: undefined,
+    datePublished: undefined,
+    author: user._id,
+    synopsis: undefined,
+  };
+
   const [response, setResponse] = useState<Response>({
     success: undefined,
     message: undefined,
   });
-  const [bookForm, setBookForm] = useForm({
-    cover: undefined,
-    formats: [],
-    datePublished: undefined,
-    author: user._id,
-  });
+  const [bookForm, setBookForm] = useBookForm(initForm);
   const [open, setOpen] = useState(false);
+  const [errors, setErrors] = useState<BookFormErrors>(initErrors);
+
   const uploadCover = async ({ target }: any) => {
     const { files } = target;
     const data = new FormData();
@@ -61,6 +79,7 @@ const Mybooks: React.FC = (): JSX.Element => {
     const file = await imageResponse.json();
     setBookForm('cover', file.secure_url);
   };
+
   const registerBook = async (): Promise<void> => {
     try {
       const res = await fetch(URL, {
@@ -73,6 +92,14 @@ const Mybooks: React.FC = (): JSX.Element => {
         message,
         success,
       } = resJSON;
+      if (resJSON.error) {
+        setResponse({
+          message: resJSON.error.errors[Object.keys(resJSON.error.errors)[0]].message,
+          success: false,
+        });
+        setOpen(true);
+        return;
+      }
       setResponse({ message, success });
       setOpen(true);
     } catch (error) {
@@ -80,6 +107,19 @@ const Mybooks: React.FC = (): JSX.Element => {
       setOpen(true);
     }
   };
+
+  const validateBook = (fields: BookForm) => {
+    const requiredFields = ['title', 'synopsis'];
+    const newErrors = Object.entries(fields).reduce(
+      (result, [key, val]) => (
+        requiredFields.includes(key) && val === undefined ? { ...result, [key]: 'field is required' } : result
+      ),
+      initErrors,
+    );
+    setErrors(newErrors);
+    if (Object.values(newErrors).every((error) => error.length === 0)) registerBook();
+  };
+
   return (
     <MyProfileLayout
       title={t('titles.mybooks')}
@@ -113,15 +153,18 @@ const Mybooks: React.FC = (): JSX.Element => {
               onChange={({ target: { name, value } }) => setBookForm(name, value)}
               variant="outlined"
               size="small"
+              required
+              error={errors[text].length > 0}
+              helperText={errors[text]}
             />
           ))}
           <TextField
             id="standard-full-width"
-            label="Sinopsis"
+            label="Synopsis"
             multiline
             style={{ margin: 8 }}
-            name="sinopsis"
-            helperText="¡no hagas spoiler!"
+            name="synopsis"
+            helperText={errors.synopsis || '¡no hagas spoiler!'}
             fullWidth
             rows="4"
             margin="normal"
@@ -129,6 +172,8 @@ const Mybooks: React.FC = (): JSX.Element => {
               shrink: true,
             }}
             onChange={({ target: { name, value } }) => setBookForm(name, value)}
+            required
+            error={errors.synopsis.length > 0}
           />
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <Grid container justify="space-around">
@@ -143,9 +188,35 @@ const Mybooks: React.FC = (): JSX.Element => {
                 KeyboardButtonProps={{
                   'aria-label': 'change date',
                 }}
+                required
               />
             </Grid>
           </MuiPickersUtilsProvider>
+          {
+            response.message
+            && (
+              <Collapse in={open}>
+                <Alert
+                  action={(
+                    <IconButton
+                      aria-label="close"
+                      color="inherit"
+                      size="small"
+                      onClick={() => {
+                        setOpen(false);
+                      }}
+                    >
+                      <CloseIcon fontSize="inherit" />
+                    </IconButton>
+                  )}
+                  variant="filled"
+                  severity={response.success ? 'success' : 'error'}
+                >
+                  {response.message}
+                </Alert>
+              </Collapse>
+            )
+          }
         </StyledSecondColumnContainer>
         <StyledThirdColumnContainer>
           <InputLabel id="demo-simple-select-autowidth-label">Género Literario</InputLabel>
@@ -172,6 +243,7 @@ const Mybooks: React.FC = (): JSX.Element => {
               shrink: true,
             }}
             onChange={({ target: { name, value } }) => setBookForm(name, value)}
+            required
           />
           <FormLabel component="legend">Formatos disponibles:</FormLabel>
           <FormGroup>
@@ -192,35 +264,11 @@ const Mybooks: React.FC = (): JSX.Element => {
             variant="contained"
             color="primary"
             size="large"
-            onClick={registerBook}
+            onClick={() => validateBook(bookForm)}
           >
             {t('buttons.registerBook')}
           </Button>
-          {
-            response.message
-            && (
-              <Collapse in={open}>
-                <Alert
-                  action={(
-                    <IconButton
-                      aria-label="close"
-                      color="inherit"
-                      size="small"
-                      onClick={() => {
-                        setOpen(false);
-                      }}
-                    >
-                      <CloseIcon fontSize="inherit" />
-                    </IconButton>
-                  )}
-                  variant="filled"
-                  severity={response.success ? 'success' : 'error'}
-                >
-                  {response.message}
-                </Alert>
-              </Collapse>
-            )
-          }
+
         </StyledThirdColumnContainer>
 
       </StyledFormContainer>
