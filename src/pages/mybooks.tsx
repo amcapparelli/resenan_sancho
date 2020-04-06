@@ -24,10 +24,11 @@ import {
   KeyboardDatePicker,
 } from '@material-ui/pickers';
 import useBookForm from '../utils/customHooks/useBookForm';
+import useValidateBookForm from '../utils/customHooks/useValidateBookForm';
 import UserContext from '../store/context/userContext/UserContext';
 import { MyProfileLayout } from '../components/Layouts';
 import { registerBook as URL } from '../config/routes';
-import { BookForm, BookFormErrors } from '../interfaces/books';
+import { BookForm } from '../interfaces/books';
 
 interface Response {
   success: boolean,
@@ -37,16 +38,6 @@ interface Response {
 const Mybooks: React.FC = (): JSX.Element => {
   const { t } = useTranslation();
   const { user } = useContext(UserContext);
-
-  const initErrors: BookFormErrors = {
-    title: '',
-    cover: '',
-    formats: '',
-    datePublished: '',
-    author: '',
-    synopsis: '',
-    editorial: '',
-  };
 
   const initForm: BookForm = {
     title: undefined,
@@ -63,8 +54,7 @@ const Mybooks: React.FC = (): JSX.Element => {
   });
   const [bookForm, setBookForm] = useBookForm(initForm);
   const [open, setOpen] = useState(false);
-  const [errors, setErrors] = useState<BookFormErrors>(initErrors);
-
+  const [errors, validateBookForm] = useValidateBookForm();
   const uploadCover = async ({ target }: any) => {
     const { files } = target;
     const data = new FormData();
@@ -106,18 +96,6 @@ const Mybooks: React.FC = (): JSX.Element => {
       setResponse(error);
       setOpen(true);
     }
-  };
-
-  const validateBook = (fields: BookForm) => {
-    const requiredFields = ['title', 'synopsis'];
-    const newErrors = Object.entries(fields).reduce(
-      (result, [key, val]) => (
-        requiredFields.includes(key) && val === undefined ? { ...result, [key]: 'field is required' } : result
-      ),
-      initErrors,
-    );
-    setErrors(newErrors);
-    if (Object.values(newErrors).every((error) => error.length === 0)) registerBook();
   };
 
   return (
@@ -264,7 +242,7 @@ const Mybooks: React.FC = (): JSX.Element => {
             variant="contained"
             color="primary"
             size="large"
-            onClick={() => validateBook(bookForm)}
+            onClick={() => validateBookForm(bookForm, registerBook)}
           >
             {t('buttons.registerBook')}
           </Button>
