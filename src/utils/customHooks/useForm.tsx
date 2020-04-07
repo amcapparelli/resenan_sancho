@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const useForm = (props: any): [Object, Function] => {
+const useForm = (props: any): [any, Function] => {
   const [form, setForm] = useState(props);
   const setFormValues = (
     name: string,

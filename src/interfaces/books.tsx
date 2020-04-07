@@ -17,6 +17,7 @@ export interface BookForm {
   datePublished: string,
   author: string,
   synopsis: string,
+  genre: string,
 }
 
 export interface BookFormErrors {
@@ -28,4 +29,6 @@ export interface BookFormErrors {
   author: string,
   synopsis: string,
   editorial: string,
+  genre: string,
+  pages: string,
 }

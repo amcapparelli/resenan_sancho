@@ -19,6 +19,7 @@ export const StyledTheme = {
   dark,
   light,
   contrastText,
+  fontFamily: 'Rambla',
 };
 
 export const MuiTheme = createMuiTheme({

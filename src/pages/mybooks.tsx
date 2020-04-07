@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import styledComponents from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import {
@@ -8,10 +8,10 @@ import {
   Checkbox,
   FormControlLabel,
   FormGroup,
+  FormHelperText,
   FormLabel,
   Grid,
   IconButton,
-  InputLabel,
   MenuItem,
   Select,
   TextField,
@@ -23,12 +23,13 @@ import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
-import useBookForm from '../utils/customHooks/useBookForm';
-import useValidateBookForm from '../utils/customHooks/useValidateBookForm';
+import useForm from '../utils/customHooks/useForm';
+import useUploadImages from '../utils/customHooks/useUploadImages';
+import useRequiredFieldsValidation from '../utils/customHooks/useRequiredFieldsValidation';
 import UserContext from '../store/context/userContext/UserContext';
 import { MyProfileLayout } from '../components/Layouts';
 import { registerBook as URL } from '../config/routes';
-import { BookForm } from '../interfaces/books';
+import { BookForm, BookFormErrors } from '../interfaces/books';
 
 interface Response {
   success: boolean,
@@ -40,35 +41,40 @@ const Mybooks: React.FC = (): JSX.Element => {
   const { user } = useContext(UserContext);
 
   const initForm: BookForm = {
-    title: undefined,
-    cover: undefined,
-    formats: undefined,
-    datePublished: undefined,
+    title: '',
+    cover: '',
+    formats: [],
+    datePublished: '',
     author: user._id,
-    synopsis: undefined,
+    synopsis: '',
+    genre: '',
+    pages: '',
   };
+  const [bookForm, setBookForm] = useForm(initForm);
+
+  const initErrors: BookFormErrors = {
+    title: '',
+    cover: '',
+    formats: '',
+    datePublished: '',
+    author: '',
+    synopsis: '',
+    editorial: '',
+    genre: '',
+    pages: '',
+  };
+  const [errors, validateRequiredFields] = useRequiredFieldsValidation(initErrors);
 
   const [response, setResponse] = useState<Response>({
     success: undefined,
     message: undefined,
   });
-  const [bookForm, setBookForm] = useBookForm(initForm);
   const [open, setOpen] = useState(false);
-  const [errors, validateBookForm] = useValidateBookForm();
-  const uploadCover = async ({ target }: any) => {
-    const { files } = target;
-    const data = new FormData();
-    data.append('file', files[0]);
-    data.append('upload_preset', 'resenan_sancho');
 
-    const imageResponse = await fetch('https://api.cloudinary.com/v1_1/dnhkw9n4n/image/upload',
-      {
-        method: 'POST',
-        body: data,
-      });
-    const file = await imageResponse.json();
-    setBookForm('cover', file.secure_url);
-  };
+  const [coverURL, uploadCover] = useUploadImages(initForm.cover);
+  useEffect(() => {
+    setBookForm('cover', coverURL);
+  }, [coverURL]);
 
   const registerBook = async (): Promise<void> => {
     try {
@@ -98,6 +104,10 @@ const Mybooks: React.FC = (): JSX.Element => {
     }
   };
 
+  const submit = () => {
+    const requiredFields = ['title', 'synopsis', 'genre', 'cover', 'pages', 'formats', 'datePublished'];
+    validateRequiredFields(bookForm, requiredFields, registerBook);
+  };
   return (
     <MyProfileLayout
       title={t('titles.mybooks')}
@@ -114,6 +124,7 @@ const Mybooks: React.FC = (): JSX.Element => {
           <StyledLabel htmlFor="raised-button-file">
             Subir Portada
           </StyledLabel>
+          <FormHelperText error>{errors.cover}</FormHelperText>
           {
             bookForm.cover
             && <StyledImageContainer src={bookForm.cover} alt="Cover" />
@@ -122,18 +133,20 @@ const Mybooks: React.FC = (): JSX.Element => {
         <StyledSecondColumnContainer>
           {['title', 'author', 'editorial'].map((text) => (
             <TextField
-              id="outlined-basic"
-              disabled={text === 'author'}
               defaultValue={text === 'author' ? `${user.name} ${user.lastName}` : undefined}
               label={t(`booksForm.${text}`)}
               name={text}
               fullWidth
               onChange={({ target: { name, value } }) => setBookForm(name, value)}
-              variant="outlined"
+              variant={text === 'author' ? 'filled' : 'outlined'}
               size="small"
-              required
+              required={text !== 'editorial'}
+              placeholder={text === 'editorial' ? 'Dejalo en blanco si eres autor independiente' : ''}
               error={errors[text].length > 0}
               helperText={errors[text]}
+              InputProps={{
+                readOnly: (text === 'author'),
+              }}
             />
           ))}
           <TextField
@@ -169,6 +182,7 @@ const Mybooks: React.FC = (): JSX.Element => {
                 required
               />
             </Grid>
+            <FormHelperText error>{errors.datePublished}</FormHelperText>
           </MuiPickersUtilsProvider>
           {
             response.message
@@ -197,10 +211,11 @@ const Mybooks: React.FC = (): JSX.Element => {
           }
         </StyledSecondColumnContainer>
         <StyledThirdColumnContainer>
-          <InputLabel id="demo-simple-select-autowidth-label">Género Literario</InputLabel>
           <Select
             onChange={({ target: { value } }) => setBookForm('genre', value)}
             displayEmpty
+            value={bookForm.genre}
+            error={errors.genre.length > 0}
           >
             <MenuItem value="" disabled>
               Género Literario
@@ -211,6 +226,7 @@ const Mybooks: React.FC = (): JSX.Element => {
               ))
             }
           </Select>
+          <FormHelperText error>{errors.genre}</FormHelperText>
           <TextField
             id="standard-number"
             label="Cantidad de páginas"
@@ -222,6 +238,8 @@ const Mybooks: React.FC = (): JSX.Element => {
             }}
             onChange={({ target: { name, value } }) => setBookForm(name, value)}
             required
+            error={errors.pages.length > 0}
+            helperText={errors.pages}
           />
           <FormLabel component="legend">Formatos disponibles:</FormLabel>
           <FormGroup>
@@ -237,12 +255,13 @@ const Mybooks: React.FC = (): JSX.Element => {
                 label={format}
               />
             ))}
+            <FormHelperText error>{errors.formats}</FormHelperText>
           </FormGroup>
           <Button
             variant="contained"
             color="primary"
             size="large"
-            onClick={() => validateBookForm(bookForm, registerBook)}
+            onClick={submit}
           >
             {t('buttons.registerBook')}
           </Button>
@@ -256,13 +275,13 @@ const Mybooks: React.FC = (): JSX.Element => {
 
 const StyledFormContainer = styledComponents.div`
   display: grid;
-  grid-template-columns: 1fr 2.5fr 1fr;
+  grid-template-columns: 0.70fr 2fr 1fr;
   grid-gap: 2rem;
 `;
 
 const StyledFirstColumnContainer = styledComponents.div`
   display: grid;
-  grid-template-rows: 1fr 3fr;
+  grid-template-rows: 0.2fr 0.1fr 3fr;
   justify-items: center;
   grid-gap: 1rem;
 `;
