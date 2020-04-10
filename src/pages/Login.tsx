@@ -7,12 +7,9 @@ import Alert from '@material-ui/lab/Alert';
 import { login } from '../config/routes';
 import UserContext from '../store/context/userContext/UserContext';
 import useForm from '../utils/customHooks/useForm';
+import { Response } from '../interfaces/response';
 
 const Login: React.FC = (): JSX.Element => {
-  interface Response {
-    success: boolean,
-    message: string
-  }
   const { t } = useTranslation();
   const [response, setResponse] = useState<Response>({
     success: undefined,
@@ -27,7 +24,9 @@ const Login: React.FC = (): JSX.Element => {
       const res = await fetch(login, {
         method: 'post',
         body: JSON.stringify({ ...loginForm }),
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
       const resJSON = await res.json();
       const {

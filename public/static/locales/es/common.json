@@ -1,4 +1,9 @@
 {
+  "booksForm": {
+    "title": "Titulo",
+    "author": "Autor",
+    "editorial": "Editorial"
+  },
   "buttons": {
     "update": "actualizar",
     "registerBook": "Registrar Libro"
@@ -9,17 +14,33 @@
     "email": "Email",
     "password": "Contraseña"
   },
-  "booksForm": {
-    "title": "Titulo",
-    "author": "Autor",
-    "editorial": "Editorial"
+  "genres": {
+    "adventure": "aventura",
+    "biography": "biografía",
+    "cienceFiction": "ciencia ficción",
+    "psychologicalDrama": "drama psicológico",
+    "erotica": "erótica",
+    "fantasy": "fantasía",
+    "historicalFiction": "ficción histórica",
+    "humor": "humor",
+    "juvenile": "juvenil",
+    "crime": "novela negra",
+    "forChildren": "para niños",
+    "poetry": "poesía",
+    "policial": "policial",
+    "romantic": "romántica",
+    "suspense": "suspense",
+    "terror": "terror",
+    "thriller": "thriller"
   },
   "sidebar": {
     "updateProfile": "Actualizar Perfil",
-    "mybooks": "Mis Libros"
+    "mybooks": "Mis Libros",
+    "addBook": "Añade Libro"
   },
   "titles": {
     "updateProfile": "Actualizar Perfil",
-    "mybooks": "Mis Libros"
+    "mybooks": "Mis Libros",
+    "addBook": "Añade Libro"
   }
 }

@@ -1,325 +1,93 @@
 /* eslint-disable no-underscore-dangle */
-import React, { useState, useContext, useEffect } from 'react';
+import React, {
+  useContext,
+  useEffect,
+  useReducer,
+  useState,
+} from 'react';
 import styledComponents from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import {
-  Button,
-  Collapse,
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
-  FormHelperText,
-  FormLabel,
-  Grid,
-  IconButton,
-  MenuItem,
-  Select,
-  TextField,
-} from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
 import Alert from '@material-ui/lab/Alert';
-import DateFnsUtils from '@date-io/date-fns';
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker,
-} from '@material-ui/pickers';
-import useForm from '../utils/customHooks/useForm';
-import useUploadImages from '../utils/customHooks/useUploadImages';
-import useRequiredFieldsValidation from '../utils/customHooks/useRequiredFieldsValidation';
 import UserContext from '../store/context/userContext/UserContext';
 import { MyProfileLayout } from '../components/Layouts';
-import { registerBook as URL } from '../config/routes';
-import { BookForm, BookFormErrors } from '../interfaces/books';
+import { Book } from '../interfaces/books';
+import { booksListLoad } from '../store/reducers';
+import { mybooks as URL } from '../config/routes';
+import { MyBooksListItem } from '../components';
+import { Response } from '../interfaces/response';
 
-interface Response {
-  success: boolean,
-  message: string,
+interface State {
+  books: Array<Book>;
 }
+const initialState: State = {
+  books: [],
+};
 
-const Mybooks: React.FC = (): JSX.Element => {
+const MyBooks: React.FC = (): JSX.Element => {
   const { t } = useTranslation();
   const { user } = useContext(UserContext);
-
-  const initForm: BookForm = {
-    title: '',
-    cover: '',
-    formats: [],
-    datePublished: '',
-    author: user._id,
-    synopsis: '',
-    genre: '',
-    pages: '',
-  };
-  const [bookForm, setBookForm] = useForm(initForm);
-
-  const initErrors: BookFormErrors = {
-    title: '',
-    cover: '',
-    formats: '',
-    datePublished: '',
-    author: '',
-    synopsis: '',
-    editorial: '',
-    genre: '',
-    pages: '',
-  };
-  const [errors, validateRequiredFields] = useRequiredFieldsValidation(initErrors);
-
   const [response, setResponse] = useState<Response>({
     success: undefined,
     message: undefined,
   });
-  const [open, setOpen] = useState(false);
-
-  const [coverURL, uploadCover] = useUploadImages(initForm.cover);
+  const [state, dispatch] = useReducer(booksListLoad, initialState);
   useEffect(() => {
-    setBookForm('cover', coverURL);
-  }, [coverURL]);
-
-  const registerBook = async (): Promise<void> => {
-    try {
-      const res = await fetch(URL, {
-        method: 'post',
-        body: JSON.stringify({ ...bookForm }),
-        headers: { 'Content-Type': 'application/json' },
-      });
-      const resJSON = await res.json();
-      const {
-        message,
-        success,
-      } = resJSON;
-      if (resJSON.error) {
-        setResponse({
-          message: resJSON.error.errors[Object.keys(resJSON.error.errors)[0]].message,
-          success: false,
+    async function fetchMyBooks() {
+      try {
+        const res = await fetch(`${URL}/${user._id}`, {
+          method: 'get',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-User-Token': user.token,
+          },
         });
-        setOpen(true);
-        return;
+        const books = await res.json();
+        dispatch({
+          type: 'USER_BOOKS_LIST_LOAD',
+          payload: books,
+        });
+      } catch (error) {
+        setResponse(error);
       }
-      setResponse({ message, success });
-      setOpen(true);
-    } catch (error) {
-      setResponse(error);
-      setOpen(true);
     }
-  };
+    fetchMyBooks();
+  }, []);
 
-  const submit = () => {
-    const requiredFields = ['title', 'synopsis', 'genre', 'cover', 'pages', 'formats', 'datePublished'];
-    validateRequiredFields(bookForm, requiredFields, registerBook);
-  };
   return (
     <MyProfileLayout
       title={t('titles.mybooks')}
     >
-      <StyledFormContainer>
-        <StyledFirstColumnContainer>
-          <StyledInputFile
-            accept="image/*"
-            id="raised-button-file"
-            multiple
-            type="file"
-            onChange={(e) => uploadCover(e)}
-          />
-          <StyledLabel htmlFor="raised-button-file">
-            Subir Portada
-          </StyledLabel>
-          <FormHelperText error>{errors.cover}</FormHelperText>
+      <div>
+        <StyledList>
           {
-            bookForm.cover
-            && <StyledImageContainer src={bookForm.cover} alt="Cover" />
-          }
-        </StyledFirstColumnContainer>
-        <StyledSecondColumnContainer>
-          {['title', 'author', 'editorial'].map((text) => (
-            <TextField
-              defaultValue={text === 'author' ? `${user.name} ${user.lastName}` : undefined}
-              label={t(`booksForm.${text}`)}
-              name={text}
-              fullWidth
-              onChange={({ target: { name, value } }) => setBookForm(name, value)}
-              variant={text === 'author' ? 'filled' : 'outlined'}
-              size="small"
-              required={text !== 'editorial'}
-              placeholder={text === 'editorial' ? 'Dejalo en blanco si eres autor independiente' : ''}
-              error={errors[text].length > 0}
-              helperText={errors[text]}
-              InputProps={{
-                readOnly: (text === 'author'),
-              }}
-            />
-          ))}
-          <TextField
-            id="standard-full-width"
-            label="Synopsis"
-            multiline
-            style={{ margin: 8 }}
-            name="synopsis"
-            helperText={errors.synopsis || '¡no hagas spoiler!'}
-            fullWidth
-            rows="4"
-            margin="normal"
-            InputLabelProps={{
-              shrink: true,
-            }}
-            onChange={({ target: { name, value } }) => setBookForm(name, value)}
-            required
-            error={errors.synopsis.length > 0}
-          />
-          <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <Grid container justify="space-around">
-              <KeyboardDatePicker
-                margin="normal"
-                id="date-picker-dialog"
-                label="Fecha de publicación"
-                format="MM/dd/yyyy"
-                value={bookForm.datePublished || null}
-                name="datePublished"
-                onChange={(date) => setBookForm('datePublished', date)}
-                KeyboardButtonProps={{
-                  'aria-label': 'change date',
-                }}
-                required
-              />
-            </Grid>
-            <FormHelperText error>{errors.datePublished}</FormHelperText>
-          </MuiPickersUtilsProvider>
-          {
-            response.message
-            && (
-              <Collapse in={open}>
-                <Alert
-                  action={(
-                    <IconButton
-                      aria-label="close"
-                      color="inherit"
-                      size="small"
-                      onClick={() => {
-                        setOpen(false);
-                      }}
-                    >
-                      <CloseIcon fontSize="inherit" />
-                    </IconButton>
-                  )}
-                  variant="filled"
-                  severity={response.success ? 'success' : 'error'}
-                >
-                  {response.message}
-                </Alert>
-              </Collapse>
+            state.books && state.books.map(
+              // eslint-disable-next-line no-underscore-dangle
+              (book) => (
+                <li key={book._id}>
+                  <MyBooksListItem book={book} />
+                </li>
+              ),
             )
           }
-        </StyledSecondColumnContainer>
-        <StyledThirdColumnContainer>
-          <Select
-            onChange={({ target: { value } }) => setBookForm('genre', value)}
-            displayEmpty
-            value={bookForm.genre}
-            error={errors.genre.length > 0}
-          >
-            <MenuItem value="" disabled>
-              Género Literario
-            </MenuItem>
-            {
-              ['thriller', 'terror', 'policial'].map((text) => (
-                <MenuItem value={text}>{text}</MenuItem>
-              ))
-            }
-          </Select>
-          <FormHelperText error>{errors.genre}</FormHelperText>
-          <TextField
-            id="standard-number"
-            label="Cantidad de páginas"
-            type="number"
-            name="pages"
-            size="small"
-            InputLabelProps={{
-              shrink: true,
-            }}
-            onChange={({ target: { name, value } }) => setBookForm(name, value)}
-            required
-            error={errors.pages.length > 0}
-            helperText={errors.pages}
-          />
-          <FormLabel component="legend">Formatos disponibles:</FormLabel>
-          <FormGroup>
-            {['ePUB', 'papel', 'mobi', 'PDF', 'audiolibro'].map((format) => (
-              <FormControlLabel
-                control={(
-                  <Checkbox
-                    onChange={({ target: { name } }) => setBookForm('formats', [...bookForm.formats, name])}
-                    name={format}
-                    color="primary"
-                  />
-                )}
-                label={format}
-              />
-            ))}
-            <FormHelperText error>{errors.formats}</FormHelperText>
-          </FormGroup>
-          <Button
-            variant="contained"
-            color="primary"
-            size="large"
-            onClick={submit}
-          >
-            {t('buttons.registerBook')}
-          </Button>
-
-        </StyledThirdColumnContainer>
-
-      </StyledFormContainer>
+        </StyledList>
+        {
+          response.message
+          && (
+            <Alert variant="filled" severity={response.success ? 'success' : 'error'}>
+              {response.message}
+            </Alert>
+          )
+        }
+      </div>
     </MyProfileLayout>
   );
 };
 
-const StyledFormContainer = styledComponents.div`
+const StyledList = styledComponents.ul`
+  list-style-type: none;
   display: grid;
-  grid-template-columns: 0.70fr 2fr 1fr;
-  grid-gap: 2rem;
-`;
-
-const StyledFirstColumnContainer = styledComponents.div`
-  display: grid;
-  grid-template-rows: 0.2fr 0.1fr 3fr;
-  justify-items: center;
+  grid-template-columns: repeat(3, 1fr);
   grid-gap: 1rem;
 `;
 
-const StyledSecondColumnContainer = styledComponents.div`
-  display: grid;
-  grid-template-rows: 1fr;
-  grid-gap: 1rem;
-  padding: 3% 3% 3% 0;
-`;
-
-const StyledThirdColumnContainer = styledComponents.div`
-  display: grid;
-  grid-template-rows: 1fr;
-  grid-gap: 1rem;
-`;
-
-const StyledImageContainer = styledComponents.img`
-  width: 70%;
-  border:2px solid #fff;
-  box-shadow: 10px 10px 5px #ccc;
-`;
-
-const StyledInputFile = styledComponents.input`
-  display: none;
-`;
-
-const StyledLabel = styledComponents.label`
-  color: ${(props) => props.theme.contrastText};
-  border-radius: 20px;
-  padding: 2%;
-  width: 50%;
-  align-self: flex-start;
-  text-align: center;
-  background-color: ${(props) => props.theme.main};
-  :hover{
-    cursor: pointer;
-  }
-`;
-
-export default Mybooks;
+export default MyBooks;

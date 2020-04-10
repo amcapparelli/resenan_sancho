@@ -17,6 +17,12 @@ export default (state: BooksList, action: IAction) => {
         books: [...state.books, ...books],
       };
     }
+    case 'USER_BOOKS_LIST_LOAD': {
+      const { books } = action.payload;
+      return {
+        books,
+      };
+    }
     default: return state;
   }
 };

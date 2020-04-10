@@ -13,11 +13,7 @@ import UserContext from '../store/context/userContext/UserContext';
 import { MyProfileLayout } from '../components/Layouts';
 import useForm from '../utils/customHooks/useForm';
 import { update as URL } from '../config/routes';
-
-interface Response {
-  success: boolean,
-  message: string
-}
+import { Response } from '../interfaces/response';
 
 const MyProfile: React.FC = (): JSX.Element => {
   const { t } = useTranslation();

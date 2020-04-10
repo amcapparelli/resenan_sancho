@@ -27,9 +27,10 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import MenuIcon from '@material-ui/icons/Menu';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
+import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
 import UserContext from '../../store/context/userContext/UserContext';
 
-const drawerWidth = 280;
+const drawerWidth = 220;
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   root: {
@@ -103,7 +104,7 @@ const MyProfileLayout: React.FC<MyProps> = ({ children, title }: MyProps): JSX.E
   const { isLogged } = useContext(UserContext);
   const classes = useStyles();
   const theme = useTheme();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   return (
     <div className={classes.root}>
       <CssBaseline>
@@ -163,6 +164,12 @@ const MyProfileLayout: React.FC<MyProps> = ({ children, title }: MyProps): JSX.E
               <ListItem button>
                 <ListItemIcon><LibraryBooksIcon color="secondary" fontSize="large" /></ListItemIcon>
                 <ListItemText primary={t('sidebar.mybooks').toUpperCase()} />
+              </ListItem>
+            </Link>
+            <Link href="/addBook">
+              <ListItem button>
+                <ListItemIcon><LibraryAddIcon color="secondary" fontSize="large" /></ListItemIcon>
+                <ListItemText primary={t('sidebar.addBook').toUpperCase()} />
               </ListItem>
             </Link>
           </List>
