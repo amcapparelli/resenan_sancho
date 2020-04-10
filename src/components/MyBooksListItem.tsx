@@ -16,9 +16,10 @@ import { Book } from '../interfaces/books';
 
 interface Props {
   book: Book
+  onClickPromote: Function
 }
 
-const MyBooksListItem: React.FC<Props> = ({ book }: Props): JSX.Element => {
+const MyBooksListItem: React.FC<Props> = ({ book, onClickPromote }: Props): JSX.Element => {
   const {
     title,
     cover,
@@ -29,11 +30,11 @@ const MyBooksListItem: React.FC<Props> = ({ book }: Props): JSX.Element => {
         <StyledContentContainer>
           <div>
             <Typography variant="h3" align="center">{title}</Typography>
-            <StyledImageContainer src={cover} alt={`${title} cover`} />
           </div>
           <StyledOptionsContainer>
+            <StyledImageContainer src={cover} alt={`${title} cover`} />
             <List>
-              <ListItem button>
+              <ListItem button onClick={() => onClickPromote && onClickPromote()}>
                 <ListItemIcon><StarsIcon color="secondary" fontSize="large" /></ListItemIcon>
                 <ListItemText primary="promocionar" />
               </ListItem>
@@ -54,7 +55,7 @@ const MyBooksListItem: React.FC<Props> = ({ book }: Props): JSX.Element => {
 };
 
 const StyledImageContainer = styledComponents.img`
-  width: 90%;
+  width: 100%;
   display:block;
   margin:auto;
   margin-bottom: 1%;
@@ -64,10 +65,12 @@ const StyledImageContainer = styledComponents.img`
 
 const StyledContentContainer = styledComponents.div`
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-rows: 1fr 2fr;
 `;
 
 const StyledOptionsContainer = styledComponents.div`
+  display: grid;
+  grid-template-columns: 2fr 1fr;
   align-self: center;
   justify-self: center;
 `;

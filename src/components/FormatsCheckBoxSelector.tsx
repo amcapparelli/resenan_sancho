@@ -14,7 +14,7 @@ interface MyProps {
   onChange: Function,
 }
 
-const CheckBoxOptions = (props: MyProps) => {
+const CheckBoxOptions: React.FC<MyProps> = (props: MyProps): JSX.Element => {
   const {
     errors,
     title,

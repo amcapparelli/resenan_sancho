@@ -23,7 +23,7 @@ import { useForm, useUploadImages, useRequiredFieldsValidation } from '../utils/
 import UserContext from '../store/context/userContext/UserContext';
 import { MyProfileLayout } from '../components/Layouts';
 import { registerBook as URL } from '../config/routes';
-import { CheckBoxOptions } from '../components';
+import { FormatsCheckBoxSelector } from '../components';
 import { BookForm, BookFormErrors } from '../interfaces/books';
 import genres from '../utils/constants/genres';
 
@@ -237,7 +237,7 @@ const AddBookForm: React.FC = (): JSX.Element => {
             error={errors.pages.length > 0}
             helperText={errors.pages}
           />
-          <CheckBoxOptions
+          <FormatsCheckBoxSelector
             errors={errors.formats}
             options={['ePUB', 'papel', 'mobi', 'PDF', 'audiolibro']}
             onChange={(
