@@ -5,11 +5,7 @@ import { useTranslation } from 'react-i18next';
 import {
   Button,
   Collapse,
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
   FormHelperText,
-  FormLabel,
   Grid,
   IconButton,
   MenuItem,
@@ -27,6 +23,7 @@ import { useForm, useUploadImages, useRequiredFieldsValidation } from '../utils/
 import UserContext from '../store/context/userContext/UserContext';
 import { MyProfileLayout } from '../components/Layouts';
 import { registerBook as URL } from '../config/routes';
+import { CheckBoxOptions } from '../components';
 import { BookForm, BookFormErrors } from '../interfaces/books';
 import genres from '../utils/constants/genres';
 
@@ -35,7 +32,7 @@ interface Response {
   message: string,
 }
 
-const Mybooks: React.FC = (): JSX.Element => {
+const AddBookForm: React.FC = (): JSX.Element => {
   const { t } = useTranslation();
   const { user } = useContext(UserContext);
 
@@ -240,22 +237,14 @@ const Mybooks: React.FC = (): JSX.Element => {
             error={errors.pages.length > 0}
             helperText={errors.pages}
           />
-          <FormLabel component="legend">Formatos disponibles:</FormLabel>
-          <FormGroup>
-            {['ePUB', 'papel', 'mobi', 'PDF', 'audiolibro'].map((format) => (
-              <FormControlLabel
-                control={(
-                  <Checkbox
-                    onChange={({ target: { name } }) => setBookForm('formats', [...bookForm.formats, name])}
-                    name={format}
-                    color="primary"
-                  />
-                )}
-                label={format}
-              />
-            ))}
-            <FormHelperText error>{errors.formats}</FormHelperText>
-          </FormGroup>
+          <CheckBoxOptions
+            errors={errors.formats}
+            options={['ePUB', 'papel', 'mobi', 'PDF', 'audiolibro']}
+            onChange={(
+              { target: { name } }: React.ChangeEvent<HTMLInputElement>,
+            ) => setBookForm('formats', [...bookForm.formats, name])}
+            title="Formatos disponibles:"
+          />
           <Button
             variant="contained"
             color="primary"
@@ -321,4 +310,4 @@ const StyledLabel = styledComponents.label`
   }
 `;
 
-export default Mybooks;
+export default AddBookForm;

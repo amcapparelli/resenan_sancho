@@ -1,5 +1,6 @@
 export { default as ErrorBoundary } from './ErrorBoundary';
 export { default as BlogsLiterariosList } from './BlogsLiterariosList';
+export { default as CheckBoxOptions } from './CheckBoxOptions';
 export { default as BooksList } from './BooksList';
 export { default as BlogLiterarioListItem } from './BlogLiterarioListItem';
 export { default as BookListItem } from './BookListItem';
