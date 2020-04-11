@@ -51,7 +51,10 @@ const MyBooks: React.FC = (): JSX.Element => {
   const [state, dispatch] = useReducer(booksListLoad, initialState);
   const [showModalPromotions, setShowModalPromotions] = useState(false);
   const [bookSelected, setBookSelected] = useState<string>('');
-  const [showMore, setShowMore] = useState<string>('');
+  const [showMore, setShowMore] = useState({
+    open: false,
+    row: '',
+  });
   useEffect(() => {
     async function fetchMyBooks() {
       try {
@@ -104,7 +107,9 @@ const MyBooks: React.FC = (): JSX.Element => {
   const ModalPromotionsContent = (
     <>
       <Typography variant="h3" align="center">
-        ¡Promociona este Libro: {bookSelected}!
+        ¡Promociona este Libro:
+        {bookSelected}
+        !
       </Typography>
       <Typography variant="subtitle1" align="center">Estas son las opciones que tienes:</Typography>
       <TableContainer component={Paper}>
@@ -121,15 +126,21 @@ const MyBooks: React.FC = (): JSX.Element => {
               <>
                 <TableRow key={row.name}>
                   <TableCell component="th" scope="row" align="center">
-                    <ListItem button onClick={() => setShowMore(row.name)}>
-                      {row.more}
+                    <ListItem
+                      button
+                      onClick={() => setShowMore({
+                        open: !showMore.open,
+                        row: row.name,
+                      })}
+                    >
+                      {showMore.open && showMore.row === row.name ? 'cerrar' : row.more}
                       <KeyboardArrowDownIcon color="secondary" fontSize="small" />
                     </ListItem>
                   </TableCell>
                   <TableCell align="left">{row.name}</TableCell>
                   <TableCell align="right">{row.price}</TableCell>
                 </TableRow>
-                {showMore === row.name && (
+                {showMore.open && showMore.row === row.name && (
                   <TableRow>
                     <StyledTableCell colSpan={3}>Más información</StyledTableCell>
                   </TableRow>

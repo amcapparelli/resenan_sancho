@@ -36,11 +36,15 @@
   "sidebar": {
     "updateProfile": "Update Profile",
     "mybooks": "My Books",
-    "addBook": "Add Book"
+    "addBook": "Add Book",
+    "myblog": "My literary blog"
   },
   "titles": {
     "updateProfile": "Update Profile",
     "mybooks": "My Books",
-    "addBook": "Add Book"
+    "myblog": "My literary spaces",
+    "addBook": "Add Book",
+    "whereDoYouReview": "Where do you post your literary reviews?",
+    "whichGenres": "What literary genres do you prefer?"
   }
 }

@@ -9,3 +9,4 @@ export { default as Header } from './Header';
 export { default as Meta } from './Meta';
 export { default as ModalDialog } from './ModalDialog';
 export { default as MyBooksListItem } from './MyBooksListItem';
+export { default as MyMediasForm } from './MyMediasForm';

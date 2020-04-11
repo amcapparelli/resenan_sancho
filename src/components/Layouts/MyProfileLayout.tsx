@@ -28,6 +28,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
+import ImportantDevicesIcon from '@material-ui/icons/ImportantDevices';
 import UserContext from '../../store/context/userContext/UserContext';
 
 const drawerWidth = 220;
@@ -158,6 +159,12 @@ const MyProfileLayout: React.FC<MyProps> = ({ children, title }: MyProps): JSX.E
               <ListItem button>
                 <ListItemIcon><AccountCircleIcon color="secondary" fontSize="large" /></ListItemIcon>
                 <ListItemText primary={t('sidebar.updateProfile').toUpperCase()} />
+              </ListItem>
+            </Link>
+            <Link href="/myblog">
+              <ListItem button>
+                <ListItemIcon><ImportantDevicesIcon color="secondary" fontSize="large" /></ListItemIcon>
+                <ListItemText primary={t('sidebar.myblog').toUpperCase()} />
               </ListItem>
             </Link>
             <Link href="/mybooks">
