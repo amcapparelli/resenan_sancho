@@ -8,3 +8,4 @@ export const mybooks: string = `${API_BASE_URL}books/private`;
 export const book: string = `${API_BASE_URL}book`;
 export const update: string = `${API_BASE_URL}update`;
 export const registerBook: string = `${API_BASE_URL}registerBook`;
+export const registerBlog: string = `${API_BASE_URL}registerBlog`;

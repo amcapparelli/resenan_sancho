@@ -6,7 +6,8 @@
   },
   "buttons": {
     "update": "actualizar",
-    "registerBook": "Registrar Libro"
+    "registerBook": "Registrar Libro",
+    "save": "guardar"
   },
   "form": {
     "name": "Nombre",

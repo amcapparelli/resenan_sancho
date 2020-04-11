@@ -6,7 +6,8 @@
   },
   "buttons": {
     "update": "update",
-    "registerBook": "Register Book"
+    "registerBook": "Register Book",
+    "save": "save"
   },
   "form": {
     "name": "Name",

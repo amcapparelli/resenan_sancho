@@ -45,6 +45,25 @@ const MyMediasForm: React.FC<MyProps> = (props: MyProps): JSX.Element => {
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
+
+  const showIcon = (type: string) => {
+    switch (type) {
+      case 'booktube': {
+        return '/static/iconoyoutube.jpg';
+      }
+      case 'bookstagram': {
+        return '/static/iconoinstagram.jpg';
+      }
+      case 'goodreads': {
+        return '/static/iconogoodreads.png';
+      }
+      case 'amazon': {
+        return '/static/iconoamazon.png';
+      }
+      default: return '/static/iconoreseñas.jpg';
+    }
+  };
+
   return (
     <Card className={classes.root}>
       <CardHeader
@@ -52,7 +71,7 @@ const MyMediasForm: React.FC<MyProps> = (props: MyProps): JSX.Element => {
       />
       <CardMedia
         className={classes.media}
-        image="/static/iconoreseñas.jpg"
+        image={showIcon(media)}
         title="Paella dish"
       />
       <CardContent>
