@@ -36,14 +36,16 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 interface MyProps {
   media: string,
   onChange: Function,
+  onSelect: Function,
 }
 
 const MyMediasForm: React.FC<MyProps> = (props: MyProps): JSX.Element => {
   const classes = useStyles();
   const [expanded, setExpanded] = useState(false);
-  const { media, onChange } = props;
+  const { media, onChange, onSelect } = props;
   const handleExpandClick = () => {
     setExpanded(!expanded);
+    onSelect();
   };
 
   const showIcon = (type: string) => {

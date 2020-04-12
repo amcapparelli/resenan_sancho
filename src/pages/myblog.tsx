@@ -7,6 +7,7 @@ import {
   Collapse,
   IconButton,
   FormControlLabel,
+  FormHelperText,
   Switch,
   Typography,
 } from '@material-ui/core';
@@ -14,27 +15,34 @@ import CloseIcon from '@material-ui/icons/Close';
 import Alert from '@material-ui/lab/Alert';
 import { MyProfileLayout } from '../components/Layouts';
 import { MyMediasForm } from '../components';
-import { useForm } from '../utils/customHooks';
+import { useForm, useRequiredFieldsValidation } from '../utils/customHooks';
 import UserContext from '../store/context/userContext/UserContext';
 import genres from '../utils/constants/genres';
 import { registerBlog as URL } from '../config/routes';
+import { MediaForm } from '../interfaces/mediaForm';
+import { Response } from '../interfaces/response';
 
-interface Response {
-  success: boolean,
-  message: string,
-}
-
-interface MediaForm {
-  author: string,
-  genres: Array<string>,
-}
-
-const myblog: React.FC = (): JSX.Element => {
+const Myblog: React.FC = (): JSX.Element => {
   const { t } = useTranslation();
   const { user } = useContext(UserContext);
   const initForm: MediaForm = {
     author: user._id,
     genres: [],
+    blog: {
+      selected: false,
+    },
+    booktube: {
+      selected: false,
+    },
+    bookstagram: {
+      selected: false,
+    },
+    goodreads: {
+      selected: false,
+    },
+    amazon: {
+      selected: false,
+    },
   };
   const [mediaForm, setMediaForm] = useForm(initForm);
   const [response, setResponse] = useState<Response>({
@@ -42,8 +50,11 @@ const myblog: React.FC = (): JSX.Element => {
     message: undefined,
   });
   const [open, setOpen] = useState(false);
-
-  const submit = async (): Promise<void> => {
+  const initErrors = {
+    genres: '',
+  };
+  const [errors, validateRequiredFields] = useRequiredFieldsValidation(initErrors);
+  const registerMedias = async (): Promise<void> => {
     try {
       const res = await fetch(URL, {
         method: 'post',
@@ -73,17 +84,46 @@ const myblog: React.FC = (): JSX.Element => {
     }
   };
 
+  const medias = ['blog', 'booktube', 'bookstagram', 'goodreads', 'amazon'];
+  const submit = () => {
+    const requiredFields = ['genres', 'medias'];
+    // Function to build an object for validation
+    const fieldToValidate = () => {
+      let mediasSelected = {};
+      // Check each media card if selected to get its inputs and send them to validation hook.
+      medias.forEach((media) => {
+        if (mediaForm[media].selected) {
+          mediasSelected = {
+            ...mediasSelected,
+            [`${media}URL`]: mediaForm[media].url,
+            [`${media}Name`]: mediaForm[media].name,
+          };
+        }
+      });
+      // If no media is selected send empty array to validation hook.
+      if (Object.entries(mediasSelected).length === 0) {
+        return { genres: mediaForm.genres, medias: [] as string[] };
+      }
+      return { genres: mediaForm.genres, ...mediasSelected };
+    };
+    console.log(fieldToValidate());
+    validateRequiredFields(fieldToValidate(), requiredFields, registerMedias);
+  };
+
   return (
     <MyProfileLayout
       title={t('titles.myblog')}
     >
       <>
         <Typography variant="h3" align="center">{t('titles.whereDoYouReview')}</Typography>
+        <FormHelperText error>{errors.medias && 'debes seleccionar al menos uno'}</FormHelperText>
         <StyledListContainer>
-          {['blog', 'booktube', 'bookstagram', 'goodreads', 'amazon'].map(
+          {medias.map(
             (media) => (
               <MyMediasForm
                 media={media}
+                onSelect={() => setMediaForm(media,
+                  { ...mediaForm[media], selected: !mediaForm[media].selected })}
                 onChange={(
                   { target: { name, value } }: React.ChangeEvent<HTMLInputElement>,
                 ) => setMediaForm(media, { ...mediaForm[media], [name]: value })}
@@ -92,6 +132,7 @@ const myblog: React.FC = (): JSX.Element => {
           )}
         </StyledListContainer>
         <Typography variant="h3" align="center">{t('titles.whichGenres')}</Typography>
+        <FormHelperText error>{errors.genres}</FormHelperText>
         <StyledGenresContainer>
           {genres.map(
             ({ name, code }) => (
@@ -159,4 +200,4 @@ const StyledGenresContainer = styledComponents.ul`
   grid-gap: 1%;
 `;
 
-export default myblog;
+export default Myblog;
