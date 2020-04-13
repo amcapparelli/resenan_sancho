@@ -49,6 +49,7 @@ const Register: React.FC = (): JSX.Element => {
 
   return (
     <StyledForm>
+      <StyledLogo src="/static/logo.png" alt="logo reseñan sancho" />
       {['name', 'lastName', 'email', 'password', 'repeatPassword'].map((text) => (
         <>
           <TextField
@@ -85,11 +86,16 @@ const Register: React.FC = (): JSX.Element => {
   );
 };
 
+const StyledLogo = styledComponents.img`
+  width: 25%;
+  justify-self: center;
+`;
+
 const StyledForm = styledComponents.form`
   display: grid;
   grid-template-columns: 1fr;
   grid-gap: 1rem;
-  width: 50%;
+  width: 35%;
   position: fixed;
   top: 50%;
   left: 50%;

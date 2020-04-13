@@ -1,6 +1,12 @@
 import React from 'react';
+import { BlogsLiterariosList } from '../components';
+import { PublicZoneLayout } from '../components/Layouts';
 
+const Home: React.FC = (): JSX.Element => (
+  <>
+    <PublicZoneLayout />
+    <BlogsLiterariosList />
+  </>
+);
 
-const index = () => <div><p>Nextjs</p></div>;
-
-export default index;
+export default Home;

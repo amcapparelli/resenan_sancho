@@ -28,6 +28,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
+import HomeIcon from '@material-ui/icons/Home';
 import ImportantDevicesIcon from '@material-ui/icons/ImportantDevices';
 import UserContext from '../../store/context/userContext/UserContext';
 
@@ -130,8 +131,8 @@ const MyProfileLayout: React.FC<MyProps> = ({ children, title }: MyProps): JSX.E
             <Typography color="secondary" variant="h6" noWrap>
               {title}
             </Typography>
-            <Link href="/home">
-              <StyledLink>Home</StyledLink>
+            <Link href="/">
+              <StyledHomeIcon fontSize="large" />
             </Link>
           </Toolbar>
         </AppBar>
@@ -192,7 +193,7 @@ const MyProfileLayout: React.FC<MyProps> = ({ children, title }: MyProps): JSX.E
   );
 };
 
-const StyledLink = styledComponents.a`
+const StyledHomeIcon = styledComponents(HomeIcon)`
   text-decoration: none;
   align-self: center;
   justify-self: center;

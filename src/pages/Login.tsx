@@ -45,6 +45,7 @@ const Login: React.FC = (): JSX.Element => {
 
   return (
     <StyledForm>
+      <StyledLogo src="/static/logo.png" alt="logo reseñan sancho" />
       {['email', 'password'].map((text) => (
         <TextField
           id="standard-password-input"
@@ -55,14 +56,14 @@ const Login: React.FC = (): JSX.Element => {
           onChange={({ target: { name, value } }) => setLoginForm(name, value)}
         />
       ))}
-      <Button
+      <StyledButton
         variant="contained"
         color="primary"
         onClick={loginRequest}
         size="large"
       >
         Login
-      </Button>
+      </StyledButton>
       {
         response.message
         && (
@@ -75,15 +76,24 @@ const Login: React.FC = (): JSX.Element => {
   );
 };
 
-const StyledForm = styledComponents.form`
-      display: grid;
-      grid-template-columns: 1fr;
-      grid-gap: 1rem;
-      width: 50%;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    `;
+const StyledLogo = styledComponents.img`
+  width: 25%;
+  justify-self: center;
+`;
 
+const StyledForm = styledComponents.form`
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-gap: 1rem;
+  width: 30%;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+`;
+
+const StyledButton = styledComponents(Button)`
+  width: 40%;
+  justify-self: center;
+`;
 export default Login;
