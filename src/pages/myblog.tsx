@@ -106,7 +106,7 @@ const Myblog: React.FC = (): JSX.Element => {
       }
       return { genres: mediaForm.genres, ...mediasSelected };
     };
-    console.log(fieldToValidate());
+    // TODO: GET ERRORS AND SHOW THEM ON MEDIA CARDS INPUTS
     validateRequiredFields(fieldToValidate(), requiredFields, registerMedias);
   };
 

@@ -7,13 +7,15 @@
   "buttons": {
     "update": "actualizar",
     "registerBook": "Registrar Libro",
+    "register": "Registrar",
     "save": "guardar"
   },
   "form": {
     "name": "Nombre",
     "lastName": "Apellido",
     "email": "Email",
-    "password": "Contraseña"
+    "password": "Contraseña",
+    "repeatPassword": "Repite Contraseña"
   },
   "genres": {
     "adventure": "aventura",

@@ -7,13 +7,15 @@
   "buttons": {
     "update": "update",
     "registerBook": "Register Book",
+    "register": "Register",
     "save": "save"
   },
   "form": {
     "name": "Name",
     "lastName": "Last Name",
     "email": "Email",
-    "password": "Password"
+    "password": "Password",
+    "repeatPassword": "Repeat Password"
   },
   "genres": {
     "adventure": "adventure",
