@@ -3,6 +3,7 @@ import styledComponents from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import {
   Button,
+  FormHelperText,
   TextField,
   InputAdornment,
   Tooltip,
@@ -12,12 +13,10 @@ import Alert from '@material-ui/lab/Alert';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import { register } from '../config/routes';
-import useForm from '../utils/customHooks/useForm';
+import { useForm, useRequiredFieldsValidation } from '../utils/customHooks';
 import { Response } from '../interfaces/response';
 
-const initialErrors = {
-  repeatPassword: '',
-};
+const fields = ['name', 'lastName', 'email'];
 
 const Register: React.FC = (): JSX.Element => {
   const { t } = useTranslation();
@@ -25,11 +24,24 @@ const Register: React.FC = (): JSX.Element => {
     success: undefined,
     message: undefined,
   });
-  const [passwordIsValid, setPasswordIsValid] = useState<boolean>(false);
+
   const [registerForm, setRegisterForm] = useForm({
+    name: '',
+    lastName: '',
+    email: '',
     password: '',
+    repeatPassword: '',
   });
-  const [errors, setErrors] = useState(initialErrors);
+
+  const [passwordIsValid, setPasswordIsValid] = useState<boolean>(false);
+  const [repeatPasswordIsValid, setRepeatPasswordIsValid] = useState<boolean>(false);
+  const [passwordErrors, setPasswordErrors] = useState<string>('');
+  const initialErrors = {
+    name: '',
+    lastName: '',
+    email: '',
+  };
+  const [errors, validateRequiredFields] = useRequiredFieldsValidation(initialErrors);
 
   useEffect(() => {
     const { password } = registerForm;
@@ -40,6 +52,12 @@ const Register: React.FC = (): JSX.Element => {
       setPasswordIsValid(false);
     }
   }, [registerForm.password]);
+
+  useEffect(() => {
+    const { password, repeatPassword } = registerForm;
+    if (password === repeatPassword) setRepeatPasswordIsValid(true);
+    if (password !== repeatPassword) setRepeatPasswordIsValid(false);
+  }, [registerForm.repeatPassword]);
 
   const signup = async (): Promise<void> => {
     try {
@@ -61,18 +79,22 @@ const Register: React.FC = (): JSX.Element => {
     }
   };
 
-  const validatePasswords = () => {
-    setErrors(initialErrors);
-    const { password, repeatPassword } = registerForm;
-    if (password === repeatPassword) signup();
-    if (password !== repeatPassword) setErrors({ repeatPassword: 'las contraseñas no coinciden' });
+  const submit = () => {
+    if (!passwordIsValid || !repeatPasswordIsValid) {
+      return setPasswordErrors('la contraeña no es válida');
+    }
+    setPasswordErrors('');
+    const requiredFields = fields;
+    return validateRequiredFields(registerForm, requiredFields, signup);
   };
 
   return (
     <StyledForm>
       <StyledLogo src="/static/logo.png" alt="logo reseñan sancho" />
-      {['name', 'lastName', 'email'].map((text) => (
+      {fields.map((text) => (
         <TextField
+          error={errors[text].length > 0}
+          helperText={errors[text]}
           key={text}
           label={t(`form.${text}`)}
           name={text}
@@ -81,45 +103,56 @@ const Register: React.FC = (): JSX.Element => {
           onChange={({ target: { name, value } }) => setRegisterForm(name, value)}
         />
       ))}
-      {['password', 'repeatPassword'].map((text) => (
-        <TextField
-          key={text}
-          label={t(`form.${text}`)}
-          name={text}
-          type="password"
-          variant="outlined"
-          onChange={({ target: { name, value } }) => setRegisterForm(name, value)}
-          error={text === 'password' && registerForm.password.length >= 1 && !passwordIsValid}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                {
-                  text === 'password' && registerForm.password.length >= 1
-                  && (passwordIsValid ? <StyledCheckIcon /> : <ErrorOutlineIcon />)
-                }
-              </InputAdornment>
-            ),
-            endAdornment: (
-              <InputAdornment position="end">
-                {
-                  text === 'password'
-                  && (
-                    <Tooltip
-                      title="La contraseña debe tener entre 7 y 20 caracteres y al menos una mayúscula, una minúscula y un número."
-                    >
-                      <HelpIcon />
-                    </Tooltip>
-                  )
-                }
-              </InputAdornment>
-            ),
-          }}
-        />
-      ))}
+      <TextField
+        label={t('form.password')}
+        name="password"
+        type="password"
+        variant="outlined"
+        onChange={({ target: { name, value } }) => setRegisterForm(name, value)}
+        error={registerForm.password.length >= 1 && !passwordIsValid}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              {
+                registerForm.password.length >= 1
+                && (passwordIsValid ? <StyledCheckIcon /> : <ErrorOutlineIcon />)
+              }
+            </InputAdornment>
+          ),
+          endAdornment: (
+            <InputAdornment position="end">
+              <Tooltip
+                title="La contraseña debe tener entre 7 y 20 caracteres y al menos una mayúscula, una minúscula y un número."
+              >
+                <HelpIcon />
+              </Tooltip>
+            </InputAdornment>
+          ),
+        }}
+      />
+      <TextField
+        label={t('form.repeatPassword')}
+        name="repeatPassword"
+        type="password"
+        variant="outlined"
+        onChange={({ target: { name, value } }) => setRegisterForm(name, value)}
+        error={registerForm.repeatPassword.length >= 1 && !repeatPasswordIsValid}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              {
+                registerForm.repeatPassword.length >= 1
+                && (repeatPasswordIsValid ? <StyledCheckIcon /> : <ErrorOutlineIcon />)
+              }
+            </InputAdornment>
+          ),
+        }}
+      />
+      <FormHelperText error>{passwordErrors}</FormHelperText>
       <StyledButton
         variant="contained"
         color="primary"
-        onClick={validatePasswords}
+        onClick={submit}
         size="large"
       >
         {t('buttons.register')}
