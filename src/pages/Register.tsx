@@ -3,28 +3,18 @@ import styledComponents from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import {
   Button,
-  FormHelperText,
   TextField,
-  InputAdornment,
-  Tooltip,
 } from '@material-ui/core';
-import HelpIcon from '@material-ui/icons/Help';
 import Alert from '@material-ui/lab/Alert';
-import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
-import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
-import { register } from '../config/routes';
-import { useForm, useRequiredFieldsValidation } from '../utils/customHooks';
-import { Response } from '../interfaces/response';
+import { register as registerURL } from '../config/routes';
+import { useForm, useRequiredFieldsValidation, useFetch } from '../utils/customHooks';
+import { PasswordFields } from '../components';
 
 const fields = ['name', 'lastName', 'email'];
 
 const Register: React.FC = (): JSX.Element => {
   const { t } = useTranslation();
-  const [response, setResponse] = useState<Response>({
-    success: undefined,
-    message: undefined,
-  });
-
+  const [signupResponse, signupRequest] = useFetch();
   const [registerForm, setRegisterForm] = useForm({
     name: '',
     lastName: '',
@@ -32,7 +22,6 @@ const Register: React.FC = (): JSX.Element => {
     password: '',
     repeatPassword: '',
   });
-
   const [passwordIsValid, setPasswordIsValid] = useState<boolean>(false);
   const [repeatPasswordIsValid, setRepeatPasswordIsValid] = useState<boolean>(false);
   const [passwordErrors, setPasswordErrors] = useState<string>('');
@@ -59,24 +48,8 @@ const Register: React.FC = (): JSX.Element => {
     if (password !== repeatPassword) setRepeatPasswordIsValid(false);
   }, [registerForm.repeatPassword]);
 
-  const signup = async (): Promise<void> => {
-    try {
-      const res = await fetch(register, {
-        method: 'post',
-        body: JSON.stringify({ ...registerForm }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      const resJSON = await res.json();
-      const {
-        message,
-        success,
-      } = resJSON;
-      setResponse({ message, success });
-    } catch (error) {
-      setResponse(error);
-    }
+  const signup = (): void => {
+    signupRequest(registerURL, 'post', registerForm);
   };
 
   const submit = () => {
@@ -103,52 +76,16 @@ const Register: React.FC = (): JSX.Element => {
           onChange={({ target: { name, value } }) => setRegisterForm(name, value)}
         />
       ))}
-      <TextField
-        label={t('form.password')}
-        name="password"
-        type="password"
-        variant="outlined"
-        onChange={({ target: { name, value } }) => setRegisterForm(name, value)}
-        error={registerForm.password.length >= 1 && !passwordIsValid}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              {
-                registerForm.password.length >= 1
-                && (passwordIsValid ? <StyledCheckIcon /> : <ErrorOutlineIcon />)
-              }
-            </InputAdornment>
-          ),
-          endAdornment: (
-            <InputAdornment position="end">
-              <Tooltip
-                title="La contraseña debe tener entre 7 y 20 caracteres y al menos una mayúscula, una minúscula y un número."
-              >
-                <HelpIcon />
-              </Tooltip>
-            </InputAdornment>
-          ),
-        }}
+      <PasswordFields
+        onChange={(
+          { target: { name, value } }: React.ChangeEvent<HTMLInputElement>,
+        ) => setRegisterForm(name, value)}
+        passwordErrors={passwordErrors}
+        passwordIsValid={passwordIsValid}
+        repeatPasswordIsValid={repeatPasswordIsValid}
+        passwordLength={registerForm.password.length}
+        repeatPasswordLength={registerForm.repeatPassword.length}
       />
-      <TextField
-        label={t('form.repeatPassword')}
-        name="repeatPassword"
-        type="password"
-        variant="outlined"
-        onChange={({ target: { name, value } }) => setRegisterForm(name, value)}
-        error={registerForm.repeatPassword.length >= 1 && !repeatPasswordIsValid}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              {
-                registerForm.repeatPassword.length >= 1
-                && (repeatPasswordIsValid ? <StyledCheckIcon /> : <ErrorOutlineIcon />)
-              }
-            </InputAdornment>
-          ),
-        }}
-      />
-      <FormHelperText error>{passwordErrors}</FormHelperText>
       <StyledButton
         variant="contained"
         color="primary"
@@ -158,10 +95,10 @@ const Register: React.FC = (): JSX.Element => {
         {t('buttons.register')}
       </StyledButton>
       {
-        response.message
+        signupResponse.message
         && (
-          <Alert variant="filled" severity={response.success ? 'success' : 'error'}>
-            {response.message}
+          <Alert variant="filled" severity={signupResponse.success ? 'success' : 'error'}>
+            {signupResponse.message}
           </Alert>
         )
       }
@@ -172,10 +109,6 @@ const Register: React.FC = (): JSX.Element => {
 const StyledLogo = styledComponents.img`
   width: 25%;
   justify-self: center;
-`;
-
-const StyledCheckIcon = styledComponents(CheckCircleOutlineIcon)`
-  color: green;
 `;
 
 const StyledForm = styledComponents.form`

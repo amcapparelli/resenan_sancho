@@ -6,7 +6,7 @@ import { Button, TextField } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import { login } from '../config/routes';
 import UserContext from '../store/context/userContext/UserContext';
-import useForm from '../utils/customHooks/useForm';
+import { useForm } from '../utils/customHooks';
 import { Response } from '../interfaces/response';
 
 const Login: React.FC = (): JSX.Element => {
@@ -37,7 +37,7 @@ const Login: React.FC = (): JSX.Element => {
       } = resJSON;
       setResponse({ message, success });
       setUserLogged({ ...user, token });
-      if (success) router.push('/home');
+      if (success) router.push('/');
     } catch (error) {
       setResponse(error);
     }

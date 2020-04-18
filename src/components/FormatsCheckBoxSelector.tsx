@@ -27,6 +27,7 @@ const CheckBoxOptions: React.FC<MyProps> = (props: MyProps): JSX.Element => {
       <FormGroup>
         {options.map((format) => (
           <FormControlLabel
+            key={format}
             control={(
               <Checkbox
                 onChange={(e) => onChange && onChange(e)}

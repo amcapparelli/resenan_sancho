@@ -8,7 +8,8 @@
     "dev": "node server.js",
     "build": "next build",
     "start": "NODE_ENV=production node server.js",
-    "test": "jest"
+    "test": "jest",
+    "coverage": "jest --coverage --collectCoverageFrom=src/**/*.tsx"
   },
   "author": "",
   "license": "ISC",
