@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Response } from '../../interfaces/response';
 
 const useFetch = (): [any, Function] => {
-  const [response, setResponse] = useState<Response>({
+  const [responseJSON, setResponse] = useState<Response>({
     success: undefined,
     message: undefined,
   });
@@ -17,13 +17,12 @@ const useFetch = (): [any, Function] => {
     try {
       const res = await fetch(url, options);
       const resJSON = await res.json();
-      const { message, success } = resJSON;
-      setResponse({ message, success });
+      setResponse(resJSON);
     } catch (error) {
       setResponse(error);
     }
   };
-  return [response, asyncRequest];
+  return [responseJSON, asyncRequest];
 };
 
 export default useFetch;

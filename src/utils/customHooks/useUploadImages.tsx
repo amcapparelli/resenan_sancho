@@ -2,13 +2,13 @@ import { useState } from 'react';
 
 const useUploadImages = (initValue: string): [string, Function] => {
   const [fileURL, setFileURL] = useState<string>(initValue);
-  const uploadCover = async ({ target }: any) => {
+  const uploadCover = async ({ target }: any, preset: string) => {
     const { files } = target;
     const data = new FormData();
     data.append('file', files[0]);
-    data.append('upload_preset', 'resenan_sancho');
+    data.append('upload_preset', preset);
 
-    const imageResponse = await fetch('https://api.cloudinary.com/v1_1/dnhkw9n4n/image/upload',
+    const imageResponse = await fetch('https://api.cloudinary.com/v1_1/dnhkw9n4n/image/upload/',
       {
         method: 'POST',
         body: data,

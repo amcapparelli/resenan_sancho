@@ -11,3 +11,5 @@ export { default as ModalDialog } from './ModalDialog';
 export { default as MyBooksListItem } from './MyBooksListItem';
 export { default as MyMediasForm } from './MyMediasForm';
 export { default as PasswordFields } from './PasswordFields';
+export { default as UploadImagesInput } from './UploadImagesInput';
+export { default as CountriesSelector } from './CountriesSelector';

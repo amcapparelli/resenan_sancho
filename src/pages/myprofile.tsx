@@ -1,7 +1,11 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import styledComponents from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import {
+  Avatar,
+  Card,
+  CardContent,
   Button,
   TextField,
   IconButton,
@@ -11,19 +15,37 @@ import CloseIcon from '@material-ui/icons/Close';
 import Alert from '@material-ui/lab/Alert';
 import UserContext from '../store/context/userContext/UserContext';
 import { MyProfileLayout } from '../components/Layouts';
-import useForm from '../utils/customHooks/useForm';
+import { UploadImagesInput, CountriesSelector } from '../components';
+import { useForm, useUploadImages } from '../utils/customHooks';
 import { update as URL } from '../config/routes';
 import { Response } from '../interfaces/response';
 
+const useStyles = makeStyles((theme: Theme) => createStyles({
+  large: {
+    width: theme.spacing(7),
+    height: theme.spacing(7),
+    alignContent: 'center',
+    justifySelf: 'center',
+    justifyContent: 'center',
+  },
+}));
+
 const MyProfile: React.FC = (): JSX.Element => {
   const { t } = useTranslation();
+  const classes = useStyles();
   const [response, setResponse] = useState<Response>({
     success: undefined,
     message: undefined,
   });
   const { user } = useContext(UserContext);
   const [updateForm, setUpdateForm] = useForm(user);
+  const [avatarURL, uploadAvatar] = useUploadImages(updateForm.avatar);
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    setUpdateForm('avatar', avatarURL);
+  }, [avatarURL]);
+
   const update = async (): Promise<void> => {
     try {
       const res = await fetch(URL, {
@@ -48,84 +70,111 @@ const MyProfile: React.FC = (): JSX.Element => {
       <MyProfileLayout
         title={t('titles.updateProfile')}
       >
-        <div>
-          <StyledForm>
+        <StyledCard>
+          <StyledAvatarContainer>
+            <UploadImagesInput
+              text="Sube tu Avatar"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => uploadAvatar(e, 'avatars')}
+            />
             {
-              ['name', 'lastName', 'email'].map((text) => (
-                <TextField
-                  id="outlined-basic"
-                  label={t(`form.${text}`)}
-                  name={text}
-                  onChange={({ target: { name, value } }) => setUpdateForm(name, value)}
-                  variant="outlined"
-                  defaultValue={user[text]}
-                />
-              ))
+              updateForm.avatar
+              && <Avatar alt="avatar" src={updateForm.avatar} className={classes.large} />
             }
-          </StyledForm>
-          <StyledButtonContainer>
-            <Button
+          </StyledAvatarContainer>
+          <StyledContentContainer>
+            <StyledForm>
+              {
+                ['name', 'lastName', 'email'].map((text) => (
+                  <TextField
+                    id="outlined-basic"
+                    label={t(`form.${text}`)}
+                    name={text}
+                    onChange={({ target: { name, value } }) => setUpdateForm(name, value)}
+                    variant="outlined"
+                    defaultValue={user[text]}
+                  />
+                ))
+              }
+              <CountriesSelector />
+            </StyledForm>
+            <StyledButton
               variant="contained"
               color="primary"
               size="large"
               onClick={update}
             >
               {t('buttons.update')}
-            </Button>
-          </StyledButtonContainer>
-        </div>
+            </StyledButton>
+            <StyledResponseContainer>
+              {
+                response.message
+                && (
+                  <Collapse in={open}>
+                    <Alert
+                      action={(
+                        <IconButton
+                          aria-label="close"
+                          color="inherit"
+                          size="small"
+                          onClick={() => {
+                            setOpen(false);
+                          }}
+                        >
+                          <CloseIcon fontSize="inherit" />
+                        </IconButton>
+                      )}
+                      variant="filled"
+                      severity={response.success ? 'success' : 'error'}
+                    >
+                      {response.message}
+                    </Alert>
+                  </Collapse>
+                )
+              }
+            </StyledResponseContainer>
+          </StyledContentContainer>
+        </StyledCard>
       </MyProfileLayout>
-      <StyledResponseContainer>
-        {
-          response.message
-          && (
-            <Collapse in={open}>
-              <Alert
-                action={(
-                  <IconButton
-                    aria-label="close"
-                    color="inherit"
-                    size="small"
-                    onClick={() => {
-                      setOpen(false);
-                    }}
-                  >
-                    <CloseIcon fontSize="inherit" />
-                  </IconButton>
-                )}
-                variant="filled"
-                severity={response.success ? 'success' : 'error'}
-              >
-                {response.message}
-              </Alert>
-            </Collapse>
-          )
-        }
-      </StyledResponseContainer>
     </>
   );
 };
+
+
+const StyledCard = styledComponents(Card)`
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+`;
+
+const StyledAvatarContainer = styledComponents.div`
+  display: grid;
+  grid-template-rows: 0.5fr 2fr;
+  grid-gap: 0.5rem;
+  justify-content: center;
+  padding-top: 1rem;
+`;
 
 const StyledForm = styledComponents.form`
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-gap: 1rem;
-  width: 50%;
-  position: fixed;
-  top: 35%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  width: 90%;
+  justify-self: center;
 `;
 
-const StyledButtonContainer = styledComponents.div`
-  float: right;
+const StyledButton = styledComponents(Button)`
+  width: 30%;
+  justify-self: center;
+`;
+
+const StyledContentContainer = styledComponents(CardContent)`
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-gap: 1rem;
 `;
 
 const StyledResponseContainer = styledComponents.div`
-  width: 25%;
-  position: fixed;
-  top: 15%;
-  left: 40%;
+  width: 30%;
+  justify-self: center;
 `;
 
 export default MyProfile;

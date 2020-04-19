@@ -1,36 +1,13 @@
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect } from 'react';
 import styledComponents from 'styled-components';
-import { blogsLiterarios as URL } from '../config/routes';
-import { BlogsLiterarios } from '../interfaces/blogsLiterarios';
 import { BlogLiterarioListItem } from '.';
-import { blogListLoad } from '../store/reducers';
+import { useBlogsListFetch } from '../utils/customHooks';
 
 
 const BlogsLiterariosList: React.FC = (): JSX.Element => {
-  interface State {
-    blogs: Array<BlogsLiterarios>;
-  }
-  const initialState: State = {
-    blogs: [],
-  };
-  const [state, dispatch] = useReducer(blogListLoad, initialState);
+  const [state, listRequest] = useBlogsListFetch();
   useEffect(() => {
-    async function fetchBlogsLiterariosList() {
-      try {
-        const response = await fetch(`${URL}`, {
-          method: 'get',
-          headers: { 'Content-Type': 'application/json' },
-        });
-        const blogs = await response.json();
-        dispatch({
-          type: 'BLOG_LIST_LOAD',
-          payload: blogs,
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    fetchBlogsLiterariosList();
+    listRequest();
   }, []);
 
   return (
@@ -48,6 +25,9 @@ const BlogsLiterariosList: React.FC = (): JSX.Element => {
 };
 
 const StyledList = styledComponents.ul`
+  display: grid;
+  grid-gap: 1rem;
+  grid-template-columns: repeat(3, 1fr);
   list-style-type: none;
 `;
 

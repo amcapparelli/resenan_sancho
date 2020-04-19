@@ -1,46 +1,29 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import styledComponents from 'styled-components';
 import { Button, TextField } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
-import { login } from '../config/routes';
+import { login as loginURL } from '../config/routes';
 import UserContext from '../store/context/userContext/UserContext';
-import { useForm } from '../utils/customHooks';
-import { Response } from '../interfaces/response';
+import { useForm, useFetch } from '../utils/customHooks';
 
 const Login: React.FC = (): JSX.Element => {
   const { t } = useTranslation();
-  const [response, setResponse] = useState<Response>({
-    success: undefined,
-    message: undefined,
-  });
+  const [loginResponse, loginRequest] = useFetch();
   const [loginForm, setLoginForm] = useForm({});
   const { setUserLogged } = useContext(UserContext);
   const router = useRouter();
 
-  const loginRequest = async (): Promise<void> => {
-    try {
-      const res = await fetch(login, {
-        method: 'post',
-        body: JSON.stringify({ ...loginForm }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      const resJSON = await res.json();
-      const {
-        message,
-        success,
-        user,
-        token,
-      } = resJSON;
-      setResponse({ message, success });
-      setUserLogged({ ...user, token });
-      if (success) router.push('/');
-    } catch (error) {
-      setResponse(error);
+  useEffect(() => {
+    if (loginResponse.success) {
+      setUserLogged({ ...loginResponse.user, token: loginResponse.token });
+      router.push('/');
     }
+  }, [loginResponse.success]);
+
+  const login = async (): Promise<void> => {
+    loginRequest(loginURL, 'post', loginForm);
   };
 
   return (
@@ -59,16 +42,16 @@ const Login: React.FC = (): JSX.Element => {
       <StyledButton
         variant="contained"
         color="primary"
-        onClick={loginRequest}
+        onClick={login}
         size="large"
       >
         Login
       </StyledButton>
       {
-        response.message
+        loginResponse.message
         && (
-          <Alert variant="filled" severity={response.success ? 'success' : 'error'}>
-            {response.message}
+          <Alert variant="filled" severity={loginResponse.success ? 'success' : 'error'}>
+            {loginResponse.message}
           </Alert>
         )
       }

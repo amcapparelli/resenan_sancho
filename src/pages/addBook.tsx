@@ -118,7 +118,7 @@ const AddBookForm: React.FC = (): JSX.Element => {
               id="raised-button-file"
               multiple
               type="file"
-              onChange={(e) => uploadCover(e)}
+              onChange={(e) => uploadCover(e, 'covers')}
             />
             <StyledLabel htmlFor="raised-button-file">
               Subir Portada
