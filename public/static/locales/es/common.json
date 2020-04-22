@@ -49,5 +49,10 @@
     "addBook": "Añade Libro",
     "whereDoYouReview": "¿Dónde publicas tus reseñas literarias?",
     "whichGenres": "¿Qué géneros literarios prefieres?"
+  },
+  "components": {
+    "countriesSelector": {
+      "title": "País"
+    }
   }
 }

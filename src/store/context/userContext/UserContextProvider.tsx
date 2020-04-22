@@ -28,14 +28,15 @@ const UserContextProvider: React.FC<MyProps> = (props: MyProps) => {
         const session = await response.json();
         const { userSession } = session;
         setUser(userSession);
+        if (userSession.token) setIsLogged(true);
       }
     }
     fetchUserSession();
-    if (user.token) setIsLogged(true);
-  }, [user.token]);
+  }, []);
 
   const setUserLogged = (userLogged: UserLogged): void => {
     setUser(userLogged);
+    if (userLogged.token) setIsLogged(true);
     sessionStorage.setItem('token', userLogged.token);
   };
   return (

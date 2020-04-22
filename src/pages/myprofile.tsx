@@ -4,12 +4,12 @@ import styledComponents from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import {
   Avatar,
+  Button,
   Card,
   CardContent,
-  Button,
-  TextField,
-  IconButton,
   Collapse,
+  IconButton,
+  TextField,
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import Alert from '@material-ui/lab/Alert';
@@ -37,7 +37,7 @@ const MyProfile: React.FC = (): JSX.Element => {
     success: undefined,
     message: undefined,
   });
-  const { user } = useContext(UserContext);
+  const { user, setUserLogged } = useContext(UserContext);
   const [updateForm, setUpdateForm] = useForm(user);
   const [avatarURL, uploadAvatar] = useUploadImages(updateForm.avatar);
   const [open, setOpen] = useState(false);
@@ -51,14 +51,19 @@ const MyProfile: React.FC = (): JSX.Element => {
       const res = await fetch(URL, {
         method: 'post',
         body: JSON.stringify({ ...updateForm }),
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'X-User-Token': user.token,
+        },
       });
       const resJSON = await res.json();
       const {
         message,
         success,
+        user: userUpdated,
       } = resJSON;
       setResponse({ message, success });
+      setUserLogged({ ...userUpdated, token: user.token });
       setOpen(true);
     } catch (error) {
       setResponse(error);
@@ -95,7 +100,12 @@ const MyProfile: React.FC = (): JSX.Element => {
                   />
                 ))
               }
-              <CountriesSelector />
+              <CountriesSelector
+                onChange={(
+                  { target: { name, value } }: React.ChangeEvent<HTMLInputElement>,
+                ) => setUpdateForm(name, value)}
+                countrySelected={updateForm.country || user.country}
+              />
             </StyledForm>
             <StyledButton
               variant="contained"

@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import styledComponents from 'styled-components';
-import { BlogLiterarioListItem } from '.';
-import { useBlogsListFetch } from '../utils/customHooks';
+import { ReviewerListItem } from '.';
+import { useReviewersListFetch } from '../utils/customHooks';
 
 
-const BlogsLiterariosList: React.FC = (): JSX.Element => {
-  const [state, listRequest] = useBlogsListFetch();
+const ReviewersList: React.FC = (): JSX.Element => {
+  const [state, listRequest] = useReviewersListFetch();
   useEffect(() => {
     listRequest();
   }, []);
@@ -14,9 +14,9 @@ const BlogsLiterariosList: React.FC = (): JSX.Element => {
     <div>
       <StyledList>
         {
-          state.blogs.map(
+          state.reviewers.map(
             // eslint-disable-next-line no-underscore-dangle
-            (blog) => <li key={blog._id}><BlogLiterarioListItem blog={blog} /></li>,
+            (reviewer) => <li key={reviewer._id}><ReviewerListItem reviewer={reviewer} /></li>,
           )
         }
       </StyledList>
@@ -31,4 +31,4 @@ const StyledList = styledComponents.ul`
   list-style-type: none;
 `;
 
-export default BlogsLiterariosList;
+export default ReviewersList;

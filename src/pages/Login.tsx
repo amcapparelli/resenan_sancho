@@ -17,7 +17,7 @@ const Login: React.FC = (): JSX.Element => {
 
   useEffect(() => {
     if (loginResponse.success) {
-      setUserLogged({ ...loginResponse.user, token: loginResponse.token });
+      setUserLogged({ ...loginResponse.user });
       router.push('/');
     }
   }, [loginResponse.success]);

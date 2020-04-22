@@ -3,3 +3,4 @@ export { default as useRequiredFieldsValidation } from './useRequiredFieldsValid
 export { default as useUploadImages } from './useUploadImages';
 export { default as useFetch } from './useFetch';
 export { default as useBlogsListFetch } from './useBlogsListFetch';
+export { default as useReviewersListFetch } from './useReviewersListFetch';
