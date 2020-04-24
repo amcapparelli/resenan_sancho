@@ -10,7 +10,7 @@ import {
 interface MyProps {
   errors: string,
   options: Array<string>
-  title: string,
+  title?: string,
   onChange: Function,
 }
 

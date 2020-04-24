@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import styledComponents from 'styled-components';
+import { useTranslation } from 'react-i18next';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import {
   Card,
@@ -8,6 +10,7 @@ import {
   CardActions,
   Collapse,
   FormControlLabel,
+  FormHelperText,
   Switch,
   TextField,
   Typography,
@@ -40,6 +43,7 @@ interface MyProps {
 }
 
 const MyMediasForm: React.FC<MyProps> = (props: MyProps): JSX.Element => {
+  const { t } = useTranslation();
   const classes = useStyles();
   const [expanded, setExpanded] = useState(false);
   const { media, onChange, onSelect } = props;
@@ -91,29 +95,41 @@ const MyMediasForm: React.FC<MyProps> = (props: MyProps): JSX.Element => {
               color="primary"
             />
           )}
-          label={`Añadir mi ${media}`}
+          label={t(`mediasCards.switch.${media}`)}
         />
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <CardContent>
-          <TextField
-            label="url"
-            name="url"
-            type="text"
-            variant="outlined"
-            onChange={(e) => onChange && onChange(e)}
-          />
-          <TextField
-            label="nombre"
-            name="name"
-            type="text"
-            variant="outlined"
-            onChange={(e) => onChange && onChange(e)}
-          />
-        </CardContent>
+        <StyledInputsContainer>
+          <div>
+            <TextField
+              label="url"
+              name="url"
+              type="text"
+              variant="outlined"
+              onChange={(e) => onChange && onChange(e)}
+            />
+            <FormHelperText>{t(`mediasHelpers.URL.${media}`)}</FormHelperText>
+          </div>
+          <div>
+            <TextField
+              label="nombre"
+              name="name"
+              type="text"
+              variant="outlined"
+              onChange={(e) => onChange && onChange(e)}
+            />
+            <FormHelperText>{t(`mediasHelpers.name.${media}`)}</FormHelperText>
+          </div>
+        </StyledInputsContainer>
       </Collapse>
     </Card>
   );
 };
+
+const StyledInputsContainer = styledComponents(CardContent)`
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  grid-gap: 1rem;
+`;
 
 export default MyMediasForm;

@@ -18,4 +18,5 @@ export interface IUserContext {
   user: UserLogged
   setUserLogged(userLogged: UserLogged): void,
   isLogged: boolean,
+  logout(): void,
 }

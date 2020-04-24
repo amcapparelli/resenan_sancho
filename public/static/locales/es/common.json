@@ -44,6 +44,8 @@
   },
   "titles": {
     "updateProfile": "Actualizar Perfil",
+    "chooseFormats": "Elige tus preferencias de lectura",
+    "describeYourself": "¿Cómo te gusta escribir tus reseñas?",
     "mybooks": "Mis Libros",
     "myblog": "Mis espacios literarios",
     "addBook": "Añade Libro",
@@ -53,6 +55,31 @@
   "components": {
     "countriesSelector": {
       "title": "País"
+    }
+  },
+  "mediasHelpers": {
+    "URL": {
+      "amazon": "Copia y pega la dirección de tu perfil público de amazon donde aparecen tus reseñas. La puedes encontrar en 'mi cuenta' y luego en 'mi perfil público'.",
+      "booktube": "Copia y pega la dirección de tu canal de Youtube.",
+      "bookstagram": "Copia y pega la dirección de tu perfil de Instagram.",
+      "blog": "Copia y pega la dirección de tu blog literario.",
+      "goodreads": "Copia y pega la dirección de tu perfil de Goodreads."
+    },
+    "name": {
+      "amazon": "Tu nombre en Amazon.",
+      "booktube": "El nombre de tu canal de Youtube.",
+      "bookstagram": "El nombre de tu perfil en Instagram.",
+      "blog": "El nombre de tu blog literario.",
+      "goodreads": "El nombre de tu perfil de Goodreads."
+    }
+  },
+  "mediasCards": {
+    "switch": {
+      "amazon": "Añadir mi perfil en Amazon",
+      "booktube": "Añadir mi canal de Youtube",
+      "bookstagram": "Añadir mi perfil en Instagram",
+      "blog": "Añadir mi Blog Literario",
+      "goodreads": "Añadir mi perfil en Goodreads"
     }
   }
 }

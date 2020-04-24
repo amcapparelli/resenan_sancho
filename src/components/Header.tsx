@@ -2,10 +2,11 @@
 import React, { useContext } from 'react';
 import Link from 'next/link';
 import styledComponents from 'styled-components';
+import { Button } from '@material-ui/core';
 import UserContext from '../store/context/userContext/UserContext';
 
 const Header: React.FC = (): JSX.Element => {
-  const { isLogged } = useContext(UserContext);
+  const { isLogged, logout } = useContext(UserContext);
   return (
     <StyledHeaderContainer>
       <header>
@@ -23,9 +24,12 @@ const Header: React.FC = (): JSX.Element => {
         {
           isLogged
             ? (
-              <Link href="/myprofile">
-                <StyledLink>Mi perfil</StyledLink>
-              </Link>
+              <>
+                <Link href="/myprofile">
+                  <StyledLink>Mi perfil</StyledLink>
+                </Link>
+                <Button onClick={logout}>Logout</Button>
+              </>
             ) : (
               <Link href="/login">
                 <StyledLink>Login</StyledLink>
@@ -39,7 +43,7 @@ const Header: React.FC = (): JSX.Element => {
 
 const StyledNav = styledComponents.nav`
   display: grid;
-  grid-template-columns: repeat(3, auto);
+  grid-template-columns: repeat(4, auto);
   gap: 2rem;
 `;
 

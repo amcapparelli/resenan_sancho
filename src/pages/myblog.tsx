@@ -3,23 +3,26 @@ import React, { useState, useContext } from 'react';
 import styledComponents from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import {
+  Card,
+  CardContent,
   Button,
   Collapse,
   IconButton,
   FormControlLabel,
   FormHelperText,
   Switch,
+  TextField,
   Typography,
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import Alert from '@material-ui/lab/Alert';
 import { MyProfileLayout } from '../components/Layouts';
-import { MyMediasForm } from '../components';
+import { MyMediasForm, FormatsCheckBoxSelector } from '../components';
 import { useForm, useRequiredFieldsValidation } from '../utils/customHooks';
 import UserContext from '../store/context/userContext/UserContext';
 import genres from '../utils/constants/genres';
 import { registerBlog as URL } from '../config/routes';
-import { MediaForm } from '../interfaces/mediaForm';
+import { AvailableMedias, MediaForm } from '../interfaces/mediaForm';
 import { Response } from '../interfaces/response';
 
 const Myblog: React.FC = (): JSX.Element => {
@@ -28,6 +31,7 @@ const Myblog: React.FC = (): JSX.Element => {
   const initForm: MediaForm = {
     author: user._id,
     genres: [],
+    formats: [],
     blog: {
       selected: false,
     },
@@ -52,6 +56,7 @@ const Myblog: React.FC = (): JSX.Element => {
   const [open, setOpen] = useState(false);
   const initErrors = {
     genres: '',
+    description: '',
   };
   const [errors, validateRequiredFields] = useRequiredFieldsValidation(initErrors);
   const registerMedias = async (): Promise<void> => {
@@ -66,8 +71,6 @@ const Myblog: React.FC = (): JSX.Element => {
         message,
         success,
       } = resJSON;
-      console.log(resJSON);
-
       if (resJSON.error) {
         setResponse({
           message: resJSON.error.errors[Object.keys(resJSON.error.errors)[0]].message,
@@ -84,9 +87,9 @@ const Myblog: React.FC = (): JSX.Element => {
     }
   };
 
-  const medias = ['blog', 'booktube', 'bookstagram', 'goodreads', 'amazon'];
+  const medias = Object.values(AvailableMedias);
   const submit = () => {
-    const requiredFields = ['genres', 'medias'];
+    const requiredFields = ['genres', 'medias', 'description'];
     // Function to build an object for validation
     const fieldToValidate = () => {
       let mediasSelected = {};
@@ -131,33 +134,79 @@ const Myblog: React.FC = (): JSX.Element => {
             ),
           )}
         </StyledListContainer>
-        <Typography variant="h3" align="center">{t('titles.whichGenres')}</Typography>
-        <FormHelperText error>{errors.genres}</FormHelperText>
-        <StyledGenresContainer>
-          {genres.map(
-            ({ name, code }) => (
-              <FormControlLabel
-                control={(
-                  <Switch
-                    // checked={expanded}
-                    onChange={() => setMediaForm('genres', [...mediaForm.genres, name])}
-                    name={code}
-                    color="primary"
+        <StyledSection>
+          <Typography variant="h3" align="center">{t('titles.whichGenres')}</Typography>
+          <FormHelperText error>{errors.genres}</FormHelperText>
+          <Card>
+            <StyledGenresContainer>
+              {genres.map(
+                ({ name, code }) => (
+                  <FormControlLabel
+                    control={(
+                      <Switch
+                        // checked={expanded}
+                        onChange={() => setMediaForm('genres', [...mediaForm.genres, name])}
+                        name={code}
+                        color="primary"
+                      />
+                    )}
+                    label={t(`genres.${name}`)}
                   />
-                )}
-                label={t(`genres.${name}`)}
+                ),
+              )}
+            </StyledGenresContainer>
+          </Card>
+        </StyledSection>
+        <StyledSection>
+          <Typography variant="h3" align="center">{t('titles.describeYourself')}</Typography>
+          <Card>
+            <CardContent>
+              <TextField
+                id="standard-full-width"
+                label="Description"
+                multiline
+                style={{ margin: 8 }}
+                name="description"
+                helperText={errors.description}
+                fullWidth
+                rows="4"
+                margin="normal"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                onChange={({ target: { name, value } }) => setMediaForm(name, value)}
+                required
+                error={errors.description.length > 0}
               />
-            ),
-          )}
-        </StyledGenresContainer>
-        <Button
-          variant="contained"
-          color="primary"
-          size="large"
-          onClick={submit}
-        >
-          {t('buttons.save')}
-        </Button>
+            </CardContent>
+          </Card>
+        </StyledSection>
+        <StyledSection>
+          <Typography variant="h3" align="center">{t('titles.chooseFormats')}</Typography>
+          <Card>
+            <CardContent>
+              <StyledCenteredContainer>
+                <FormatsCheckBoxSelector
+                  errors={errors.formats}
+                  options={['ePUB', 'papel', 'mobi', 'PDF', 'audiolibro']}
+                  onChange={(
+                    { target: { name } }: React.ChangeEvent<HTMLInputElement>,
+                  ) => setMediaForm('formats', [...mediaForm.formats, name])}
+                />
+              </StyledCenteredContainer>
+            </CardContent>
+          </Card>
+        </StyledSection>
+        <StyledCenteredContainer>
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            onClick={submit}
+          >
+            {t('buttons.save')}
+          </Button>
+        </StyledCenteredContainer>
         {
           response.message
           && (
@@ -189,12 +238,22 @@ const Myblog: React.FC = (): JSX.Element => {
 };
 
 const StyledListContainer = styledComponents.ul`
+  margin-left: 0;  
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   grid-gap: 1%;
 `;
 
-const StyledGenresContainer = styledComponents.ul`
+const StyledSection = styledComponents.section`
+  margin-top: 1.5rem;
+`;
+
+const StyledCenteredContainer = styledComponents.div`
+  margin-top: 1rem;
+  margin-left: 45%;
+`;
+
+const StyledGenresContainer = styledComponents(CardContent)`
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   grid-gap: 1%;
