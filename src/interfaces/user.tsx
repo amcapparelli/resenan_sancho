@@ -1,5 +1,8 @@
+import { Media } from './mediaForm';
+
 export interface User {
-  [name: string]: string,
+  [key: string]: any,
+  name: string,
   lastName: string,
   email: string,
 }
@@ -12,6 +15,17 @@ export interface UserLogged extends User {
   name: string,
   _id: string,
   token: string,
+  reviewerInfo?: {
+    [key: string]: any,
+    description: string
+    genres: Array<string>,
+    formats: Array<string>
+    blog?: Media,
+    booktube?: Media
+    bookstagram?: Media,
+    goodreads?: Media,
+    amazon?: Media,
+  }
 }
 
 export interface IUserContext {

@@ -12,6 +12,7 @@ interface MyProps {
   options: Array<string>
   title?: string,
   onChange: Function,
+  formatsSelected: Array<string>
 }
 
 const CheckBoxOptions: React.FC<MyProps> = (props: MyProps): JSX.Element => {
@@ -20,6 +21,7 @@ const CheckBoxOptions: React.FC<MyProps> = (props: MyProps): JSX.Element => {
     title,
     onChange,
     options,
+    formatsSelected,
   } = props;
   return (
     <div>
@@ -33,6 +35,7 @@ const CheckBoxOptions: React.FC<MyProps> = (props: MyProps): JSX.Element => {
                 onChange={(e) => onChange && onChange(e)}
                 name={format}
                 color="primary"
+                checked={formatsSelected.includes(format)}
               />
             )}
             label={format}

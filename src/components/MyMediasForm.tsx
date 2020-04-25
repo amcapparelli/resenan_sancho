@@ -40,13 +40,28 @@ interface MyProps {
   media: string,
   onChange: Function,
   onSelect: Function,
+  selected: boolean,
+  url: string,
+  name: string,
+  errors: {
+    url: string,
+    name: string,
+  }
 }
 
 const MyMediasForm: React.FC<MyProps> = (props: MyProps): JSX.Element => {
   const { t } = useTranslation();
   const classes = useStyles();
-  const [expanded, setExpanded] = useState(false);
-  const { media, onChange, onSelect } = props;
+  const {
+    errors,
+    media,
+    onChange,
+    onSelect,
+    selected,
+    url,
+    name,
+  } = props;
+  const [expanded, setExpanded] = useState(selected);
   const handleExpandClick = () => {
     setExpanded(!expanded);
     onSelect();
@@ -102,20 +117,26 @@ const MyMediasForm: React.FC<MyProps> = (props: MyProps): JSX.Element => {
         <StyledInputsContainer>
           <div>
             <TextField
+              error={errors.url && errors.url.length > 0}
+              helperText={errors.url}
               label="url"
               name="url"
               type="text"
               variant="outlined"
+              value={url}
               onChange={(e) => onChange && onChange(e)}
             />
             <FormHelperText>{t(`mediasHelpers.URL.${media}`)}</FormHelperText>
           </div>
           <div>
             <TextField
+              error={errors.name && errors.name.length > 0}
+              helperText={errors.name}
               label="nombre"
               name="name"
               type="text"
               variant="outlined"
+              value={name}
               onChange={(e) => onChange && onChange(e)}
             />
             <FormHelperText>{t(`mediasHelpers.name.${media}`)}</FormHelperText>

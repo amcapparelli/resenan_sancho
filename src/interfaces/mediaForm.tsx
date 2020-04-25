@@ -6,23 +6,20 @@ export enum AvailableMedias {
   amazon = 'amazon',
 }
 
+export interface Media {
+  selected: boolean,
+  url: string,
+  name: string
+}
+
 export interface MediaForm {
   author: string,
   genres: Array<string>,
   formats: Array<string>,
-  blog: {
-    selected: boolean,
-  },
-  booktube: {
-    selected: boolean,
-  },
-  bookstagram: {
-    selected: boolean,
-  },
-  goodreads: {
-    selected: boolean,
-  },
-  amazon: {
-    selected: boolean,
-  }
+  description: string,
+  blog: Media,
+  booktube: Media,
+  bookstagram: Media,
+  goodreads: Media,
+  amazon: Media,
 }

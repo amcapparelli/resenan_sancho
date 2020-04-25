@@ -241,11 +241,15 @@ const AddBookForm: React.FC = (): JSX.Element => {
               helperText={errors.pages}
             />
             <FormatsCheckBoxSelector
+              formatsSelected={bookForm.formats}
               errors={errors.formats}
               options={['ePUB', 'papel', 'mobi', 'PDF', 'audiolibro']}
               onChange={(
-                { target: { name } }: React.ChangeEvent<HTMLInputElement>,
-              ) => setBookForm('formats', [...bookForm.formats, name])}
+                { target: { name, checked } }: React.ChangeEvent<HTMLInputElement>,
+              ) => setBookForm('formats',
+                checked
+                  ? [...bookForm.formats, name]
+                  : [...bookForm.formats.filter((format: string) => format !== name)])}
               title="Formatos disponibles:"
             />
             <Button
