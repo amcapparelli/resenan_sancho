@@ -13,21 +13,41 @@ import { FormatsCheckBoxSelector } from '../../src/components';
 describe('FormatsCheckBoxSelector Component', () => {
   test('show options', () => {
     const options = ['option1', 'option2'];
-    const { root } = create(<FormatsCheckBoxSelector options={options} />);
+    const formatsSelected = [];
+    const { root } = create(
+      <FormatsCheckBoxSelector
+        options={options}
+        formatsSelected={formatsSelected}
+      />,
+    );
     const formControlLabel = root.findAllByType(FormControlLabel);
     expect(formControlLabel).toHaveLength(options.length);
   });
   test('has title prop', () => {
     const options = ['option1', 'option2'];
     const title = 'titleTest';
-    const { root } = create(<FormatsCheckBoxSelector options={options} title={title} />);
+    const formatsSelected = [];
+    const { root } = create(
+      <FormatsCheckBoxSelector
+        options={options}
+        title={title}
+        formatsSelected={formatsSelected}
+      />,
+    );
     const formLabel = root.findByType(FormLabel);
     expect(formLabel.props.children).toBe('titleTest');
   });
   test('shows errors', () => {
     const options = ['option1', 'option2'];
     const errors = 'errorsTest';
-    const { root } = create(<FormatsCheckBoxSelector options={options} errors={errors} />);
+    const formatsSelected = [];
+    const { root } = create(
+      <FormatsCheckBoxSelector
+        options={options}
+        errors={errors}
+        formatsSelected={formatsSelected}
+      />,
+    );
     const formHelperText = root.findByType(FormHelperText);
     expect(formHelperText.props.children).toBe('errorsTest');
   });
