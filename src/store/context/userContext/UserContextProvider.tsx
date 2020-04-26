@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import UserContext from './UserContext';
-import { login } from '../../../config/routes';
+import { login, logout } from '../../../config/routes';
 import { UserLogged } from '../../../interfaces/user';
 
 interface MyProps {
@@ -23,16 +23,20 @@ const UserContextProvider: React.FC<MyProps> = (props: MyProps) => {
   const router = useRouter();
   useEffect(() => {
     async function fetchUserSession() {
-      const token = sessionStorage.getItem('token');
-      if (token) {
-        const response = await fetch(`${login}/${token}`, {
+      try {
+        const response = await fetch(`${login}/session`, {
           method: 'get',
+          mode: 'cors',
+          cache: 'no-cache',
+          credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
         });
         const session = await response.json();
         const { userSession } = session;
         setUser(userSession);
         if (userSession.token) setIsLogged(true);
+      } catch (error) {
+        console.log(error);
       }
     }
     fetchUserSession();
@@ -41,13 +45,22 @@ const UserContextProvider: React.FC<MyProps> = (props: MyProps) => {
   const setUserLogged = (userLogged: UserLogged): void => {
     setUser(userLogged);
     if (userLogged.token) setIsLogged(true);
-    sessionStorage.setItem('token', userLogged.token);
   };
-  const logout = (): void => {
-    sessionStorage.removeItem('token');
-    setUser(initialUser);
-    setIsLogged(true);
-    router.push('/login');
+  const logoutRequest = async (): Promise<void> => {
+    try {
+      await fetch(logout, {
+        method: 'get',
+        mode: 'cors',
+        cache: 'no-cache',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      setUser(initialUser);
+      setIsLogged(false);
+      router.push('/login');
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -55,7 +68,7 @@ const UserContextProvider: React.FC<MyProps> = (props: MyProps) => {
       user,
       setUserLogged,
       isLogged,
-      logout,
+      logoutRequest,
     }}
     >
       {children}

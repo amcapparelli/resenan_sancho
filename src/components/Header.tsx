@@ -6,7 +6,7 @@ import { Button } from '@material-ui/core';
 import UserContext from '../store/context/userContext/UserContext';
 
 const Header: React.FC = (): JSX.Element => {
-  const { isLogged, logout } = useContext(UserContext);
+  const { isLogged, logoutRequest } = useContext(UserContext);
   return (
     <StyledHeaderContainer>
       <header>
@@ -28,7 +28,7 @@ const Header: React.FC = (): JSX.Element => {
                 <Link href="/myprofile">
                   <StyledLink>Mi perfil</StyledLink>
                 </Link>
-                <Button onClick={logout}>Logout</Button>
+                <Button onClick={logoutRequest}>Logout</Button>
               </>
             ) : (
               <Link href="/login">

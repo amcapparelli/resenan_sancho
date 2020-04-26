@@ -1,4 +1,5 @@
 import React, { useContext, useEffect } from 'react';
+import { NextPage } from 'next';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import styledComponents from 'styled-components';
@@ -8,7 +9,7 @@ import { login as loginURL } from '../config/routes';
 import UserContext from '../store/context/userContext/UserContext';
 import { useForm, useFetch } from '../utils/customHooks';
 
-const Login: React.FC = (): JSX.Element => {
+const Login: NextPage = (): JSX.Element => {
   const { t } = useTranslation();
   const [loginResponse, loginRequest] = useFetch();
   const [loginForm, setLoginForm] = useForm({});

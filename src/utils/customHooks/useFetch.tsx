@@ -7,15 +7,17 @@ const useFetch = (): [any, Function] => {
     message: undefined,
   });
   const asyncRequest = async (url: string, method: string, body: object): Promise<void> => {
-    const options = {
-      method,
-      body: JSON.stringify({ ...body }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    };
     try {
-      const res = await fetch(url, options);
+      const res = await fetch(url, {
+        method,
+        mode: 'cors',
+        cache: 'no-cache',
+        credentials: 'include',
+        body: JSON.stringify({ ...body }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
       const resJSON = await res.json();
       setResponse(resJSON);
     } catch (error) {
