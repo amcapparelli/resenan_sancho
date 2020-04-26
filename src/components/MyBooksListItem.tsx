@@ -17,9 +17,12 @@ import { Book } from '../interfaces/books';
 interface Props {
   book: Book
   onClickPromote: Function
+  onClickEdit: Function
 }
 
-const MyBooksListItem: React.FC<Props> = ({ book, onClickPromote }: Props): JSX.Element => {
+const MyBooksListItem: React.FC<Props> = (
+  { book, onClickPromote, onClickEdit }: Props,
+): JSX.Element => {
   const {
     title,
     cover,
@@ -38,7 +41,7 @@ const MyBooksListItem: React.FC<Props> = ({ book, onClickPromote }: Props): JSX.
                 <ListItemIcon><StarsIcon color="secondary" fontSize="large" /></ListItemIcon>
                 <ListItemText primary="promocionar" />
               </ListItem>
-              <ListItem button>
+              <ListItem button onClick={() => onClickEdit && onClickEdit()}>
                 <ListItemIcon><EditIcon color="secondary" fontSize="large" /></ListItemIcon>
                 <ListItemText primary="editar" />
               </ListItem>

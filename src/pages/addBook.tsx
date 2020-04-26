@@ -1,5 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import React, { useState, useContext, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import styledComponents from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import {
@@ -10,8 +11,6 @@ import {
   FormHelperText,
   Grid,
   IconButton,
-  MenuItem,
-  Select,
   TextField,
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
@@ -21,13 +20,17 @@ import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
-import { useForm, useUploadImages, useRequiredFieldsValidation } from '../utils/customHooks';
+import {
+  useForm,
+  useUploadImages,
+  useRequiredFieldsValidation,
+  useFetchBook,
+} from '../utils/customHooks';
 import UserContext from '../store/context/userContext/UserContext';
 import { MyProfileLayout } from '../components/Layouts';
 import { registerBook as URL } from '../config/routes';
-import { FormatsCheckBoxSelector } from '../components';
+import { FormatsCheckBoxSelector, GenresSelector } from '../components';
 import { BookForm, BookFormErrors } from '../interfaces/books';
-import genres from '../utils/constants/genres';
 
 interface Response {
   success: boolean,
@@ -36,7 +39,9 @@ interface Response {
 
 const AddBookForm: React.FC = (): JSX.Element => {
   const { t } = useTranslation();
+  const { query: { book } } = useRouter();
   const { user } = useContext(UserContext);
+  const [state, fetchBook] = useFetchBook();
 
   const initForm: BookForm = {
     title: '',
@@ -48,7 +53,7 @@ const AddBookForm: React.FC = (): JSX.Element => {
     genre: '',
     pages: '',
   };
-  const [bookForm, setBookForm] = useForm(initForm);
+  const [bookForm, setBookForm, loadForm] = useForm(initForm);
 
   const initErrors: BookFormErrors = {
     title: '',
@@ -70,9 +75,38 @@ const AddBookForm: React.FC = (): JSX.Element => {
   const [open, setOpen] = useState(false);
 
   const [coverURL, uploadCover] = useUploadImages(initForm.cover);
+
   useEffect(() => {
     setBookForm('cover', coverURL);
   }, [coverURL]);
+
+  useEffect(() => {
+    if (book) fetchBook(book);
+  }, [book]);
+
+  useEffect(() => {
+    const {
+      title,
+      synopsis,
+      cover,
+      editorial,
+      formats,
+      genre,
+      pages,
+      datePublished,
+    } = state;
+    loadForm({
+      ...initForm,
+      title,
+      synopsis,
+      cover,
+      editorial,
+      formats,
+      genre,
+      pages,
+      datePublished,
+    });
+  }, [state]);
 
   const registerBook = async (): Promise<void> => {
     try {
@@ -132,7 +166,6 @@ const AddBookForm: React.FC = (): JSX.Element => {
           <StyledSecondColumnContainer>
             {['title', 'author', 'editorial'].map((text) => (
               <TextField
-                defaultValue={text === 'author' ? `${user.name} ${user.lastName}` : undefined}
                 label={t(`booksForm.${text}`)}
                 name={text}
                 fullWidth
@@ -146,6 +179,7 @@ const AddBookForm: React.FC = (): JSX.Element => {
                 InputProps={{
                   readOnly: (text === 'author'),
                 }}
+                value={text !== 'author' ? bookForm[text] : `${user.name} ${user.lastName}`}
               />
             ))}
             <TextField
@@ -164,6 +198,7 @@ const AddBookForm: React.FC = (): JSX.Element => {
               onChange={({ target: { name, value } }) => setBookForm(name, value)}
               required
               error={errors.synopsis.length > 0}
+              value={bookForm.synopsis}
             />
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
               <Grid container justify="space-around">
@@ -210,21 +245,13 @@ const AddBookForm: React.FC = (): JSX.Element => {
             }
           </StyledSecondColumnContainer>
           <StyledThirdColumnContainer>
-            <Select
-              onChange={({ target: { value } }) => setBookForm('genre', value)}
-              displayEmpty
-              value={bookForm.genre}
-              error={errors.genre.length > 0}
-            >
-              <MenuItem value="" disabled>
-                Género Literario
-              </MenuItem>
-              {
-                genres.map(({ name, code }) => (
-                  <MenuItem value={code}>{t(`genres.${name}`)}</MenuItem>
-                ))
-              }
-            </Select>
+            <GenresSelector
+              genreSelected={bookForm.genre}
+              onChange={(
+                { target: { name, value } }: React.ChangeEvent<HTMLInputElement>,
+              ) => setBookForm(name, value)}
+              errors={errors.genre}
+            />
             <FormHelperText error>{errors.genre}</FormHelperText>
             <TextField
               id="standard-number"
@@ -239,6 +266,7 @@ const AddBookForm: React.FC = (): JSX.Element => {
               required
               error={errors.pages.length > 0}
               helperText={errors.pages}
+              value={bookForm.pages}
             />
             <FormatsCheckBoxSelector
               formatsSelected={bookForm.formats}
@@ -258,7 +286,7 @@ const AddBookForm: React.FC = (): JSX.Element => {
               size="large"
               onClick={submit}
             >
-              {t('buttons.registerBook')}
+              {!book ? t('buttons.registerBook') : 'actualizar libro'}
             </Button>
 
           </StyledThirdColumnContainer>
@@ -275,6 +303,7 @@ const StyledFormContainer = styledComponents(CardContent)`
 `;
 
 const StyledFirstColumnContainer = styledComponents.div`
+  padding-top: 1rem;
   display: grid;
   grid-template-rows: 0.2fr 0.1fr 3fr;
   justify-items: center;
@@ -289,6 +318,7 @@ const StyledSecondColumnContainer = styledComponents.div`
 `;
 
 const StyledThirdColumnContainer = styledComponents.div`
+  padding-top: 1rem;
   display: grid;
   grid-template-rows: 1fr;
   grid-gap: 1rem;
@@ -306,14 +336,19 @@ const StyledInputFile = styledComponents.input`
 
 const StyledLabel = styledComponents.label`
   color: ${(props) => props.theme.contrastText};
-  border-radius: 20px;
-  padding: 2%;
-  width: 50%;
+  border-radius: 5px;
+  border:2px solid #fff;
+  box-shadow: 2px 2px 5px #ccc;
+  padding: 5%;
+  width: 70%;
   align-self: flex-start;
   text-align: center;
+  font-weight: 600;
   background-color: ${(props) => props.theme.main};
   :hover{
     cursor: pointer;
+    background-color: ${(props) => props.theme.dark};
+    color: ${(props) => props.theme.main};
   }
 `;
 

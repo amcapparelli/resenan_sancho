@@ -55,6 +55,9 @@
   "components": {
     "countriesSelector": {
       "title": "País"
+    },
+    "genresSelector": {
+      "title": "Género Literario"
     }
   },
   "mediasHelpers": {

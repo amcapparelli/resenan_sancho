@@ -26,7 +26,7 @@ const BookListItem: React.FC<Props> = ({ book }: Props): JSX.Element => {
           <div>
             <h2>{title}</h2>
             <p>{`${author.name} ${author.lastName}`}</p>
-            <Link href={`/books?book=${_id}`}>
+            <Link href={{ pathname: '/books', query: { book: _id } }}>
               <a>leer más</a>
             </Link>
           </div>

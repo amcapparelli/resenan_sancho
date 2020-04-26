@@ -1,27 +1,14 @@
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect } from 'react';
 import styledComponents from 'styled-components';
 import { Paper, Typography } from '@material-ui/core';
-import { book as URL } from '../config/routes';
-import { bookLoad } from '../store/reducers';
-import { Book } from '../interfaces/books';
+import { useFetchBook } from '../utils/customHooks';
 
 interface Props {
   id: string | string[] | undefined,
 }
 
-const initialState: Book = {
-  _id: undefined,
-  title: undefined,
-  author: {
-    name: undefined,
-    lastName: undefined,
-  },
-  cover: undefined,
-  synopsis: undefined,
-};
-
 const BookItem = (props: Props) => {
-  const [state, dispatch] = useReducer(bookLoad, initialState);
+  const [state, fetchBook] = useFetchBook();
   const { id } = props;
   const {
     title,
@@ -30,22 +17,7 @@ const BookItem = (props: Props) => {
     synopsis,
   } = state;
   useEffect(() => {
-    async function fetchBook() {
-      try {
-        const response = await fetch(`${URL}/${id}`, {
-          method: 'get',
-          headers: { 'Content-Type': 'application/json' },
-        });
-        const book = await response.json();
-        dispatch({
-          type: 'BOOK_LOAD',
-          payload: book,
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    fetchBook();
+    fetchBook(id);
   }, []);
 
   return (
