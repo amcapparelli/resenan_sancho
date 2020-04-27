@@ -8,7 +8,8 @@
     "update": "update",
     "registerBook": "Register Book",
     "register": "Register",
-    "save": "save"
+    "save": "save",
+    "uploadCover": "Upload Cover"
   },
   "form": {
     "name": "Name",
@@ -35,6 +36,10 @@
     "suspense": "suspense",
     "terror": "terror",
     "thriller": "thriller"
+  },
+  "link": {
+    "forgotPassword": "I forgot my password...",
+    "backToLogin": "Go back to login!"
   },
   "sidebar": {
     "updateProfile": "Update Profile",

@@ -8,6 +8,7 @@ import Alert from '@material-ui/lab/Alert';
 import { login as loginURL } from '../config/routes';
 import UserContext from '../store/context/userContext/UserContext';
 import { useForm, useFetch } from '../utils/customHooks';
+import { StyledLink } from '../components';
 
 const Login: NextPage = (): JSX.Element => {
   const { t } = useTranslation();
@@ -48,6 +49,10 @@ const Login: NextPage = (): JSX.Element => {
       >
         Login
       </StyledButton>
+      <StyledLink
+        anchor={t('link.forgotPassword')}
+        href="/forgot"
+      />
       {
         loginResponse.message
         && (

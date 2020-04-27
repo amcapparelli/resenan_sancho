@@ -8,7 +8,8 @@
     "update": "actualizar",
     "registerBook": "Registrar Libro",
     "register": "Registrar",
-    "save": "guardar"
+    "save": "guardar",
+    "uploadCover": "Subir portada"
   },
   "form": {
     "name": "Nombre",
@@ -16,6 +17,10 @@
     "email": "Email",
     "password": "Contraseña",
     "repeatPassword": "Repite Contraseña"
+  },
+  "link": {
+    "forgotPassword": "Olvidé mi contraseña...",
+    "backToLogin": "¡Volver al login!"
   },
   "genres": {
     "adventure": "aventura",

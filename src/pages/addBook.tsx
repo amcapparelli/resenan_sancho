@@ -25,6 +25,7 @@ import {
   useUploadImages,
   useRequiredFieldsValidation,
   useFetchBook,
+  useFetch,
 } from '../utils/customHooks';
 import UserContext from '../store/context/userContext/UserContext';
 import { MyProfileLayout } from '../components/Layouts';
@@ -42,6 +43,7 @@ const AddBookForm: React.FC = (): JSX.Element => {
   const { query: { book } } = useRouter();
   const { user } = useContext(UserContext);
   const [state, fetchBook] = useFetchBook();
+  const [registerBookResponse, registerBookRequest] = useFetch();
 
   const initForm: BookForm = {
     title: '',
@@ -67,11 +69,6 @@ const AddBookForm: React.FC = (): JSX.Element => {
     pages: '',
   };
   const [errors, validateRequiredFields] = useRequiredFieldsValidation(initErrors);
-
-  const [response, setResponse] = useState<Response>({
-    success: undefined,
-    message: undefined,
-  });
   const [open, setOpen] = useState(false);
 
   const [coverURL, uploadCover] = useUploadImages(initForm.cover);
@@ -108,31 +105,15 @@ const AddBookForm: React.FC = (): JSX.Element => {
     });
   }, [state]);
 
+  useEffect(() => {
+    if (registerBookResponse !== undefined) setOpen(true);
+  }, [registerBookResponse.message]);
+
   const registerBook = async (): Promise<void> => {
-    try {
-      const res = await fetch(URL, {
-        method: 'post',
-        body: JSON.stringify({ ...bookForm }),
-        headers: { 'Content-Type': 'application/json' },
-      });
-      const resJSON = await res.json();
-      const {
-        message,
-        success,
-      } = resJSON;
-      if (resJSON.error) {
-        setResponse({
-          message: resJSON.error.errors[Object.keys(resJSON.error.errors)[0]].message,
-          success: false,
-        });
-        setOpen(true);
-        return;
-      }
-      setResponse({ message, success });
-      setOpen(true);
-    } catch (error) {
-      setResponse(error);
-      setOpen(true);
+    if (!book) {
+      registerBookRequest(URL, 'post', bookForm);
+    } else {
+      registerBookRequest(`${URL}/${book}`, 'put', bookForm);
     }
   };
 
@@ -155,7 +136,7 @@ const AddBookForm: React.FC = (): JSX.Element => {
               onChange={(e) => uploadCover(e, 'covers')}
             />
             <StyledLabel htmlFor="raised-button-file">
-              Subir Portada
+              {t('buttons.uploadCover')}
             </StyledLabel>
             <FormHelperText error>{errors.cover}</FormHelperText>
             {
@@ -219,7 +200,7 @@ const AddBookForm: React.FC = (): JSX.Element => {
               <FormHelperText error>{errors.datePublished}</FormHelperText>
             </MuiPickersUtilsProvider>
             {
-              response.message
+              registerBookResponse.message
               && (
                 <Collapse in={open}>
                   <Alert
@@ -236,9 +217,9 @@ const AddBookForm: React.FC = (): JSX.Element => {
                       </IconButton>
                     )}
                     variant="filled"
-                    severity={response.success ? 'success' : 'error'}
+                    severity={registerBookResponse.success ? 'success' : 'error'}
                   >
-                    {response.message}
+                    {registerBookResponse.message}
                   </Alert>
                 </Collapse>
               )

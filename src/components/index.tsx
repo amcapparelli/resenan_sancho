@@ -16,4 +16,5 @@ export { default as MyMediasForm } from './MyMediasForm';
 export { default as PasswordFields } from './PasswordFields';
 export { default as ReviewerListItem } from './ReviewerListItem';
 export { default as ReviewersList } from './ReviewersList';
+export { default as StyledLink } from './StyledLink';
 export { default as UploadImagesInput } from './UploadImagesInput';

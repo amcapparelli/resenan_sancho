@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import styledComponents from 'styled-components';
+import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
-import {
-  Button,
-  Link,
-} from '@material-ui/core';
+import { Button } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import { useForm, useFetch } from '../utils/customHooks';
-import { PasswordFields } from '../components';
+import { PasswordFields, StyledLink } from '../components';
 import { resetPass as resetPassURL } from '../config/routes';
 
 const reset = () => {
+  const { t } = useTranslation();
   const { query: { resetToken, user } } = useRouter();
   const [resetForm, setResetForm] = useForm({
     password: '',
@@ -44,7 +44,7 @@ const reset = () => {
   };
 
   return (
-    <>
+    <StyledForm>
       <PasswordFields
         onChange={(
           { target: { name, value } }: React.ChangeEvent<HTMLInputElement>,
@@ -74,13 +74,25 @@ const reset = () => {
       {
         resetResponse.success
         && (
-          <Link href="/login" variant="body1">
-            Volver al Login
-          </Link>
+          <StyledLink
+            anchor={t('link.backToLogin')}
+            href="/login"
+          />
         )
       }
-    </>
+    </StyledForm>
   );
 };
+
+const StyledForm = styledComponents.form`
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-gap: 1rem;
+  width: 30%;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+`;
 
 export default reset;

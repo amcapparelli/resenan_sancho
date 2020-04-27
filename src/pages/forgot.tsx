@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import styledComponents from 'styled-components';
 import { Button, TextField } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import { useForm } from '../utils/customHooks';
@@ -31,7 +32,7 @@ const reset = () => {
     }
   };
   return (
-    <>
+    <StyledForm>
       <TextField
         id="standard-password-input"
         label="email"
@@ -56,8 +57,19 @@ const reset = () => {
           </Alert>
         )
       }
-    </>
+    </StyledForm>
   );
 };
+
+const StyledForm = styledComponents.form`
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-gap: 1rem;
+  width: 30%;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+`;
 
 export default reset;
