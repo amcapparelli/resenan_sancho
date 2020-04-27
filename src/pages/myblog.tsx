@@ -83,11 +83,11 @@ const Myblog: React.FC = (): JSX.Element => {
     try {
       const res = await fetch(URL, {
         method: isEditing ? 'put' : 'post',
+        mode: 'cors',
+        cache: 'no-cache',
+        credentials: 'include',
         body: JSON.stringify({ ...mediasFormClean }),
-        headers: {
-          'Content-Type': 'application/json',
-          'X-User-Token': user.token,
-        },
+        headers: { 'Content-Type': 'application/json' },
       });
       const resJSON = await res.json();
       const {
