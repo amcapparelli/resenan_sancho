@@ -12,7 +12,7 @@ export default (state: ReviewersList, action: IAction) => {
     case 'REVIEWERS_LIST_LOAD': {
       const { reviewers } = action.payload;
       return {
-        reviewers: [...state.reviewers, ...reviewers],
+        reviewers: [...reviewers],
       };
     }
     default: return state;
