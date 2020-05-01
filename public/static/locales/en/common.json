@@ -1,4 +1,9 @@
 {
+  "nav": {
+    "availableBooks": "Available Books",
+    "reviewers": "Literary Reviewers",
+    "myProfile": "My profile"
+  },
   "booksForm": {
     "title": "Title",
     "author": "Author",
@@ -9,7 +14,8 @@
     "registerBook": "Register Book",
     "register": "Register",
     "save": "save",
-    "uploadCover": "Upload Cover"
+    "uploadCover": "Upload Cover",
+    "filter": "Filter list"
   },
   "form": {
     "name": "Name",
@@ -39,7 +45,8 @@
   },
   "link": {
     "forgotPassword": "I forgot my password...",
-    "backToLogin": "Go back to login!"
+    "backToLogin": "Go back to login!",
+    "readMore": "Read More"
   },
   "sidebar": {
     "updateProfile": "Update Profile",
@@ -63,6 +70,10 @@
     },
     "genresSelector": {
       "title": "Literary Genre"
+    },
+    "formatsSelector": {
+      "title": "Format",
+      "all": "all"
     }
   },
   "mediasHelpers": {
@@ -89,5 +100,9 @@
       "blog": "Añadir mi Blog Literario",
       "goodreads": "Añadir mi perfil en Goodreads"
     }
+  },
+  "books": {
+    "pages": "pages",
+    "availableFormats": "Available formats"
   }
 }

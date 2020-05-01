@@ -33,6 +33,9 @@ export const MuiTheme = createMuiTheme({
       light,
       contrastText,
     },
+    secondary: {
+      main: dark,
+    },
   },
   spacing: 8,
 });

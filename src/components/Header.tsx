@@ -1,11 +1,13 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useContext } from 'react';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
 import styledComponents from 'styled-components';
 import { Button } from '@material-ui/core';
 import UserContext from '../store/context/userContext/UserContext';
 
 const Header: React.FC = (): JSX.Element => {
+  const { t } = useTranslation();
   const { isLogged, logoutRequest } = useContext(UserContext);
   return (
     <StyledHeaderContainer>
@@ -16,17 +18,17 @@ const Header: React.FC = (): JSX.Element => {
       </header>
       <StyledNav>
         <Link href="/books">
-          <StyledLink>Libros Disponibles</StyledLink>
+          <StyledLink>{t('nav.availableBooks')}</StyledLink>
         </Link>
-        <Link href="/books">
-          <StyledLink>Reseñadores</StyledLink>
+        <Link href="/">
+          <StyledLink>{t('nav.reviewers')}</StyledLink>
         </Link>
         {
           isLogged
             ? (
               <>
                 <Link href="/myprofile">
-                  <StyledLink>Mi perfil</StyledLink>
+                  <StyledLink>{t('nav.myProfile')}</StyledLink>
                 </Link>
                 <Button onClick={logoutRequest}>Logout</Button>
               </>

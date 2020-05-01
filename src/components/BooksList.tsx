@@ -1,45 +1,48 @@
-import React, { useEffect, useReducer } from 'react';
+/* eslint-disable no-nested-ternary */
+import React, { useEffect } from 'react';
 import styledComponents from 'styled-components';
-import { books as URL } from '../config/routes';
-import { booksListLoad } from '../store/reducers';
-import { Book } from '../interfaces/books';
-import { BookListItem } from '.';
-
-interface State {
-  books: Array<Book>;
-}
-const initialState: State = {
-  books: [],
-};
+import { useBooksListFetch, useFilters } from '../utils/customHooks';
+import {
+  BookListItem,
+  Loading,
+  Filters,
+  EmptyList,
+} from '.';
 
 const BooksList = () => {
-  const [state, dispatch] = useReducer(booksListLoad, initialState);
+  const [filters, setFilters] = useFilters({});
+  const [state, listRequest, loading] = useBooksListFetch();
   useEffect(() => {
-    async function fetchBooksList() {
-      try {
-        const response = await fetch(`${URL}`, {
-          method: 'get',
-          headers: { 'Content-Type': 'application/json' },
-        });
-        const books = await response.json();
-        dispatch({
-          type: 'BOOKS_LIST_LOAD',
-          payload: books,
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    fetchBooksList();
+    listRequest();
   }, []);
+
+  const filter = () => {
+    listRequest(filters);
+  };
+
   return (
     <div>
+      <Filters
+        onChange={(
+          { target: { name, value } }: React.ChangeEvent<HTMLInputElement>,
+        ) => setFilters(name, value)}
+        onClick={() => filter()}
+        genreSelected={filters.genre}
+        formatSelected={filters.format}
+        text="Busca libros según tus preferencias: "
+      />
       <StyledList>
         {
-          state.books.map(
-            // eslint-disable-next-line no-underscore-dangle
-            (book) => <li key={book._id}><BookListItem book={book} /></li>,
-          )
+          loading
+            ? <Loading />
+            : (
+              state.books.length === 0
+                ? <EmptyList />
+                : state.books.map(
+                  // eslint-disable-next-line no-underscore-dangle
+                  (book) => <li key={book._id}><BookListItem book={book} /></li>,
+                )
+            )
         }
       </StyledList>
     </div>

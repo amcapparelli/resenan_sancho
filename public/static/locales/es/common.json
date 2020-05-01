@@ -1,4 +1,9 @@
 {
+  "nav": {
+    "availableBooks": "Libros Disponibles",
+    "reviewers": "Reseñadores Literarios",
+    "myProfile": "Mi perfil"
+  },
   "booksForm": {
     "title": "Titulo",
     "author": "Autor",
@@ -9,7 +14,8 @@
     "registerBook": "Registrar Libro",
     "register": "Registrar",
     "save": "guardar",
-    "uploadCover": "Subir portada"
+    "uploadCover": "Subir portada",
+    "filter": "Filtrar lista"
   },
   "form": {
     "name": "Nombre",
@@ -20,7 +26,8 @@
   },
   "link": {
     "forgotPassword": "Olvidé mi contraseña...",
-    "backToLogin": "¡Volver al login!"
+    "backToLogin": "¡Volver al login!",
+    "readMore": "Lee más"
   },
   "genres": {
     "adventure": "aventura",
@@ -63,6 +70,10 @@
     },
     "genresSelector": {
       "title": "Género Literario"
+    },
+    "formatsSelector": {
+      "title": "Formato",
+      "all": "todos"
     }
   },
   "mediasHelpers": {
@@ -89,5 +100,9 @@
       "blog": "Añadir mi Blog Literario",
       "goodreads": "Añadir mi perfil en Goodreads"
     }
+  },
+  "books": {
+    "pages": "páginas",
+    "availableFormats": "Formatos disponibles"
   }
 }

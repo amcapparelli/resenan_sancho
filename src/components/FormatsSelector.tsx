@@ -7,54 +7,54 @@ import {
   MenuItem,
   OutlinedInput,
 } from '@material-ui/core';
-import genres from '../utils/constants/genres';
+import formats from '../utils/constants/formats';
 
 
 interface MyProps {
-  genreSelected: string
+  formatSelected: string
   onChange: Function
   errors: string
 }
 
-const GenresSelector: React.FC<MyProps> = (props: MyProps): JSX.Element => {
+const FormatsSelector: React.FC<MyProps> = (props: MyProps): JSX.Element => {
   const { t } = useTranslation();
-  const { genreSelected, onChange, errors } = props;
+  const { formatSelected, onChange, errors } = props;
 
   return (
     <FormControl variant="outlined">
       <InputLabel
-        shrink={!!genreSelected}
-        htmlFor="genresSelector"
+        shrink={!!formatSelected}
+        htmlFor="formatsSelector"
       >
-        {t('components.genresSelector.title')}
+        {t('components.formatsSelector.title')}
       </InputLabel>
       <Select
         fullWidth
-        value={genreSelected}
+        value={formatSelected}
         onChange={(e) => onChange && onChange(e)}
         error={errors.length > 0}
-        label={t('components.genresSelector.title')}
+        label={t('components.formatsSelector.title')}
         inputProps={{
-          name: 'genre',
-          id: 'genresSelector',
+          name: 'format',
+          id: 'formatsSelector',
         }}
         input={
           (
             <OutlinedInput
-              name="genre"
+              name="format"
               id="outlined-country-simple"
               notched
-              labelWidth={genreSelected ? 110 : 0}
+              labelWidth={formatSelected ? 65 : 0}
             />
           )
         }
       >
-        <MenuItem value="" disabled>
-          {t('components.genresSelector.title')}
+        <MenuItem value="">
+          {t('components.formatsSelector.all')}
         </MenuItem>
         {
-          genres.map(({ name, code }) => (
-            <MenuItem value={code}>{t(`genres.${name}`)}</MenuItem>
+          formats.map((format) => (
+            <MenuItem value={format}>{format}</MenuItem>
           ))
         }
       </Select>
@@ -62,4 +62,4 @@ const GenresSelector: React.FC<MyProps> = (props: MyProps): JSX.Element => {
   );
 };
 
-export default GenresSelector;
+export default FormatsSelector;

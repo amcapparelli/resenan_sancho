@@ -1,20 +1,21 @@
 import { useReducer, useState } from 'react';
-import { reviewersListLoad } from '../../store/reducers';
-import { reviewers as URL } from '../../config/routes';
+import { booksListLoad } from '../../store/reducers';
+import { Book } from '../../interfaces/books';
+import { books as URL } from '../../config/routes';
 
 interface State {
-  reviewers: Array<any>;
+  books: Array<Book>;
 }
 const initialState: State = {
-  reviewers: [],
+  books: [],
 };
 
 interface Filters {
   [key: string]: string,
 }
 
-const useReviewersListFetch = (): [State, Function, boolean] => {
-  const [state, dispatch] = useReducer(reviewersListLoad, initialState);
+const useBooksListFetch = (): [State, Function, boolean] => {
+  const [state, dispatch] = useReducer(booksListLoad, initialState);
   const [loading, setLoading] = useState(false);
   const listRequest = async (filters: Filters = {}): Promise<void> => {
     const options = {
@@ -27,13 +28,13 @@ const useReviewersListFetch = (): [State, Function, boolean] => {
     try {
       setLoading(true);
       const response = await fetch(`${URL}?${queryString}`, options);
-      const blogs = await response.json();
+      const books = await response.json();
       dispatch({
-        type: 'REVIEWERS_LIST_LOAD',
-        payload: blogs,
+        type: 'BOOKS_LIST_LOAD',
+        payload: books,
       });
     } catch (error) {
-      dispatch({ type: 'REVIEWERS_LIST_ERROR', payload: error });
+      dispatch({ type: 'BOOKS_LIST_ERROR', payload: error });
     } finally {
       setLoading(false);
     }
@@ -41,4 +42,4 @@ const useReviewersListFetch = (): [State, Function, boolean] => {
   return [state, listRequest, loading];
 };
 
-export default useReviewersListFetch;
+export default useBooksListFetch;

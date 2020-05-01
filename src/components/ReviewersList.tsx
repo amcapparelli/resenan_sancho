@@ -1,13 +1,12 @@
 import React, { useEffect } from 'react';
 import styledComponents from 'styled-components';
-import { Button } from '@material-ui/core';
-import { ReviewerListItem, GenresSelector } from '.';
+import { ReviewerListItem, Loading, Filters } from '.';
 import { useReviewersListFetch, useFilters } from '../utils/customHooks';
 
 
 const ReviewersList: React.FC = (): JSX.Element => {
   const [filters, setFilters] = useFilters({});
-  const [state, listRequest] = useReviewersListFetch();
+  const [state, listRequest, loading] = useReviewersListFetch();
   useEffect(() => {
     listRequest();
   }, []);
@@ -18,29 +17,23 @@ const ReviewersList: React.FC = (): JSX.Element => {
 
   return (
     <div>
-      <StyledFiltersContainer>
-        <GenresSelector
-          onChange={(
-            { target: { name, value } }: React.ChangeEvent<HTMLInputElement>,
-          ) => setFilters(name, value)}
-          genreSelected={filters.genre}
-          errors=""
-        />
-        <Button
-          variant="contained"
-          color="primary"
-          size="small"
-          onClick={filter}
-        >
-          Filtrar Listado
-        </Button>
-      </StyledFiltersContainer>
+      <Filters
+        onChange={(
+          { target: { name, value } }: React.ChangeEvent<HTMLInputElement>,
+        ) => setFilters(name, value)}
+        onClick={() => filter()}
+        genreSelected={filters.genre}
+        formatSelected={filters.format}
+        text="Busca reseñadores para tu novela:"
+      />
       <StyledList>
         {
-          state.reviewers.map(
-            // eslint-disable-next-line no-underscore-dangle
-            (reviewer) => <li key={reviewer._id}><ReviewerListItem reviewer={reviewer} /></li>,
-          )
+          loading
+            ? <Loading />
+            : state.reviewers.map(
+              // eslint-disable-next-line no-underscore-dangle
+              (reviewer) => <li key={reviewer._id}><ReviewerListItem reviewer={reviewer} /></li>,
+            )
         }
       </StyledList>
     </div>
@@ -52,13 +45,6 @@ const StyledList = styledComponents.ul`
   grid-gap: 1rem;
   grid-template-columns: repeat(3, 1fr);
   list-style-type: none;
-`;
-
-const StyledFiltersContainer = styledComponents.div`
-  display: grid;
-  grid-gap: 1rem;
-  grid-template-columns: repeat(4, 1fr);
-  margin-left: 10%;
 `;
 
 export default ReviewersList;

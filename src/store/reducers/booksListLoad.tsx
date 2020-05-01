@@ -14,7 +14,7 @@ export default (state: BooksList, action: IAction) => {
     case 'BOOKS_LIST_LOAD': {
       const { books } = action.payload;
       return {
-        books: [...state.books, ...books],
+        books: [...books],
       };
     }
     case 'USER_BOOKS_LIST_LOAD': {

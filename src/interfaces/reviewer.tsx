@@ -1,6 +1,5 @@
 import { AvailableGenres } from './genres';
-
-enum formats { 'ePUB', 'papel', 'mobi', 'PDF', 'audiolibro' }
+import AvailableFormats from './formats';
 
 export interface Reviewer {
   author: {
@@ -22,6 +21,6 @@ export interface Reviewer {
     url: string,
   },
   genres: Array<AvailableGenres>,
-  formats: Array<formats>,
+  formats: Array<AvailableFormats>,
   description: string,
 }

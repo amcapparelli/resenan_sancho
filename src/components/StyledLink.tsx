@@ -4,7 +4,7 @@ import styledComponents from 'styled-components';
 
 interface MyProps {
   anchor: string,
-  href: string
+  href: any
 }
 
 const StyledLink = ({ anchor, href }: MyProps) => (

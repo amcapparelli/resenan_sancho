@@ -9,6 +9,7 @@ export interface Book {
   },
   cover: string,
   synopsis: string,
+  pages: number
 }
 
 export interface BookForm {

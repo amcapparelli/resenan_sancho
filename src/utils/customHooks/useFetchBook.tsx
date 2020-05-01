@@ -15,6 +15,7 @@ const initialState: Book = {
   },
   cover: '',
   synopsis: '',
+  pages: null,
 };
 
 const useFetchBook = (): [any, Function, boolean, any] => {
