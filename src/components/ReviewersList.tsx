@@ -1,15 +1,21 @@
 import React, { useEffect } from 'react';
 import styledComponents from 'styled-components';
-import { ReviewerListItem, Loading, Filters } from '.';
+import {
+  ReviewerListItem,
+  Loading,
+  Filters,
+  ListPagination,
+} from '.';
 import { useReviewersListFetch, useFilters } from '../utils/customHooks';
 
-
 const ReviewersList: React.FC = (): JSX.Element => {
-  const [filters, setFilters] = useFilters({});
+  const [filters, setFilters] = useFilters({
+    page: 1,
+  });
   const [state, listRequest, loading] = useReviewersListFetch();
   useEffect(() => {
-    listRequest();
-  }, []);
+    listRequest(filters);
+  }, [filters.page]);
 
   const filter = () => {
     listRequest(filters);
@@ -25,6 +31,10 @@ const ReviewersList: React.FC = (): JSX.Element => {
         genreSelected={filters.genre}
         formatSelected={filters.format}
         text="Busca reseñadores para tu novela:"
+      />
+      <ListPagination
+        onChange={(e: React.ChangeEvent<HTMLInputElement>, page: number) => setFilters('page', page)}
+        totalPages={state.totalPages}
       />
       <StyledList>
         {

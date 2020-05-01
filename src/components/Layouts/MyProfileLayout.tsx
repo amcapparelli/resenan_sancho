@@ -30,6 +30,7 @@ import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
 import HomeIcon from '@material-ui/icons/Home';
 import ImportantDevicesIcon from '@material-ui/icons/ImportantDevices';
+import { NotLogged } from '..';
 import UserContext from '../../store/context/userContext/UserContext';
 
 const drawerWidth = 220;
@@ -185,7 +186,7 @@ const MyProfileLayout: React.FC<MyProps> = ({ children, title }: MyProps): JSX.E
         <main className={classes.content}>
           <div className={classes.toolbar} />
           {
-            isLogged ? children : <p>No estás logueado</p>
+            isLogged ? children : <NotLogged />
           }
         </main>
       </CssBaseline>

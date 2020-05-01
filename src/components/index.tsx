@@ -11,6 +11,8 @@ export { default as FormatsSelector } from './FormatsSelector';
 export { default as Filters } from './Filters';
 export { default as Header } from './Header';
 export { default as Loading } from './Loading';
+export { default as NotLogged } from './NotLogged';
+export { default as ListPagination } from './ListPagination';
 export { default as Meta } from './Meta';
 export { default as ModalDialog } from './ModalDialog';
 export { default as ModalPromotions } from './ModalPromotions';

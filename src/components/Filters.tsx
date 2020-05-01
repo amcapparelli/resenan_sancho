@@ -25,7 +25,7 @@ const Filters = ({
   return (
     <>
       <StyledFiltersContainer>
-        <StyledText variant="body2">{text}</StyledText>
+        <StyledText variant="body2" align="right">{text}</StyledText>
         <GenresSelector
           onChange={onChange}
           genreSelected={genreSelected}

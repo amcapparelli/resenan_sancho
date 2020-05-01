@@ -5,15 +5,15 @@ import {
   Button,
   Typography,
 } from '@material-ui/core';
-import AddCircleIcon from '@material-ui/icons/AddCircle';
+import AddToHomeScreenIcon from '@material-ui/icons/AddToHomeScreen';
 
-const AddBook = () => (
+const NotLogged = () => (
   <StyledContainer>
     <Typography variant="h3" align="center">
-      No tienes ningún libro todavía, agrega uno.
+      No te has logueado.
     </Typography>
-    <Link href="/addBook">
-      <Button><AddCircleIcon fontSize="large" /></Button>
+    <Link href="/login">
+      <Button><AddToHomeScreenIcon fontSize="large" /></Button>
     </Link>
   </StyledContainer>
 );
@@ -28,4 +28,4 @@ const StyledContainer = styledComponents.div`
   left: 50%;
   transform: translate(-50%, -50%);
 `;
-export default AddBook;
+export default NotLogged;

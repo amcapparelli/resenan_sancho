@@ -4,13 +4,17 @@ import { reviewers as URL } from '../../config/routes';
 
 interface State {
   reviewers: Array<any>;
+  totalElements: number,
+  totalPages: number,
 }
 const initialState: State = {
   reviewers: [],
+  totalElements: 0,
+  totalPages: 0,
 };
 
 interface Filters {
-  [key: string]: string,
+  [key: string]: string | number,
 }
 
 const useReviewersListFetch = (): [State, Function, boolean] => {
@@ -27,10 +31,10 @@ const useReviewersListFetch = (): [State, Function, boolean] => {
     try {
       setLoading(true);
       const response = await fetch(`${URL}?${queryString}`, options);
-      const blogs = await response.json();
+      const { reviewers, totalElements, totalPages } = await response.json();
       dispatch({
         type: 'REVIEWERS_LIST_LOAD',
-        payload: blogs,
+        payload: { reviewers, totalElements, totalPages },
       });
     } catch (error) {
       dispatch({ type: 'REVIEWERS_LIST_ERROR', payload: error });
