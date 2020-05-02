@@ -20,8 +20,10 @@ const UserContextProvider: React.FC<MyProps> = (props: MyProps) => {
   const { children } = props;
   const [user, setUser] = useState(initialUser);
   const [isLogged, setIsLogged] = useState<boolean>(user.token !== undefined);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   useEffect(() => {
+    setLoading(true);
     async function fetchUserSession() {
       try {
         const response = await fetch(`${login}/session`, {
@@ -37,6 +39,8 @@ const UserContextProvider: React.FC<MyProps> = (props: MyProps) => {
         if (userSession.token) setIsLogged(true);
       } catch (error) {
         console.log(error);
+      } finally {
+        setLoading(false);
       }
     }
     fetchUserSession();
@@ -69,6 +73,7 @@ const UserContextProvider: React.FC<MyProps> = (props: MyProps) => {
       setUserLogged,
       isLogged,
       logoutRequest,
+      loading,
     }}
     >
       {children}

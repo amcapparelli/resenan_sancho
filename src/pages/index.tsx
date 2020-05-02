@@ -1,100 +1,138 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import styledComponents from 'styled-components';
+import Link from 'next/link';
 import { PublicZoneLayout } from '../components/Layouts';
 import { StyledTitle } from '../components';
+import UserContext from '../store/context/userContext/UserContext';
 
-const index = () => (
-  <div>
-    <PublicZoneLayout showFooter>
-      <StyledTitle
-        text="Un libro sin reseñas es un libro aún sin publicar."
-      />
-      <StyledSection>
-        <StyledArticleContainer>
-          <StyledArticleTitle>
-            <h2>
-              Reseñan Sancho es un sitio para conectar a escritores con reseñadores literarios.
-            </h2>
-          </StyledArticleTitle>
-          <StyledArticleP>
-            <p>
-              Sabemos que una reseña literaria puede ser positiva o negativa,
-              pero lo importante es que sea honesta.
-            </p>
-            <p>
-              No solo para dar a conocer nuestra novela sino para mejorar como escritores,
-              las reseñas son una parte muy importante del proceso editorial.
-            </p>
-            <p>
-              Por eso, Reseñan Sancho toma su nombre de la célebre frase:
-              «Ladran, Sancho, señal que cabalgamos».
-            </p>
-          </StyledArticleP>
-          <StyledNav>
-            <StyledArticleButton>Encontrar reseñadores</StyledArticleButton>
-            <StyledArticleButton>Encontrar Libros</StyledArticleButton>
-          </StyledNav>
-        </StyledArticleContainer>
-      </StyledSection>
-      <StyledSectionB>
-        <StyledArticleBContainer>
-          <StyledArticleTitleB>
-            <h2>
-              Libros para Reseñadores Literarios.
-            </h2>
-          </StyledArticleTitleB>
-          <StyledArticleBP>
-            <p>
-              Si tienes un blog literario, eres booktuber o bookstagramer,
-              o simplemente te encanta escribir reseñas de los libros que lees en goodreads
-              o amazon, sabemos que siempre tendrás interés en descubrir a una escritora o
-              escritor nuevos.
-            </p>
-            <p>
-              Crea tu cuenta para encotrar libros y conectar con sus autores.
-              Ellos te lo agradecerán y estarán dispuestos a enviarte un ejemplar de su novela.
-            </p>
-            <p>
-              Además, participarás en
-              <b> concursos de reseñas</b>
-              , propuestas de lecturas conjuntas
-              y lanzamientos de libros en tu país.
-            </p>
-          </StyledArticleBP>
-          <StyledNav>
-            <StyledArticleButton>Ver Libros Disponibles</StyledArticleButton>
-            <StyledArticleButton>Darme de alta</StyledArticleButton>
-          </StyledNav>
-        </StyledArticleBContainer>
-      </StyledSectionB>
-      <StyledSection>
-        <StyledArticleContainer>
-          <StyledArticleTitleB>
-            <h2>
-              Promoción para escritores.
-            </h2>
-          </StyledArticleTitleB>
-          <StyledArticleP>
-            <p>
-              La mejor forma de promocionar una novela es que los demás hablen de ella.
-            </p>
-            <p>
-              Una reseña literaria es un lector recomendándole a otros lectores un libro.
-            </p>
-            <p>
-              Si quieres empezar a dar a conocer tu obra, crea tu cuenta y empieza a ofrecer tu
-              libro a cientos de reseñadores liteararios interesados en el género de tu novela.
-            </p>
-          </StyledArticleP>
-          <StyledNav>
-            <StyledArticleButton>Encontrar reseñadores</StyledArticleButton>
-            <StyledArticleButton>Darme de alta</StyledArticleButton>
-          </StyledNav>
-        </StyledArticleContainer>
-      </StyledSection>
-    </PublicZoneLayout>
-  </div>
-);
+const index = () => {
+  const { isLogged } = useContext(UserContext);
+  return (
+    <div>
+      <PublicZoneLayout showFooter>
+        <StyledTitle
+          text="Un libro sin reseñas es un libro aún sin publicar."
+        />
+        <StyledSection>
+          <StyledArticleContainer>
+            <StyledArticleTitle>
+              <h2>
+                Reseñan Sancho es un sitio para conectar a escritores con reseñadores literarios.
+              </h2>
+            </StyledArticleTitle>
+            <StyledArticleP>
+              <p>
+                Sabemos que una reseña literaria puede ser positiva o negativa,
+                pero lo importante es que sea honesta.
+              </p>
+              <p>
+                No solo para dar a conocer nuestra novela sino para mejorar como escritores,
+                las reseñas son una parte muy importante del proceso editorial.
+              </p>
+              <p>
+                Por eso, Reseñan Sancho toma su nombre de la célebre frase:
+                «Ladran, Sancho, señal que cabalgamos».
+              </p>
+            </StyledArticleP>
+            <StyledNav>
+              <Link href="/reviewers">
+                <StyledArticleButton>Encontrar reseñadores</StyledArticleButton>
+              </Link>
+              <Link href="/books">
+                <StyledArticleButton>Encontrar Libros</StyledArticleButton>
+              </Link>
+            </StyledNav>
+          </StyledArticleContainer>
+        </StyledSection>
+        <StyledSectionB>
+          <StyledArticleBContainer>
+            <StyledArticleTitleB>
+              <h2>
+                Libros para Reseñadores Literarios.
+              </h2>
+            </StyledArticleTitleB>
+            <StyledArticleBP>
+              <p>
+                Si tienes un blog literario, eres booktuber o bookstagramer,
+                o simplemente te encanta escribir reseñas de los libros que lees en goodreads
+                o amazon, sabemos que siempre tendrás interés en descubrir a una escritora o
+                escritor nuevos.
+              </p>
+              <p>
+                Crea tu cuenta para encotrar libros y conectar con sus autores.
+                Ellos te lo agradecerán y estarán dispuestos a enviarte un ejemplar de su novela.
+              </p>
+              <p>
+                Además, participarás en
+                <b> concursos de reseñas</b>
+                , propuestas de lecturas conjuntas
+                y lanzamientos de libros en tu país.
+              </p>
+            </StyledArticleBP>
+            <StyledNav>
+              <Link href="/books">
+                <StyledArticleButton>Ver Libros Disponibles</StyledArticleButton>
+              </Link>
+              {
+                !isLogged
+                  ? (
+                    <Link href="/register">
+                      <StyledArticleButton>Darme de alta</StyledArticleButton>
+                    </Link>
+                  )
+                  : (
+                    <Link href="/myblog">
+                      <StyledArticleButton>Añadir Mi espacio literario</StyledArticleButton>
+                    </Link>
+                  )
+              }
+            </StyledNav>
+          </StyledArticleBContainer>
+        </StyledSectionB>
+        <StyledSection>
+          <StyledArticleContainer>
+            <StyledArticleTitleB>
+              <h2>
+                Promoción para escritores.
+              </h2>
+            </StyledArticleTitleB>
+            <StyledArticleP>
+              <p>
+                La mejor forma de promocionar una novela es que los demás hablen de ella.
+              </p>
+              <p>
+                Una reseña literaria es un lector recomendándole a otros lectores un libro.
+              </p>
+              <p>
+                Si quieres empezar a dar a conocer tu obra, crea tu cuenta y empieza a ofrecer tu
+                libro a cientos de reseñadores liteararios interesados en el género de tu novela.
+              </p>
+            </StyledArticleP>
+            <StyledNav>
+              <Link href="/reviewers">
+                <StyledArticleButton>Encontrar reseñadores</StyledArticleButton>
+              </Link>
+              {
+                !isLogged
+                  ? (
+                    <Link href="/register">
+                      <StyledArticleButton>Darme de alta</StyledArticleButton>
+                    </Link>
+                  )
+                  : (
+                    <Link href="/addBook">
+                      <StyledArticleButton>Añadir Libro</StyledArticleButton>
+                    </Link>
+                  )
+              }
+
+            </StyledNav>
+          </StyledArticleContainer>
+        </StyledSection>
+      </PublicZoneLayout>
+    </div>
+  );
+};
 
 const StyledSectionB = styledComponents.section`
   margin-left: calc(50% - 50vw);

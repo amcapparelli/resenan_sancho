@@ -1,20 +1,28 @@
 import { Book } from '../../interfaces/books';
 
 interface BooksList {
-  books: Array<Book>
+  books: Array<Book>,
+  totalElements?: number,
+  totalPages?: number,
 }
 
 interface IAction {
   type: string,
-  payload: BooksList,
+  payload: {
+    books: Array<Book>,
+    totalElements: number,
+    totalPages: number,
+  }
 }
 
 export default (state: BooksList, action: IAction) => {
   switch (action.type) {
     case 'BOOKS_LIST_LOAD': {
-      const { books } = action.payload;
+      const { books, totalElements, totalPages } = action.payload;
       return {
         books: [...books],
+        totalElements,
+        totalPages,
       };
     }
     case 'USER_BOOKS_LIST_LOAD': {

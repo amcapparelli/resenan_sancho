@@ -7,7 +7,7 @@ interface ReviewersList {
 interface IAction {
   type: string,
   payload: {
-    reviewers: Array<ReviewersList>,
+    reviewers: Array<any>,
     totalElements: number,
     totalPages: number,
   }

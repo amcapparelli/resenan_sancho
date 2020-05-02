@@ -7,14 +7,18 @@ import {
   Loading,
   Filters,
   EmptyList,
+  ListPagination,
 } from '.';
 
 const BooksList = () => {
-  const [filters, setFilters] = useFilters({});
+  const [filters, setFilters] = useFilters({
+    page: 1,
+  });
   const [state, listRequest, loading] = useBooksListFetch();
+
   useEffect(() => {
-    listRequest();
-  }, []);
+    listRequest(filters);
+  }, [filters.page]);
 
   const filter = () => {
     listRequest(filters);
@@ -30,6 +34,10 @@ const BooksList = () => {
         genreSelected={filters.genre}
         formatSelected={filters.format}
         text="Busca libros según tus preferencias: "
+      />
+      <ListPagination
+        onChange={(e: React.ChangeEvent<HTMLInputElement>, page: number) => setFilters('page', page)}
+        totalPages={state.totalPages}
       />
       <StyledList>
         {

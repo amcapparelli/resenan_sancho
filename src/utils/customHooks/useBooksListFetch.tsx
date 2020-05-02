@@ -4,10 +4,14 @@ import { Book } from '../../interfaces/books';
 import { books as URL } from '../../config/routes';
 
 interface State {
-  books: Array<Book>;
+  books: Array<Book>,
+  totalElements?: number,
+  totalPages?: number,
 }
 const initialState: State = {
   books: [],
+  totalElements: 0,
+  totalPages: 0,
 };
 
 interface Filters {

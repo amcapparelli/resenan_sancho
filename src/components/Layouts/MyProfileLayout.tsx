@@ -30,7 +30,7 @@ import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
 import HomeIcon from '@material-ui/icons/Home';
 import ImportantDevicesIcon from '@material-ui/icons/ImportantDevices';
-import { NotLogged } from '..';
+import { NotLogged, Loading } from '..';
 import UserContext from '../../store/context/userContext/UserContext';
 
 const drawerWidth = 220;
@@ -104,7 +104,7 @@ interface MyProps {
 
 const MyProfileLayout: React.FC<MyProps> = ({ children, title }: MyProps): JSX.Element => {
   const { t } = useTranslation();
-  const { isLogged } = useContext(UserContext);
+  const { isLogged, loading } = useContext(UserContext);
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = useState(true);
@@ -186,7 +186,8 @@ const MyProfileLayout: React.FC<MyProps> = ({ children, title }: MyProps): JSX.E
         <main className={classes.content}>
           <div className={classes.toolbar} />
           {
-            isLogged ? children : <NotLogged />
+            // eslint-disable-next-line no-nested-ternary
+            loading ? <Loading /> : (isLogged ? children : <NotLogged />)
           }
         </main>
       </CssBaseline>
