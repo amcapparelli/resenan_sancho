@@ -7,10 +7,11 @@ const Books: React.FC = (): JSX.Element => {
   const { query: { book } } = useRouter();
   return (
     <>
-      <PublicZoneLayout />
-      {
-        book ? <BookItem id={book} /> : <BooksList />
-      }
+      <PublicZoneLayout>
+        {
+          book ? <BookItem id={book} /> : <BooksList />
+        }
+      </PublicZoneLayout>
     </>
   );
 };

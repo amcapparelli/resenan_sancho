@@ -12,7 +12,7 @@ const Header: React.FC = (): JSX.Element => {
   return (
     <StyledHeaderContainer>
       <header>
-        <Link href="/home">
+        <Link href="/">
           <StyledLogo src="/static/logo.png" alt="logo reseñan sancho" />
         </Link>
       </header>
@@ -20,7 +20,7 @@ const Header: React.FC = (): JSX.Element => {
         <Link href="/books">
           <StyledLink>{t('nav.availableBooks')}</StyledLink>
         </Link>
-        <Link href="/">
+        <Link href="/reviewers">
           <StyledLink>{t('nav.reviewers')}</StyledLink>
         </Link>
         {
