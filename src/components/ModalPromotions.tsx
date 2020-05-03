@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+/* eslint-disable no-underscore-dangle */
+import React, { useState, useContext } from 'react';
 import {
+  Button,
   ListItem,
   Paper,
   Typography,
@@ -17,37 +19,67 @@ import {
   createStyles,
 } from '@material-ui/core/styles';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import Alert from '@material-ui/lab/Alert';
+import UserContext from '../store/context/userContext/UserContext';
+import { useFetch } from '../utils/customHooks';
+import { Book } from '../interfaces/books';
+import { promotions as URL } from '../config/routes';
 import { ModalDialog } from '.';
+import promotions from '../utils/constants/promotions';
 
 interface MyProps {
-  bookSelected: string,
+  bookSelected: Book,
   show: boolean
   onClose: Function
 }
 
-const ModalPromotions = (props: MyProps) => {
+interface Row {
+  id: number,
+  more: string,
+  name: string,
+  price: number | string,
+  moreInfo: string
+}
+
+const ModalPromotions: React.FC<MyProps> = (props: MyProps): JSX.Element => {
+  const { user } = useContext(UserContext);
   const { bookSelected, show, onClose } = props;
   const [showMore, setShowMore] = useState({
     open: false,
     row: '',
   });
+  const [response, asyncRequest] = useFetch();
   const useStyles = makeStyles({
     table: {
       minWidth: 650,
     },
   });
   const classes = useStyles();
-  function createData(more: string, name: string, price: string) {
+  function createData(
+    id: number,
+    more: string,
+    name: string,
+    price: string,
+    moreInfo: string,
+  ): Row {
     return {
+      id,
       more,
       name,
       price,
+      moreInfo,
     };
   }
-  const rows = [
-    createData('Más info', 'Mostrar el libro como disponible para reseña durante 1 mes', '¡GRATIS!'),
-    createData('Más info', 'Mostrar el libro como destacado durante 1 mes', '60€'),
+  const rows: Array<Row> = [
+    ...promotions.map((p) => createData(
+      p.id,
+      'Más info',
+      `Ofrecer ${p.copies} ejemplares de este libro para reseña`,
+      p.price > 0 ? `${p.price.toString()}€` : '¡GRATIS!',
+      p.moreInfo,
+    )), createData(3, 'Más info', '¡Quiero acelerar! Recomendar mi novela vía email a reseñadores', '60€', 'bla'),
   ];
+
   const StyledTableCell = withStyles((theme: Theme) => createStyles({
     body: {
       backgroundColor: theme.palette.primary.light,
@@ -55,10 +87,18 @@ const ModalPromotions = (props: MyProps) => {
       padding: '2%',
     },
   }))(TableCell);
-  const ModalPromotionsContent = (
+
+  const handleClick = (book: Book, id: number) => {
+    asyncRequest(`${URL}/${book._id}`, 'put', {
+      copies: promotions.find((p) => p.id === id).copies,
+      author: user._id,
+    });
+  };
+
+  const ModalPromotionsContent: JSX.Element = (
     <>
       <Typography variant="h3" align="center">
-        {`¡Promociona este Libro: ${bookSelected}!`}
+        {bookSelected && `¡Promociona este Libro: ${bookSelected.title}!`}
       </Typography>
       <Typography variant="subtitle1" align="center">Estas son las opciones que tienes:</Typography>
       <TableContainer component={Paper}>
@@ -68,6 +108,7 @@ const ModalPromotions = (props: MyProps) => {
               <TableCell>Más información</TableCell>
               <TableCell>Servicio</TableCell>
               <TableCell align="right">Precio</TableCell>
+              <TableCell align="right">Elegir</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -88,10 +129,22 @@ const ModalPromotions = (props: MyProps) => {
                   </TableCell>
                   <TableCell align="left">{row.name}</TableCell>
                   <TableCell align="right">{row.price}</TableCell>
+                  <TableCell align="right">
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => handleClick(bookSelected, row.id)}
+                      size="small"
+                    >
+                      ¡Lo Quiero!
+                    </Button>
+                  </TableCell>
                 </TableRow>
                 {showMore.open && showMore.row === row.name && (
                   <TableRow>
-                    <StyledTableCell colSpan={3}>Más información</StyledTableCell>
+                    <StyledTableCell colSpan={4}>
+                      {row.moreInfo}
+                    </StyledTableCell>
                   </TableRow>
                 )}
               </>
@@ -99,6 +152,14 @@ const ModalPromotions = (props: MyProps) => {
           </TableBody>
         </Table>
       </TableContainer>
+      {
+        response.message
+        && (
+          <Alert variant="filled" severity={response.success ? 'success' : 'error'}>
+            {response.message}
+          </Alert>
+        )
+      }
     </>
   );
 

@@ -52,14 +52,14 @@
     "updateProfile": "Update Profile",
     "mybooks": "My Books",
     "addBook": "Add Book",
-    "myblog": "My literary blog"
+    "mySpaces": "My literary spaces"
   },
   "titles": {
     "updateProfile": "Update Profile",
     "chooseFormats": "Elige tus preferencias de lectura",
     "describeYourself": "Cuentale al mundo cómo te gusta escribir tus reseñas",
     "mybooks": "My Books",
-    "myblog": "My literary spaces",
+    "mySpaces": "My literary spaces",
     "addBook": "Add Book",
     "whereDoYouReview": "Where do you post your literary reviews?",
     "whichGenres": "What literary genres do you prefer?"

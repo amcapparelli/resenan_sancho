@@ -33,7 +33,7 @@ const defaultMediaValues = {
   amazon: { selected: false, url: '', name: '' },
 };
 
-const Myblog: React.FC = (): JSX.Element => {
+const MySpaces: React.FC = (): JSX.Element => {
   const { t } = useTranslation();
   const { user, user: { reviewerInfo } } = useContext(UserContext);
   const [isEditing] = useState<boolean>(!!reviewerInfo);
@@ -142,7 +142,7 @@ const Myblog: React.FC = (): JSX.Element => {
 
   return (
     <MyProfileLayout
-      title={t('titles.myblog')}
+      title={t('titles.mySpaces')}
     >
       <>
         <Typography variant="h3" align="center">{t('titles.whereDoYouReview')}</Typography>
@@ -308,4 +308,4 @@ const StyledGenresContainer = styledComponents(CardContent)`
   grid-gap: 1%;
 `;
 
-export default Myblog;
+export default MySpaces;

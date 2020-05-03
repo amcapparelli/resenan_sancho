@@ -33,7 +33,7 @@ import ImportantDevicesIcon from '@material-ui/icons/ImportantDevices';
 import { NotLogged, Loading } from '..';
 import UserContext from '../../store/context/userContext/UserContext';
 
-const drawerWidth = 220;
+const drawerWidth = 250;
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   root: {
@@ -163,10 +163,10 @@ const MyProfileLayout: React.FC<MyProps> = ({ children, title }: MyProps): JSX.E
                 <ListItemText primary={t('sidebar.updateProfile').toUpperCase()} />
               </ListItem>
             </Link>
-            <Link href="/myblog">
+            <Link href="/myspaces">
               <ListItem button>
                 <ListItemIcon><ImportantDevicesIcon color="secondary" fontSize="large" /></ListItemIcon>
-                <ListItemText primary={t('sidebar.myblog').toUpperCase()} />
+                <ListItemText primary={t('sidebar.mySpaces').toUpperCase()} />
               </ListItem>
             </Link>
             <Link href="/mybooks">

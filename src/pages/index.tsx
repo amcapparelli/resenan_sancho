@@ -54,7 +54,7 @@ const index = () => {
             <StyledArticleBP>
               <p>
                 Si tienes un blog literario, eres booktuber o bookstagramer,
-                o simplemente te encanta escribir reseñas de los libros que lees en goodreads
+                o simplemente te encanta escribir reseñas de los libros que lees, en goodreads
                 o amazon, sabemos que siempre tendrás interés en descubrir a una escritora o
                 escritor nuevos.
               </p>
@@ -81,7 +81,7 @@ const index = () => {
                     </Link>
                   )
                   : (
-                    <Link href="/myblog">
+                    <Link href="/myspaces">
                       <StyledArticleButton>Añadir Mi espacio literario</StyledArticleButton>
                     </Link>
                   )

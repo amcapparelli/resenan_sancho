@@ -17,6 +17,7 @@ import {
   Loading,
 } from '../components';
 import { useUsersBooksListFetch } from '../utils/customHooks';
+import { Book } from '../interfaces/books';
 
 const MyBooks: React.FC = (): JSX.Element => {
   const { t } = useTranslation();
@@ -24,7 +25,7 @@ const MyBooks: React.FC = (): JSX.Element => {
   const { user } = useContext(UserContext);
   const [state, listRequest, loading, response] = useUsersBooksListFetch();
   const [showModalPromotions, setShowModalPromotions] = useState(false);
-  const [bookSelected, setBookSelected] = useState<string>('');
+  const [bookSelected, setBookSelected] = useState<Book>();
 
   useEffect(() => {
     listRequest(user._id);
@@ -49,7 +50,7 @@ const MyBooks: React.FC = (): JSX.Element => {
                       onClickEdit={() => router.push(`/addBook?book=${book._id}`)}
                       onClickPromote={() => {
                         setShowModalPromotions(true);
-                        setBookSelected(book.title);
+                        setBookSelected(book);
                       }}
                       book={book}
                     />
