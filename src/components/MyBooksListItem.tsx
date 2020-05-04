@@ -1,17 +1,19 @@
 import React from 'react';
 import styledComponents from 'styled-components';
 import {
+  Badge,
+  CardActions,
+  Card,
+  CardContent,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
-  Card,
-  CardContent,
   Typography,
 } from '@material-ui/core';
 import StarsIcon from '@material-ui/icons/Stars';
 import EditIcon from '@material-ui/icons/Edit';
-import DeleteIcon from '@material-ui/icons/Delete';
+import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 import { Book } from '../interfaces/books';
 
 interface Props {
@@ -26,6 +28,7 @@ const MyBooksListItem: React.FC<Props> = (
   const {
     title,
     cover,
+    copies,
   } = book;
   return (
     <Card>
@@ -45,13 +48,25 @@ const MyBooksListItem: React.FC<Props> = (
                 <ListItemIcon><EditIcon color="secondary" fontSize="large" /></ListItemIcon>
                 <ListItemText primary="editar" />
               </ListItem>
-              <ListItem button>
-                <ListItemIcon><DeleteIcon color="secondary" fontSize="large" /></ListItemIcon>
-                <ListItemText primary="eliminar" />
+              <ListItem button onClick={() => onClickPromote && onClickPromote()}>
+                <ListItemIcon>
+                  <Badge color="secondary" badgeContent={copies}>
+                    <LibraryBooksIcon color="secondary" />
+                  </Badge>
+                </ListItemIcon>
+                <ListItemText primary="ejemplares" />
               </ListItem>
             </List>
           </StyledOptionsContainer>
         </StyledContentContainer>
+        <CardActions>
+          <Typography variant="body1" align="left">
+            {`Agrega ejemplares de 
+            ${title} 
+            con la opción PROMOCIONAR para que estén
+            visibles en la sección «Libros disponibles».`}
+          </Typography>
+        </CardActions>
       </CardContent>
     </Card>
   );
