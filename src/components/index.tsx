@@ -15,6 +15,7 @@ export { default as Loading } from './Loading';
 export { default as NotLogged } from './NotLogged';
 export { default as ListPagination } from './ListPagination';
 export { default as Meta } from './Meta';
+export { default as ModalContact } from './ModalContact';
 export { default as ModalDialog } from './ModalDialog';
 export { default as ModalPromotions } from './ModalPromotions';
 export { default as MyBooksListItem } from './MyBooksListItem';

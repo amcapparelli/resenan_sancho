@@ -74,7 +74,7 @@ const MyBooks: React.FC = (): JSX.Element => {
           onClose={() => setShowModalPromotions(false)}
         />
       </div>
-    </MyProfileLayout >
+    </MyProfileLayout>
   );
 };
 

@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
+import Link from 'next/link';
 import styledComponents from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import {
@@ -8,7 +9,9 @@ import {
   Chip,
 } from '@material-ui/core';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
+import { ModalContact } from '.';
 import { useFetchBook } from '../utils/customHooks';
+import UserContext from '../store/context/userContext/UserContext';
 import genres from '../utils/constants/genres';
 
 interface MyProps {
@@ -16,10 +19,13 @@ interface MyProps {
 }
 
 const BookItem: React.FC<MyProps> = (props: MyProps): JSX.Element => {
+  const { isLogged } = useContext(UserContext);
   const [state, fetchBook] = useFetchBook();
+  const [openModalContact, setOpenModalContact] = useState(false);
   const { t } = useTranslation();
   const { id } = props;
   const {
+    _id,
     title,
     author,
     cover,
@@ -33,38 +39,60 @@ const BookItem: React.FC<MyProps> = (props: MyProps): JSX.Element => {
   }, []);
 
   const handleOrderCopy = () => {
-    console.log('ordercopy');
+    setOpenModalContact(true);
   };
 
   return (
-    <Paper>
-      <StyledCardContentContainer>
-        <StyledHeadContainer>
-          <Typography variant="h2">{title}</Typography>
-          <Typography variant="subtitle1">{`${author.name} ${author.lastName}`}</Typography>
-        </StyledHeadContainer>
-        <StyledMainContainer>
-          <Typography variant="body1">{synopsis}</Typography>
-          <Typography variant="body1" align="left">{`${t('books.pages')}: ${pages}`}</Typography>
-          <StyledGenreChip
-            size="small"
-            label={genre && t(`genres.${genres.find((g) => g.code === genre).name}`)}
-            color="primary"
-          />
-        </StyledMainContainer>
-        <StyledFootContainer>
-          <Button
-            variant="contained"
-            startIcon={<LibraryBooksIcon />}
-            color="secondary"
-            onClick={handleOrderCopy}
-          >
-            {`Pedir un ejemplar. Hay ${copies} disponibles`}
-          </Button>
-        </StyledFootContainer>
-        <StyledImageContainer src={cover} />
-      </StyledCardContentContainer>
-    </Paper>
+    <>
+      <Paper>
+        <StyledCardContentContainer>
+          <StyledHeadContainer>
+            <Typography variant="h2">{title}</Typography>
+            <Typography variant="subtitle1">{`${author.name} ${author.lastName}`}</Typography>
+          </StyledHeadContainer>
+          <StyledMainContainer>
+            <Typography variant="body1">{synopsis}</Typography>
+            <Typography variant="body1" align="left">{`${t('books.pages')}: ${pages}`}</Typography>
+            <StyledGenreChip
+              size="small"
+              label={genre && t(`genres.${genres.find((g) => g.code === genre).name}`)}
+              color="primary"
+            />
+          </StyledMainContainer>
+          <StyledFootContainer>
+            {
+              isLogged
+                ? (
+                  <Button
+                    variant="contained"
+                    startIcon={<LibraryBooksIcon />}
+                    color="secondary"
+                    onClick={handleOrderCopy}
+                  >
+                    {`Pedir un ejemplar. Hay ${copies} disponibles`}
+                  </Button>
+                )
+                : (
+                  <Link href="/login">
+                    <Button
+                      color="secondary"
+                    >
+                      Para Pedir un ejemplar tienes que estar logueado.
+                    </Button>
+                  </Link>
+                )
+            }
+
+          </StyledFootContainer>
+          <StyledImageContainer src={cover} />
+        </StyledCardContentContainer>
+      </Paper>
+      <ModalContact
+        open={openModalContact}
+        onClose={() => setOpenModalContact(false)}
+        book={_id}
+      />
+    </>
   );
 };
 
