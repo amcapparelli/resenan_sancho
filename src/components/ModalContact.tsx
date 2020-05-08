@@ -8,11 +8,14 @@ import {
   TextField,
   Typography,
 } from '@material-ui/core';
+import Alert from '@material-ui/lab/Alert';
 import {
   useForm,
+  useFetch,
 } from '../utils/customHooks';
 import UserContext from '../store/context/userContext/UserContext';
 import { ModalDialog } from '.';
+import { orderBook as URL } from '../config/routes';
 
 interface MyProps {
   open: boolean
@@ -22,15 +25,32 @@ interface MyProps {
 
 const ModalContact: React.FC<MyProps> = ({ open, onClose, book }: MyProps): JSX.Element => {
   const { user } = useContext(UserContext);
+  const [orderBookResponse, orderBookRequest, loading] = useFetch();
   const [contactForm, setContactForm, loadContactForm] = useForm({});
+  const [copiesOrdered, setCopiesOrdered] = useState<number>(0);
   const [termsAccepted, setTermsAccepted] = useState(false);
+
   useEffect(() => {
     loadContactForm({
       message: '',
       book,
       reviewer: user._id,
     });
-  }, [book]);
+  }, [book, user._id]);
+
+  useEffect(() => {
+    if (orderBookResponse.success) setCopiesOrdered(1);
+  }, [orderBookResponse.success]);
+
+  const handleSubmit = () => {
+    orderBookRequest(URL, 'post', contactForm);
+  };
+
+  const handleCloseModal = () => {
+    onClose(copiesOrdered);
+    setTermsAccepted(false);
+  };
+
   const content: JSX.Element = (
     <>
       <Typography variant="h4" align="center">¡Contacta con el autor!</Typography>
@@ -61,21 +81,29 @@ const ModalContact: React.FC<MyProps> = ({ open, onClose, book }: MyProps): JSX.
       />
       <StyledButtonContainer>
         <Button
-          disabled={!termsAccepted}
+          disabled={!termsAccepted || loading || copiesOrdered > 0}
           variant="contained"
           color="primary"
           size="large"
-          onClick={() => { }}
+          onClick={handleSubmit}
         >
-          Enviar
+          {`Envi${loading ? 'ando' : 'ar'}`}
         </Button>
       </StyledButtonContainer>
+      {
+        !loading && orderBookResponse.message
+        && (
+          <StyledAlert variant="filled" severity={orderBookResponse.success ? 'success' : 'error'}>
+            {orderBookResponse.message}
+          </StyledAlert>
+        )
+      }
     </>
   );
   return (
     <ModalDialog
       open={open}
-      onClose={() => onClose && onClose()}
+      onClose={handleCloseModal}
       content={content}
     />
   );
@@ -84,4 +112,11 @@ const ModalContact: React.FC<MyProps> = ({ open, onClose, book }: MyProps): JSX.
 const StyledButtonContainer = styledComponents.div`
   margin-left: 45%;
 `;
+
+const StyledAlert = styledComponents(Alert)`
+  width: 40%;
+  margin-top: 2%;
+  margin-left: 30%;
+`;
+
 export default ModalContact;

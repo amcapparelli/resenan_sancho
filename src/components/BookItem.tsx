@@ -22,6 +22,7 @@ const BookItem: React.FC<MyProps> = (props: MyProps): JSX.Element => {
   const { isLogged } = useContext(UserContext);
   const [state, fetchBook] = useFetchBook();
   const [openModalContact, setOpenModalContact] = useState(false);
+  const [copiesDecrease, setCopiesDecrease] = useState<number>(0);
   const { t } = useTranslation();
   const { id } = props;
   const {
@@ -36,7 +37,7 @@ const BookItem: React.FC<MyProps> = (props: MyProps): JSX.Element => {
   } = state;
   useEffect(() => {
     fetchBook(id);
-  }, []);
+  }, [copiesDecrease]);
 
   const handleOrderCopy = () => {
     setOpenModalContact(true);
@@ -67,6 +68,7 @@ const BookItem: React.FC<MyProps> = (props: MyProps): JSX.Element => {
                     variant="contained"
                     startIcon={<LibraryBooksIcon />}
                     color="secondary"
+                    size="large"
                     onClick={handleOrderCopy}
                   >
                     {`Pedir un ejemplar. Hay ${copies} disponibles`}
@@ -89,7 +91,10 @@ const BookItem: React.FC<MyProps> = (props: MyProps): JSX.Element => {
       </Paper>
       <ModalContact
         open={openModalContact}
-        onClose={() => setOpenModalContact(false)}
+        onClose={(copiesOrdered: number) => {
+          setCopiesDecrease(copiesOrdered);
+          setOpenModalContact(false);
+        }}
         book={_id}
       />
     </>

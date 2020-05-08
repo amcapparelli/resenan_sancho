@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { Response } from '../../interfaces/response';
 
-const useFetch = (): [any, Function] => {
+const useFetch = (): [any, Function, boolean] => {
+  const [loading, setLoading] = useState(false);
   const [responseJSON, setResponse] = useState<Response>({
     success: undefined,
-    message: undefined,
+    message: '',
   });
   const asyncRequest = async (url: string, method: string, body: object): Promise<void> => {
     try {
+      setLoading(true);
       const res = await fetch(url, {
         method,
         mode: 'cors',
@@ -22,9 +24,11 @@ const useFetch = (): [any, Function] => {
       setResponse(resJSON);
     } catch (error) {
       setResponse(error);
+    } finally {
+      setLoading(false);
     }
   };
-  return [responseJSON, asyncRequest];
+  return [responseJSON, asyncRequest, loading];
 };
 
 export default useFetch;
