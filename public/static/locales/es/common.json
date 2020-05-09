@@ -27,7 +27,8 @@
   "link": {
     "forgotPassword": "Olvidé mi contraseña...",
     "backToLogin": "¡Volver al login!",
-    "readMore": "Lee más"
+    "readMore": "Lee más",
+    "register": "Registrarme"
   },
   "genres": {
     "adventure": "aventura",
@@ -52,7 +53,8 @@
     "updateProfile": "Actualizar Perfil",
     "mybooks": "Mis Libros",
     "addBook": "Añade Libro",
-    "mySpaces": "Mis espacios literarios"
+    "mySpaces": "Mis espacios literarios",
+    "help": "¡Ayuda!"
   },
   "titles": {
     "updateProfile": "Actualizar Perfil",

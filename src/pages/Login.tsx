@@ -53,6 +53,10 @@ const Login: NextPage = (): JSX.Element => {
         anchor={t('link.forgotPassword')}
         href="/forgot"
       />
+      <StyledLink
+        anchor={t('link.register')}
+        href="/register"
+      />
       {
         loginResponse.message
         && (

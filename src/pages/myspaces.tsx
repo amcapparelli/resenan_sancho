@@ -36,6 +36,7 @@ const defaultMediaValues = {
 const MySpaces: React.FC = (): JSX.Element => {
   const { t } = useTranslation();
   const { user, user: { reviewerInfo } } = useContext(UserContext);
+  const [succeeded, setSucceeded] = useState<boolean>(false);
   const [isEditing] = useState<boolean>(!!reviewerInfo);
   const getInitialMediaValues = !isEditing
     ? defaultMediaValues
@@ -64,7 +65,7 @@ const MySpaces: React.FC = (): JSX.Element => {
     success: undefined,
     message: undefined,
   });
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState<boolean>(false);
   const initErrors = {
     genres: '',
     description: '',
@@ -82,7 +83,7 @@ const MySpaces: React.FC = (): JSX.Element => {
     );
     try {
       const res = await fetch(URL, {
-        method: isEditing ? 'put' : 'post',
+        method: isEditing || succeeded ? 'put' : 'post',
         mode: 'cors',
         cache: 'no-cache',
         credentials: 'include',
@@ -103,6 +104,7 @@ const MySpaces: React.FC = (): JSX.Element => {
         return;
       }
       setResponse({ message, success });
+      if (success) setSucceeded(true);
       setOpen(true);
     } catch (error) {
       setResponse(error);

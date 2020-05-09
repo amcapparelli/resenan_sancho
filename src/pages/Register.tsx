@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styledComponents from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import { useRouter } from 'next/router';
 import {
   Button,
   TextField,
@@ -14,6 +15,7 @@ const fields = ['name', 'lastName', 'email'];
 
 const Register: React.FC = (): JSX.Element => {
   const { t } = useTranslation();
+  const router = useRouter();
   const [signupResponse, signupRequest] = useFetch();
   const [registerForm, setRegisterForm] = useForm({
     name: '',
@@ -31,6 +33,12 @@ const Register: React.FC = (): JSX.Element => {
     email: '',
   };
   const [errors, validateRequiredFields] = useRequiredFieldsValidation(initialErrors);
+
+  useEffect(() => {
+    if (signupResponse.success) {
+      router.push('/login');
+    }
+  }, [signupResponse.success]);
 
   useEffect(() => {
     const { password } = registerForm;

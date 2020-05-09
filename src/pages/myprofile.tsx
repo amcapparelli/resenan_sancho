@@ -99,8 +99,11 @@ const MyProfile: React.FC = (): JSX.Element => {
                     label={t(`form.${text}`)}
                     name={text}
                     onChange={({ target: { name, value } }) => setUpdateForm(name, value)}
-                    variant="outlined"
+                    variant={text === 'email' ? 'filled' : 'outlined'}
                     defaultValue={user[text]}
+                    InputProps={{
+                      readOnly: (text === 'email'),
+                    }}
                   />
                 ))
               }

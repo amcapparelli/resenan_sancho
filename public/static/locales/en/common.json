@@ -46,13 +46,15 @@
   "link": {
     "forgotPassword": "I forgot my password...",
     "backToLogin": "Go back to login!",
-    "readMore": "Read More"
+    "readMore": "Read More",
+    "register": "Sign up"
   },
   "sidebar": {
     "updateProfile": "Update Profile",
     "mybooks": "My Books",
     "addBook": "Add Book",
-    "mySpaces": "My literary spaces"
+    "mySpaces": "My literary spaces",
+    "help": "Help!"
   },
   "titles": {
     "updateProfile": "Update Profile",

@@ -28,6 +28,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
+import ContactSupportIcon from '@material-ui/icons/ContactSupport';
 import HomeIcon from '@material-ui/icons/Home';
 import ImportantDevicesIcon from '@material-ui/icons/ImportantDevices';
 import { NotLogged, Loading } from '..';
@@ -179,6 +180,12 @@ const MyProfileLayout: React.FC<MyProps> = ({ children, title }: MyProps): JSX.E
               <ListItem button>
                 <ListItemIcon><LibraryAddIcon color="secondary" fontSize="large" /></ListItemIcon>
                 <ListItemText primary={t('sidebar.addBook').toUpperCase()} />
+              </ListItem>
+            </Link>
+            <Link href="/help">
+              <ListItem button>
+                <ListItemIcon><ContactSupportIcon color="secondary" fontSize="large" /></ListItemIcon>
+                <ListItemText primary={t('sidebar.help').toUpperCase()} />
               </ListItem>
             </Link>
           </List>
