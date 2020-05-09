@@ -13,9 +13,10 @@ import {
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import Alert from '@material-ui/lab/Alert';
+import DeleteIcon from '@material-ui/icons/Delete';
 import UserContext from '../store/context/userContext/UserContext';
 import { MyProfileLayout } from '../components/Layouts';
-import { UploadImagesInput, CountriesSelector } from '../components';
+import { UploadImagesInput, CountriesSelector, ModalDeleteAccount } from '../components';
 import { useForm, useUploadImages } from '../utils/customHooks';
 import { update as URL } from '../config/routes';
 import { Response } from '../interfaces/response';
@@ -41,6 +42,7 @@ const MyProfile: React.FC = (): JSX.Element => {
   const [updateForm, setUpdateForm] = useForm(user);
   const [avatarURL, uploadAvatar] = useUploadImages(updateForm.avatar);
   const [open, setOpen] = useState(false);
+  const [openDeleteAccountModal, setDeleteAccountModal] = useState(false);
 
   useEffect(() => {
     setUpdateForm('avatar', avatarURL);
@@ -50,10 +52,12 @@ const MyProfile: React.FC = (): JSX.Element => {
     try {
       const res = await fetch(URL, {
         method: 'post',
+        mode: 'cors',
+        cache: 'no-cache',
+        credentials: 'include',
         body: JSON.stringify({ ...updateForm }),
         headers: {
           'Content-Type': 'application/json',
-          'X-User-Token': user.token,
         },
       });
       const resJSON = await res.json();
@@ -143,6 +147,19 @@ const MyProfile: React.FC = (): JSX.Element => {
               }
             </StyledResponseContainer>
           </StyledContentContainer>
+          <IconButton
+            aria-label="delete"
+            size="small"
+            color="secondary"
+            onClick={() => setDeleteAccountModal(true)}
+          >
+            <DeleteIcon fontSize="small" color="secondary" />
+            Eliminar mi cuenta
+          </IconButton>
+          <ModalDeleteAccount
+            open={openDeleteAccountModal}
+            onClose={() => setDeleteAccountModal(false)}
+          />
         </StyledCard>
       </MyProfileLayout>
     </>

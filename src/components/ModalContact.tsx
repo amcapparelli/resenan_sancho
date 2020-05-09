@@ -81,7 +81,12 @@ const ModalContact: React.FC<MyProps> = ({ open, onClose, book }: MyProps): JSX.
       />
       <StyledButtonContainer>
         <Button
-          disabled={!termsAccepted || loading || copiesOrdered > 0}
+          disabled={
+            !termsAccepted
+            || loading
+            || copiesOrdered > 0
+            || contactForm.message.length === 0
+          }
           variant="contained"
           color="primary"
           size="large"

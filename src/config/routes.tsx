@@ -4,6 +4,7 @@ export const register: string = `${API_BASE_URL}register`;
 export const login: string = `${API_BASE_URL}login`;
 export const logout: string = `${API_BASE_URL}logout`;
 export const blogsLiterarios: string = `${API_BASE_URL}blogs_literarios`;
+export const deleteUser: string = `${API_BASE_URL}deleteUser`;
 export const reviewers: string = `${API_BASE_URL}reviewers`;
 export const books: string = `${API_BASE_URL}books`;
 export const mybooks: string = `${API_BASE_URL}books/private`;
