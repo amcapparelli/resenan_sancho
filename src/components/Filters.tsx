@@ -3,7 +3,12 @@
 import React from 'react';
 import styledComponents from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { Button, Typography, Divider } from '@material-ui/core';
+import {
+  Button,
+  Divider,
+  Typography,
+  TextField,
+} from '@material-ui/core';
 import { GenresSelector, FormatsSelector } from '.';
 
 interface MyProps {
@@ -11,6 +16,7 @@ interface MyProps {
   onClick: Function,
   genreSelected: string,
   formatSelected: string,
+  showInputSearch?: boolean,
   text: string
 }
 
@@ -20,12 +26,13 @@ const Filters = ({
   genreSelected,
   formatSelected,
   text,
+  showInputSearch,
 }: MyProps) => {
   const { t } = useTranslation();
   return (
     <>
-      <StyledFiltersContainer>
-        <StyledText variant="body2" align="right">{text}</StyledText>
+      <StyledFiltersContainer id={showInputSearch ? 'reviewersFilters' : 'bookFilters'}>
+        <StyledText variant="body2">{text}</StyledText>
         <GenresSelector
           onChange={onChange}
           genreSelected={genreSelected}
@@ -36,7 +43,21 @@ const Filters = ({
           formatSelected={formatSelected}
           errors=""
         />
+        {
+          showInputSearch
+          && (
+            <TextField
+              label="Texto"
+              name="searchText"
+              type="text"
+              variant="outlined"
+              helperText="Introduce un texto para buscar por el nombre del blog, canal o perfil"
+              onChange={(e) => onChange && onChange(e)}
+            />
+          )
+        }
         <StyledButton
+          id={showInputSearch ? 'reviewersFilters' : 'bookFilters'}
           variant="contained"
           color="primary"
           size="small"
@@ -50,22 +71,22 @@ const Filters = ({
   );
 };
 
-
 const StyledText = styledComponents(Typography)`
-  align-self: center;
+  width: 50%;
+  justify-self: right;
 `;
 const StyledFiltersContainer = styledComponents.div`
   display: grid;
   grid-gap: 1rem;
-  grid-template-columns: repeat(4, 1fr);
-  margin-left: 10%;
+  grid-template-columns: repeat(${(props) => (props.id === 'reviewersFilters' ? 5 : 4)}, 1fr);
+  margin-top: 2%;
   margin-bottom: 1%;
 `;
 
 const StyledButton = styledComponents(Button)`
   width: 50%;
   height: 50%;
-  align-self: center;
+  align-self: ${(props) => (props.id === 'reviewersFilters' ? 'flex-start' : 'center')};
 `;
 
 export default Filters;

@@ -31,6 +31,7 @@ const ReviewersList: React.FC = (): JSX.Element => {
         genreSelected={filters.genre}
         formatSelected={filters.format}
         text="Busca reseñadores para tu novela:"
+        showInputSearch
       />
       <ListPagination
         onChange={(e: React.ChangeEvent<HTMLInputElement>, page: number) => setFilters('page', page)}
