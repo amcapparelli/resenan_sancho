@@ -1,4 +1,4 @@
-const API_BASE_URL: string = 'http://localhost:9000/';
+const API_BASE_URL: string = process.env.REACT_APP_API_URL;
 
 export const register: string = `${API_BASE_URL}register`;
 export const login: string = `${API_BASE_URL}login`;
@@ -13,6 +13,7 @@ export const update: string = `${API_BASE_URL}update`;
 export const registerBook: string = `${API_BASE_URL}registerBook`;
 export const orderBook: string = `${API_BASE_URL}orderBook`;
 export const promotions: string = `${API_BASE_URL}promotions`;
+export const paymentCheckout: string = `${API_BASE_URL}paymentCheckout`;
 export const registerBlog: string = `${API_BASE_URL}registerBlog`;
 export const forgotPass: string = `${API_BASE_URL}users/forgot`;
 export const resetPass: string = `${API_BASE_URL}users/reset`;

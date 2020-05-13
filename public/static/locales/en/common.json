@@ -64,7 +64,8 @@
     "mySpaces": "My literary spaces",
     "addBook": "Add Book",
     "whereDoYouReview": "Where do you post your literary reviews?",
-    "whichGenres": "What literary genres do you prefer?"
+    "whichGenres": "What literary genres do you prefer?",
+    "help": "Help!"
   },
   "components": {
     "countriesSelector": {

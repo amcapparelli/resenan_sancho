@@ -1,5 +1,9 @@
 /* eslint-disable no-underscore-dangle */
 import React, { useState, useContext } from 'react';
+import { loadStripe } from '@stripe/stripe-js';
+import {
+  Elements,
+} from '@stripe/react-stripe-js';
 import {
   Button,
   ListItem,
@@ -24,7 +28,7 @@ import UserContext from '../store/context/userContext/UserContext';
 import { useFetch } from '../utils/customHooks';
 import { Book } from '../interfaces/books';
 import { promotions as URL } from '../config/routes';
-import { ModalDialog } from '.';
+import { ModalDialog, PaymentCheckout } from '.';
 import promotions from '../utils/constants/promotions';
 
 interface MyProps {
@@ -37,12 +41,16 @@ interface Row {
   id: number,
   more: string,
   name: string,
-  price: number | string,
+  price: any,
   moreInfo: string
 }
 
+const stripePromise = loadStripe(process.env.PUBLISHABLE_KEY);
+
 const ModalPromotions: React.FC<MyProps> = (props: MyProps): JSX.Element => {
   const { user } = useContext(UserContext);
+  const [openPayment, setOpenPayment] = useState(false);
+  const [amount, setAmount] = useState(0);
   const { bookSelected, show, onClose } = props;
   const [showMore, setShowMore] = useState({
     open: false,
@@ -74,10 +82,10 @@ const ModalPromotions: React.FC<MyProps> = (props: MyProps): JSX.Element => {
     ...promotions.map((p) => createData(
       p.id,
       'Más info',
-      `Ofrecer ${p.copies} ejemplares de este libro para reseña`,
-      p.price > 0 ? `${p.price.toString()}€` : '¡GRATIS!',
+      `${p.price > 0 ? 'Añadir' : 'Ofrecer'} ${p.copies} ejemplares de este libro para reseña.`,
+      p.price > 0 ? `${p.price}0€` : '¡GRATIS!',
       p.moreInfo,
-    )), createData(3, 'Más info', '¡Quiero acelerar! Recomendar mi novela vía email a reseñadores', '60€', 'bla'),
+    )), createData(3, 'Más info', '¡Quiero acelerar! Recomendar mi novela vía email a reseñadores.', '60€', 'bla'),
   ];
 
   const StyledTableCell = withStyles((theme: Theme) => createStyles({
@@ -88,11 +96,16 @@ const ModalPromotions: React.FC<MyProps> = (props: MyProps): JSX.Element => {
     },
   }))(TableCell);
 
-  const handleClick = (book: Book, id: number) => {
+  const handleClickFreePromo = (book: Book, id: number) => {
     asyncRequest(`${URL}/${book._id}`, 'put', {
       copies: promotions.find((p) => p.id === id).copies,
       author: user._id,
     });
+  };
+
+  const handleClickPaidPromo = (book: Book, id: number) => {
+    setOpenPayment(true);
+    setAmount(promotions.find((p) => p.id === id).price);
   };
 
   const ModalPromotionsContent: JSX.Element = (
@@ -130,14 +143,32 @@ const ModalPromotions: React.FC<MyProps> = (props: MyProps): JSX.Element => {
                   <TableCell align="left">{row.name}</TableCell>
                   <TableCell align="right">{row.price}</TableCell>
                   <TableCell align="right">
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={() => handleClick(bookSelected, row.id)}
-                      size="small"
-                    >
-                      ¡Lo Quiero!
-                    </Button>
+                    {
+                      row.id === 1
+                      && (
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={() => handleClickFreePromo(bookSelected, row.id)}
+                          size="small"
+                        >
+                          ¡Lo Quiero!
+                        </Button>
+                      )
+                    }
+                    {
+                      row.id === 2
+                      && (
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          size="small"
+                          onClick={() => handleClickPaidPromo(bookSelected, row.id)}
+                        >
+                          ¡Lo Quiero!
+                        </Button>
+                      )
+                    }
                   </TableCell>
                 </TableRow>
                 {showMore.open && showMore.row === row.name && (
@@ -151,6 +182,20 @@ const ModalPromotions: React.FC<MyProps> = (props: MyProps): JSX.Element => {
             ))}
           </TableBody>
         </Table>
+        <Elements stripe={stripePromise}>
+          <PaymentCheckout
+            open={openPayment}
+            onClose={() => setOpenPayment(false)}
+            amount={amount}
+            image={bookSelected && bookSelected.cover}
+            description={
+              `Añadir 
+              ${promotions.find((p) => p.price === amount).copies} 
+              ejemplares para reseña de 
+              ${bookSelected && bookSelected.title}`
+            }
+          />
+        </Elements>
       </TableContainer>
       {
         response.message

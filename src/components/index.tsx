@@ -22,6 +22,7 @@ export { default as ModalPromotions } from './ModalPromotions';
 export { default as MyBooksListItem } from './MyBooksListItem';
 export { default as MyMediasForm } from './MyMediasForm';
 export { default as PasswordFields } from './PasswordFields';
+export { default as PaymentCheckout } from './PaymentCheckout';
 export { default as ReviewerListItem } from './ReviewerListItem';
 export { default as ReviewersList } from './ReviewersList';
 export { default as StyledLink } from './StyledLink';

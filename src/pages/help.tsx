@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React from 'react';
 import styledComponents from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import {

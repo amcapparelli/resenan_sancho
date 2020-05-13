@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 
@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 
 const ModalDialog: React.FC<MyProps> = (props: MyProps): JSX.Element => {
   const classes = useStyles();
-  const [modalStyle] = React.useState(getModalStyle);
+  const [modalStyle] = useState(getModalStyle);
   const { open, onClose, content } = props;
   const body = (
     <div style={modalStyle} className={classes.paper}>
