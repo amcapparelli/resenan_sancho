@@ -28,8 +28,8 @@ const MyBooks: React.FC = (): JSX.Element => {
   const [bookSelected, setBookSelected] = useState<Book>();
 
   useEffect(() => {
-    listRequest(user._id);
-  }, []);
+    if (!showModalPromotions) listRequest(user._id);
+  }, [showModalPromotions]);
 
   return (
     <MyProfileLayout

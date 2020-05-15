@@ -65,6 +65,7 @@ const BookItem: React.FC<MyProps> = (props: MyProps): JSX.Element => {
               isLogged
                 ? (
                   <Button
+                    disabled={copies === 0}
                     variant="contained"
                     startIcon={<LibraryBooksIcon />}
                     color="secondary"

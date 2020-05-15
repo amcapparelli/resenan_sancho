@@ -29,6 +29,15 @@ const Help: React.FC = (): JSX.Element => {
               </Typography>
             </StyledContainer>
             <StyledContainer>
+              <Typography variant="h5">Mi perfil de reseñador aparece muy atrás en los resultados</Typography>
+              <Typography variant="body1">
+                ¡No te preocupes, hay solución! Si te has registrado hace un tiempo como reseñador
+                literario es posible que aparezcas atrás en los resultados de búsqueda. Si quieres
+                aparecer en los primeros lugares, escríbenos a alejandro@resenansancho.com y te
+                subimos.
+              </Typography>
+            </StyledContainer>
+            <StyledContainer>
               <Typography variant="h5">
                 ¿Tienes una duda, algún comentario o algo no funciona cómo esperabas?
               </Typography>

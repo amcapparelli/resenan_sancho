@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+/* eslint-disable no-underscore-dangle */
+import React, { useState, useContext } from 'react';
 import styledComponents from 'styled-components';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
@@ -13,6 +14,7 @@ import {
 } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import PaymentIcon from '@material-ui/icons/Payment';
+import UserContext from '../store/context/userContext/UserContext';
 import { paymentCheckout } from '../config/routes';
 
 interface MyProps {
@@ -21,6 +23,8 @@ interface MyProps {
   amount: number
   image: string
   description: string
+  chosenPromo: number
+  bookId: string
 }
 
 function getModalStyle() {
@@ -54,11 +58,14 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 
 const PaymentCheckout: React.FC<MyProps> = ({
   amount,
+  bookId,
   open,
   onClose,
   image,
   description,
+  chosenPromo,
 }: MyProps): JSX.Element => {
+  const { user } = useContext(UserContext);
   const classes = useStyles();
   const [modalStyle] = useState(getModalStyle);
   const elements = useElements();
@@ -95,6 +102,9 @@ const PaymentCheckout: React.FC<MyProps> = ({
           body: JSON.stringify({
             id: paymentMethod.id,
             amount: amount * 100,
+            chosenPromo,
+            bookId,
+            author: user._id,
           }),
           headers: {
             'Content-Type': 'application/json',

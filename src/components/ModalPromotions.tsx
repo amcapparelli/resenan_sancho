@@ -51,6 +51,7 @@ const ModalPromotions: React.FC<MyProps> = (props: MyProps): JSX.Element => {
   const { user } = useContext(UserContext);
   const [openPayment, setOpenPayment] = useState(false);
   const [amount, setAmount] = useState(0);
+  const [promo, setPromo] = useState(null);
   const { bookSelected, show, onClose } = props;
   const [showMore, setShowMore] = useState({
     open: false,
@@ -82,10 +83,10 @@ const ModalPromotions: React.FC<MyProps> = (props: MyProps): JSX.Element => {
     ...promotions.map((p) => createData(
       p.id,
       'Más info',
-      `${p.price > 0 ? 'Añadir' : 'Ofrecer'} ${p.copies} ejemplares de este libro para reseña.`,
+      p.info,
       p.price > 0 ? `${p.price}0€` : '¡GRATIS!',
       p.moreInfo,
-    )), createData(3, 'Más info', '¡Quiero acelerar! Recomendar mi novela vía email a reseñadores.', '60€', 'bla'),
+    )),
   ];
 
   const StyledTableCell = withStyles((theme: Theme) => createStyles({
@@ -97,14 +98,17 @@ const ModalPromotions: React.FC<MyProps> = (props: MyProps): JSX.Element => {
   }))(TableCell);
 
   const handleClickFreePromo = (book: Book, id: number) => {
+    setPromo(id);
     asyncRequest(`${URL}/${book._id}`, 'put', {
       copies: promotions.find((p) => p.id === id).copies,
       author: user._id,
+      chosenPromo: id,
     });
   };
 
   const handleClickPaidPromo = (book: Book, id: number) => {
     setOpenPayment(true);
+    setPromo(id);
     setAmount(promotions.find((p) => p.id === id).price);
   };
 
@@ -145,29 +149,26 @@ const ModalPromotions: React.FC<MyProps> = (props: MyProps): JSX.Element => {
                   <TableCell align="right">
                     {
                       row.id === 1
-                      && (
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          onClick={() => handleClickFreePromo(bookSelected, row.id)}
-                          size="small"
-                        >
-                          ¡Lo Quiero!
-                        </Button>
-                      )
-                    }
-                    {
-                      row.id === 2
-                      && (
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          size="small"
-                          onClick={() => handleClickPaidPromo(bookSelected, row.id)}
-                        >
-                          ¡Lo Quiero!
-                        </Button>
-                      )
+                        ? (
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={() => handleClickFreePromo(bookSelected, row.id)}
+                            size="small"
+                          >
+                            ¡Lo Quiero!
+                          </Button>
+                        )
+                        : (
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            size="small"
+                            onClick={() => handleClickPaidPromo(bookSelected, row.id)}
+                          >
+                            ¡Lo Quiero!
+                          </Button>
+                        )
                     }
                   </TableCell>
                 </TableRow>
@@ -194,6 +195,8 @@ const ModalPromotions: React.FC<MyProps> = (props: MyProps): JSX.Element => {
               ejemplares para reseña de 
               ${bookSelected && bookSelected.title}`
             }
+            chosenPromo={promo}
+            bookId={bookSelected && bookSelected._id}
           />
         </Elements>
       </TableContainer>

@@ -210,12 +210,15 @@ const MySpaces: React.FC = (): JSX.Element => {
                 multiline
                 style={{ margin: 8 }}
                 name="description"
-                helperText={errors.description}
+                helperText={errors.description || `Caracteres restantes: ${(2000 - mediaForm.description.length)} `}
                 fullWidth
                 rows="4"
                 margin="normal"
                 InputLabelProps={{
                   shrink: true,
+                }}
+                inputProps={{
+                  maxLength: 1000,
                 }}
                 value={mediaForm.description}
                 onChange={({ target: { name, value } }) => setMediaForm(name, value)}

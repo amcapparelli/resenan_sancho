@@ -169,12 +169,15 @@ const AddBookForm: React.FC = (): JSX.Element => {
               multiline
               style={{ margin: 8 }}
               name="synopsis"
-              helperText={errors.synopsis || '¡no hagas spoiler!'}
+              helperText={errors.synopsis || `Caracteres restantes: ${(2000 - bookForm.synopsis.length)} `}
               fullWidth
               rows="4"
               margin="normal"
               InputLabelProps={{
                 shrink: true,
+              }}
+              inputProps={{
+                maxLength: 2000,
               }}
               onChange={({ target: { name, value } }) => setBookForm(name, value)}
               required

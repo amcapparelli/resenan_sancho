@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import styledComponents from 'styled-components';
 import {
+  Button,
   CardHeader,
   Chip,
   Card,
@@ -35,8 +36,16 @@ const BookListItem: React.FC<Props> = ({ book }: Props): JSX.Element => {
         <StyledCardContentContainer>
           <StyledCardHeader>
             <CardHeader
-              title={<Typography variant="h5" align="left">{title}</Typography>}
-              subheader={`${author.name} ${author.lastName}`}
+              title={
+                (
+                  <Typography variant="h5" align="left">
+                    {title}
+                  </Typography>
+                )
+              }
+              subheader={
+                `${author.name} ${author.lastName}`
+              }
             />
           </StyledCardHeader>
           <StyledCardMain>
@@ -51,6 +60,11 @@ const BookListItem: React.FC<Props> = ({ book }: Props): JSX.Element => {
           <StyledCardCover>
             <StyledImageContainer src={cover} alt={`${title} cover`} />
             <Typography variant="body1" align="center">{`${t('books.pages')}: ${pages}`}</Typography>
+            <StyledGenreChip
+              size="small"
+              label={t(`genres.${genres.find((g) => g.code === genre).name}`)}
+              color="primary"
+            />
           </StyledCardCover>
           <StyledCardFooter>
             <StyledChipsFormatsContainer>
@@ -68,17 +82,36 @@ const BookListItem: React.FC<Props> = ({ book }: Props): JSX.Element => {
                 ))
               }
             </StyledChipsFormatsContainer>
-            <StyledGenreChip
-              size="small"
-              label={t(`genres.${genres.find((g) => g.code === genre).name}`)}
-              color="primary"
-            />
+            <StyledButtonContainer>
+              <Link href={{ pathname: '/books', query: { book: _id } }}>
+                <StyledButton
+                  variant="contained"
+                  color="secondary"
+                  size="large"
+                >
+                  Ver más información
+                </StyledButton>
+              </Link>
+            </StyledButtonContainer>
           </StyledCardFooter>
         </StyledCardContentContainer>
       </CardContent>
     </Card>
   );
 };
+
+const StyledButton = styledComponents(Button)`
+  color: ${(props) => props.theme.main};
+  :hover{
+    background-color: ${(props) => props.theme.light};
+    color: ${(props) => props.theme.main};
+  }
+`;
+
+const StyledButtonContainer = styledComponents.div`
+  margin-top: 5%;
+  margin-left: 30%;
+`;
 
 const StyledCardContentContainer = styledComponents.div`
   display: grid;
@@ -122,9 +155,9 @@ const StyledImageContainer = styledComponents.img`
 `;
 
 const StyledGenreChip = styledComponents(Chip)`
-  width: 40%;
+  margin-top: 1%;
+  width: 90%;
   justify-self: center;
-  margin-top: 1rem;
 `;
 
 const StyledFormatChip = styledComponents(Chip)`
