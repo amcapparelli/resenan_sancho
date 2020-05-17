@@ -50,7 +50,7 @@ const ReviewerListItem: React.FC<Props> = ({ reviewer }: Props): JSX.Element => 
         avatar={
           <Avatar alt="avatar" src={avatar || '/static/default-avatar.png'} />
         }
-        title={<Typography variant="h4">{`${name} ${lastName}`}</Typography>}
+        title={<Typography variant="h4">{`${name} ${lastName || ''}`}</Typography>}
         subheader={country}
       />
       <CardContent>
@@ -71,7 +71,7 @@ const ReviewerListItem: React.FC<Props> = ({ reviewer }: Props): JSX.Element => 
               )
             }
             {
-              booktube
+              booktube && booktube.url.length > 0
               && (
                 <Link href={booktube.url} target="_blank" rel="noopener noreferrer">
                   <StyledChip

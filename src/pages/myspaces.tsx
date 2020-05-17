@@ -235,7 +235,7 @@ const MySpaces: React.FC = (): JSX.Element => {
               <StyledCenteredContainer>
                 <FormatsCheckBoxSelector
                   errors={errors.formats}
-                  options={['ePUB', 'papel', 'mobi', 'PDF', 'audiolibro']}
+                  options={['epub', 'papel', 'mobi', 'pdf', 'audiolibro']}
                   formatsSelected={mediaForm.formats}
                   onChange={(
                     { target: { name, checked } }: React.ChangeEvent<HTMLInputElement>,

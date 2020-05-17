@@ -1,8 +1,8 @@
 enum AvailableFormats {
-  epub = 'ePUB',
+  epub = 'epub',
   papel = 'papel',
   mobi = 'mobi',
-  pdf = 'PDF',
+  pdf = 'pdf',
   audiolibro = 'audiolibro',
 }
 
