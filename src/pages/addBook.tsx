@@ -30,7 +30,7 @@ import {
 import UserContext from '../store/context/userContext/UserContext';
 import { MyProfileLayout } from '../components/Layouts';
 import { registerBook as URL } from '../config/routes';
-import { FormatsCheckBoxSelector, GenresSelector } from '../components';
+import { FormatsCheckBoxSelector, GenresSelector, Loading } from '../components';
 import { BookForm, BookFormErrors } from '../interfaces/books';
 
 interface Response {
@@ -71,7 +71,7 @@ const AddBookForm: React.FC = (): JSX.Element => {
   const [errors, validateRequiredFields] = useRequiredFieldsValidation(initErrors);
   const [open, setOpen] = useState(false);
 
-  const [coverURL, uploadCover] = useUploadImages(initForm.cover);
+  const [coverURL, uploadCover, loadingCover] = useUploadImages(initForm.cover);
 
   useEffect(() => {
     setBookForm('cover', coverURL);
@@ -140,8 +140,10 @@ const AddBookForm: React.FC = (): JSX.Element => {
             </StyledLabel>
             <FormHelperText error>{errors.cover}</FormHelperText>
             {
-              bookForm.cover
-              && <StyledImageContainer src={bookForm.cover} alt="Cover" />
+              loadingCover
+                ? <Loading />
+                : bookForm.cover
+                && <StyledImageContainer src={bookForm.cover} alt="Cover" />
             }
           </StyledFirstColumnContainer>
           <StyledSecondColumnContainer>
@@ -160,7 +162,7 @@ const AddBookForm: React.FC = (): JSX.Element => {
                 InputProps={{
                   readOnly: (text === 'author'),
                 }}
-                value={text !== 'author' ? bookForm[text] : `${user.name} ${user.lastName}`}
+                value={text !== 'author' ? bookForm[text] : `${user.name} ${user.lastName || ''}`}
               />
             ))}
             <TextField

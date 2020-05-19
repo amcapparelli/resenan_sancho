@@ -6,6 +6,7 @@ import { book as URL } from '../../config/routes';
 
 const initialState: Book = {
   _id: '',
+  editorial: '',
   title: '',
   formats: [],
   genre: '',

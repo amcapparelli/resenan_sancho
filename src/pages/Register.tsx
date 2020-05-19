@@ -79,7 +79,7 @@ const Register: React.FC = (): JSX.Element => {
           key={text}
           label={t(`form.${text}`)}
           name={text}
-          type="text"
+          type={text === 'email' ? 'email' : 'text'}
           variant="outlined"
           onChange={({ target: { name, value } }) => setRegisterForm(name, value)}
         />

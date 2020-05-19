@@ -4,7 +4,7 @@ const promotions = [
     copies: 2,
     price: 0,
     info: 'Ofrecer 2 ejemplares de este libro para reseña',
-    moreInfo: 'Por cada libro, puedes ofrecer gratuitamente 3 ejemplares para que los reseñadores literarios contacten contigo y te los soliciten. Cada vez que uno de ellos solicite un ejemplar, te notificaremos por email para que te pongas en contacto con el reseñador y será descontado de los ejemplares disponibles.',
+    moreInfo: 'Por cada libro, puedes ofrecer gratuitamente 2 ejemplares para que los reseñadores literarios contacten contigo y te los soliciten. Cada vez que uno de ellos solicite un ejemplar, te notificaremos por email para que te pongas en contacto con el reseñador y será descontado de los ejemplares disponibles.',
   },
   {
     id: 2,

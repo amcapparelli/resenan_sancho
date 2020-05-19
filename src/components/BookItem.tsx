@@ -27,6 +27,7 @@ const BookItem: React.FC<MyProps> = (props: MyProps): JSX.Element => {
   const { id } = props;
   const {
     _id,
+    editorial,
     title,
     author,
     cover,
@@ -49,7 +50,9 @@ const BookItem: React.FC<MyProps> = (props: MyProps): JSX.Element => {
         <StyledCardContentContainer>
           <StyledHeadContainer>
             <Typography variant="h2">{title}</Typography>
-            <Typography variant="subtitle1">{`${author.name} ${author.lastName}`}</Typography>
+            <Typography variant="subtitle1">
+              {`${author.name} ${author.lastName || ''} (${editorial || 'autor independiente'})`}
+            </Typography>
           </StyledHeadContainer>
           <StyledMainContainer>
             <Typography variant="body1">{synopsis}</Typography>

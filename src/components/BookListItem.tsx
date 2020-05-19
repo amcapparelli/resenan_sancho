@@ -21,6 +21,7 @@ interface Props {
 const BookListItem: React.FC<Props> = ({ book }: Props): JSX.Element => {
   const { t } = useTranslation();
   const {
+    editorial,
     genre,
     synopsis,
     formats,
@@ -44,7 +45,7 @@ const BookListItem: React.FC<Props> = ({ book }: Props): JSX.Element => {
                 )
               }
               subheader={
-                `${author.name} ${author.lastName}`
+                `${author.name} ${author.lastName || ''} (${editorial || 'autor independiente'})`
               }
             />
           </StyledCardHeader>

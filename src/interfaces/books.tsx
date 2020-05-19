@@ -1,5 +1,6 @@
 export interface Book {
   _id: string,
+  editorial: string,
   title: string,
   formats: Array<string>,
   genre: string,

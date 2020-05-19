@@ -7,6 +7,13 @@ import React, {
 import { useRouter } from 'next/router';
 import styledComponents from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import {
+  Button,
+  Card,
+  CardContent,
+  FormControlLabel,
+  Switch,
+} from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import UserContext from '../store/context/userContext/UserContext';
 import { MyProfileLayout } from '../components/Layouts';
@@ -16,20 +23,38 @@ import {
   ModalPromotions,
   Loading,
 } from '../components';
-import { useUsersBooksListFetch } from '../utils/customHooks';
+import { useUsersBooksListFetch, useFetch } from '../utils/customHooks';
+import { suscribeAuthor as URL } from '../config/routes';
 import { Book } from '../interfaces/books';
 
 const MyBooks: React.FC = (): JSX.Element => {
   const { t } = useTranslation();
   const router = useRouter();
-  const { user } = useContext(UserContext);
+  const { user, setUserLogged } = useContext(UserContext);
   const [state, listRequest, loading, response] = useUsersBooksListFetch();
   const [showModalPromotions, setShowModalPromotions] = useState(false);
   const [bookSelected, setBookSelected] = useState<Book>();
+  const [suscribe, setSuscribe] = useState<boolean>(
+    !!(user.emailAuthorListStatus && user.emailAuthorListStatus === 'subscribed'),
+  );
+  const [suscribeUserResponse, suscribeUserRequest] = useFetch();
 
   useEffect(() => {
     if (!showModalPromotions) listRequest(user._id);
   }, [showModalPromotions]);
+
+  useEffect(() => {
+    if (suscribeUserResponse.success) {
+      setUserLogged({ ...user, emailAuthorListStatus: suscribe ? 'subscribed' : 'unsubscribed' });
+    }
+  }, [suscribeUserResponse.message]);
+
+  const handleSuscribe = () => {
+    suscribeUserRequest(URL, 'post', {
+      _id: user._id,
+      status: suscribe ? 'subscribed' : 'unsubscribed',
+    });
+  };
 
   return (
     <MyProfileLayout
@@ -38,6 +63,46 @@ const MyBooks: React.FC = (): JSX.Element => {
       <div>
         {
           loading && <Loading />
+        }
+        {
+          !loading && state.books && state.books.length > 0
+          && (
+            <StyledCard>
+              <CardContent>
+                <FormControlLabel
+                  control={(
+                    <Switch
+                      checked={suscribe}
+                      onChange={() => setSuscribe(!suscribe)}
+                      name="suscribe"
+                      color="primary"
+                    />
+                  )}
+                  label="Quiero recibir consejos vía email para promocionar mis libros"
+                />
+                <Button
+                  disabled={
+                    (user.emailAuthorListStatus === 'subscribed' && suscribe)
+                    || (user.emailAuthorListStatus !== 'subscribed' && !suscribe)
+                  }
+                  variant="contained"
+                  color="secondary"
+                  size="small"
+                  onClick={handleSuscribe}
+                >
+                  Guardar Cambio
+                </Button>
+                {
+                  suscribeUserResponse.message
+                  && (
+                    <Alert variant="filled" severity={suscribeUserResponse.success ? 'success' : 'error'}>
+                      {suscribeUserResponse.message}
+                    </Alert>
+                  )
+                }
+              </CardContent>
+            </StyledCard>
+          )
         }
         <StyledList>
           {
@@ -77,6 +142,11 @@ const MyBooks: React.FC = (): JSX.Element => {
     </MyProfileLayout>
   );
 };
+
+const StyledCard = styledComponents(Card)`
+  width: 50%;
+  margin-left: 25%;
+`;
 
 const StyledList = styledComponents.ul`
   list-style-type: none;
