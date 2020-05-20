@@ -20,6 +20,14 @@ export interface Reviewer {
     name: string,
     url: string,
   },
+  goodreads: {
+    name: string,
+    url: string,
+  },
+  amazon: {
+    name: string,
+    url: string,
+  },
   genres: Array<AvailableGenres>,
   formats: Array<AvailableFormats>,
   description: string,

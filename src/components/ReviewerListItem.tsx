@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import styledComponents from 'styled-components';
 import {
   Avatar,
@@ -29,6 +30,7 @@ interface Props {
 
 const ReviewerListItem: React.FC<Props> = ({ reviewer }: Props): JSX.Element => {
   const classes = useStyles();
+  const { t } = useTranslation();
   const {
     description,
     formats,
@@ -36,6 +38,8 @@ const ReviewerListItem: React.FC<Props> = ({ reviewer }: Props): JSX.Element => 
     blog,
     bookstagram,
     booktube,
+    amazon,
+    goodreads,
   } = reviewer;
   const {
     name,
@@ -56,10 +60,10 @@ const ReviewerListItem: React.FC<Props> = ({ reviewer }: Props): JSX.Element => 
       <CardContent>
         <Typography variant="body1" align="left">{description}</Typography>
         <CardContent>
-          <Typography align="center" variant="body1">Lee sus reseñas en:</Typography>
+          <Typography align="center" variant="body1">Mira sus reseñas en:</Typography>
           <StyledChipsContainer>
             {
-              blog
+              blog && blog.url.length > 0
               && (
                 <Link href={blog.url} target="_blank" rel="noopener noreferrer">
                   <StyledChip
@@ -83,13 +87,37 @@ const ReviewerListItem: React.FC<Props> = ({ reviewer }: Props): JSX.Element => 
               )
             }
             {
-              bookstagram
+              bookstagram && bookstagram.url.length > 0
               && (
                 <Link href={bookstagram.url} target="_blank" rel="noopener noreferrer">
                   <StyledChip
                     color="primary"
                     avatar={<Avatar alt="bookstagram" src="/static/iconoinstagram.jpg" />}
                     label={bookstagram.name}
+                  />
+                </Link>
+              )
+            }
+            {
+              goodreads && goodreads.url.length > 0
+              && (
+                <Link href={goodreads.url} target="_blank" rel="noopener noreferrer">
+                  <StyledChip
+                    color="primary"
+                    avatar={<Avatar alt="goodreads profile" src="/static/iconogoodreads.png" />}
+                    label={goodreads.name}
+                  />
+                </Link>
+              )
+            }
+            {
+              amazon && amazon.url.length > 0
+              && (
+                <Link href={amazon.url} target="_blank" rel="noopener noreferrer">
+                  <StyledChip
+                    color="primary"
+                    avatar={<Avatar alt="amazon profile" src="/static/iconoamazon.png" />}
+                    label={amazon.name}
                   />
                 </Link>
               )
@@ -103,7 +131,7 @@ const ReviewerListItem: React.FC<Props> = ({ reviewer }: Props): JSX.Element => 
               genres.map((genre) => (
                 <Chip
                   size="small"
-                  label={genre}
+                  label={t(`genres.${genre}`)}
                   color="primary"
                 />
               ))
@@ -141,14 +169,14 @@ const StyledChipsContainer = styledComponents.div`
   justify-content: center;
   display: grid;
   grid-gap: .5rem;
-  grid-template-columns: repeat(2, auto);
+  grid-template-columns: repeat(1, auto);
 `;
 
 const StyledChipsGenresContainer = styledComponents.div`
   justify-content: center;
   display: grid;
   grid-gap: .5rem;
-  grid-template-columns: repeat(4, auto);
+  grid-template-columns: repeat(3, auto);
 `;
 
 const StyledChipsFormatsContainer = styledComponents.div`
