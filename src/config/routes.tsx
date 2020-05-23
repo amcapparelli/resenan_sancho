@@ -15,6 +15,7 @@ export const orderBook: string = `${API_BASE_URL}orderBook`;
 export const promotions: string = `${API_BASE_URL}promotions`;
 export const paymentCheckout: string = `${API_BASE_URL}paymentCheckout`;
 export const registerBlog: string = `${API_BASE_URL}registerReviewer`;
+export const reviewer: string = `${API_BASE_URL}reviewer`;
 export const suscribeAuthor: string = `${API_BASE_URL}suscribeAuthor`;
 export const forgotPass: string = `${API_BASE_URL}users/forgot`;
 export const resetPass: string = `${API_BASE_URL}users/reset`;

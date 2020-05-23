@@ -4,6 +4,7 @@ export { default as useRequiredFieldsValidation } from './useRequiredFieldsValid
 export { default as useUploadImages } from './useUploadImages';
 export { default as useFetch } from './useFetch';
 export { default as useFetchBook } from './useFetchBook';
+export { default as useFetchReviewer } from './useFetchReviewer';
 export { default as useBlogsListFetch } from './useBlogsListFetch';
 export { default as useReviewersListFetch } from './useReviewersListFetch';
 export { default as useBooksListFetch } from './useBooksListFetch';

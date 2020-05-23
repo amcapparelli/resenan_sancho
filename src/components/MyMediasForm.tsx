@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styledComponents from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
@@ -62,6 +62,11 @@ const MyMediasForm: React.FC<MyProps> = (props: MyProps): JSX.Element => {
     name,
   } = props;
   const [expanded, setExpanded] = useState(selected);
+
+  useEffect(() => {
+    if (selected) setExpanded(selected);
+  }, [selected]);
+
   const handleExpandClick = () => {
     setExpanded(!expanded);
     onSelect();

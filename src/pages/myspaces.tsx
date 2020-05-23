@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import styledComponents from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import {
@@ -18,11 +18,11 @@ import CloseIcon from '@material-ui/icons/Close';
 import Alert from '@material-ui/lab/Alert';
 import { MyProfileLayout } from '../components/Layouts';
 import { MyMediasForm, FormatsCheckBoxSelector } from '../components';
-import { useForm, useRequiredFieldsValidation } from '../utils/customHooks';
+import { useForm, useRequiredFieldsValidation, useFetchReviewer } from '../utils/customHooks';
 import UserContext from '../store/context/userContext/UserContext';
 import genres from '../utils/constants/genres';
 import { registerBlog as URL } from '../config/routes';
-import { AvailableMedias, MediaForm } from '../interfaces/mediaForm';
+import { AvailableMedias } from '../interfaces/mediaForm';
 import { Response } from '../interfaces/response';
 
 const defaultMediaValues = {
@@ -35,32 +35,47 @@ const defaultMediaValues = {
 
 const MySpaces: React.FC = (): JSX.Element => {
   const { t } = useTranslation();
-  const { user, user: { reviewerInfo }, setUserLogged } = useContext(UserContext);
-  const [succeeded, setSucceeded] = useState<boolean>(false);
-  const [isEditing] = useState<boolean>(!!reviewerInfo);
-  const getInitialMediaValues = !isEditing
-    ? defaultMediaValues
-    : Object.keys(AvailableMedias).reduce((object, key) => ({
+  const { user, setUserLogged } = useContext(UserContext);
+  const [requestReviewer, reviewerResponse] = useFetchReviewer();
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [mediaForm, setMediaForm, loadForm] = useForm({
+    author: user._id,
+    genres: [],
+    formats: [],
+    description: '',
+    ...defaultMediaValues,
+  });
+
+  useEffect(() => {
+    if (user._id) requestReviewer(user._id);
+  }, [user._id]);
+
+  useEffect(() => {
+    const getInitialMediaValues = Object.keys(AvailableMedias).reduce((object, key) => ({
       ...object,
       [key]: {
-        selected: !!reviewerInfo[key],
-        url: reviewerInfo[key] && reviewerInfo[key].url,
-        name: reviewerInfo[key] && reviewerInfo[key].name,
+        selected: !!reviewerResponse[key],
+        url: reviewerResponse[key] && reviewerResponse[key].url,
+        name: reviewerResponse[key] && reviewerResponse[key].name,
       },
     }), defaultMediaValues);
+    if (Object.keys(reviewerResponse).length > 0) {
+      setIsEditing(true);
+      loadForm({
+        author: user._id,
+        genres: reviewerResponse.genres,
+        formats: reviewerResponse.formats,
+        description: reviewerResponse.description,
+        blog: getInitialMediaValues.blog,
+        booktube: getInitialMediaValues.booktube,
+        bookstagram: getInitialMediaValues.bookstagram,
+        goodreads: getInitialMediaValues.goodreads,
+        amazon: getInitialMediaValues.amazon,
+      });
+    }
+  }, [reviewerResponse.author]);
 
-  const initForm: MediaForm = {
-    author: user._id,
-    genres: isEditing ? reviewerInfo.genres : [],
-    formats: isEditing ? reviewerInfo.formats : [],
-    description: isEditing ? reviewerInfo.description : '',
-    blog: getInitialMediaValues.blog,
-    booktube: getInitialMediaValues.booktube,
-    bookstagram: getInitialMediaValues.bookstagram,
-    goodreads: getInitialMediaValues.goodreads,
-    amazon: getInitialMediaValues.amazon,
-  };
-  const [mediaForm, setMediaForm] = useForm(initForm);
+  const [succeeded, setSucceeded] = useState<boolean>(false);
   const [response, setResponse] = useState<Response>({
     success: undefined,
     message: undefined,
