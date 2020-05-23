@@ -35,7 +35,7 @@ const defaultMediaValues = {
 
 const MySpaces: React.FC = (): JSX.Element => {
   const { t } = useTranslation();
-  const { user, user: { reviewerInfo } } = useContext(UserContext);
+  const { user, user: { reviewerInfo }, setUserLogged } = useContext(UserContext);
   const [succeeded, setSucceeded] = useState<boolean>(false);
   const [isEditing] = useState<boolean>(!!reviewerInfo);
   const getInitialMediaValues = !isEditing
@@ -94,6 +94,7 @@ const MySpaces: React.FC = (): JSX.Element => {
       const {
         message,
         success,
+        reviewer,
       } = resJSON;
       if (resJSON.error) {
         setResponse({
@@ -104,7 +105,10 @@ const MySpaces: React.FC = (): JSX.Element => {
         return;
       }
       setResponse({ message, success });
-      if (success) setSucceeded(true);
+      if (success) {
+        setUserLogged({ ...user, reviewerInfo: reviewer });
+        setSucceeded(true);
+      }
       setOpen(true);
     } catch (error) {
       setResponse(error);
