@@ -40,8 +40,8 @@ const MyBooks: React.FC = (): JSX.Element => {
   const [suscribeUserResponse, suscribeUserRequest] = useFetch();
 
   useEffect(() => {
-    if (!showModalPromotions) listRequest(user._id);
-  }, [showModalPromotions]);
+    if (!showModalPromotions && user._id !== undefined) listRequest(user._id);
+  }, [showModalPromotions, user._id]);
 
   useEffect(() => {
     if (suscribeUserResponse.success) {
