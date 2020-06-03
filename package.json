@@ -7,9 +7,10 @@
     "lint": "eslint ./src/App.tsx --fix",
     "dev": "node server.js",
     "build": "next build",
-    "start": "NODE_ENV=production node server.js",
+    "start": "NODE_ENV=production node server.js -p $PORT",
     "test": "jest",
-    "coverage": "jest --coverage --collectCoverageFrom=src/**/*.tsx"
+    "coverage": "jest --coverage --collectCoverageFrom=src/**/*.tsx",
+    "heroku-postbuild": "next build"
   },
   "author": "",
   "license": "ISC",
