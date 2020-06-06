@@ -45,7 +45,8 @@ interface Row {
   moreInfo: string
 }
 
-const stripePromise = loadStripe(process.env.PUBLISHABLE_KEY);
+const PUBLISHABLE_KEY: string = process.env.NODE_ENV === 'production' ? 'pk_live_hnHykpu6AzNWJfUxxFdbB12a00pLwBhUR9' : 'pk_test_CcNp900cqt0Ps35Yp1iT1XYY00cu0xb9VY';
+const stripePromise = loadStripe(PUBLISHABLE_KEY);
 
 const ModalPromotions: React.FC<MyProps> = (props: MyProps): JSX.Element => {
   const { user } = useContext(UserContext);
