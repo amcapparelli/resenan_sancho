@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import styledComponents from 'styled-components';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
@@ -29,7 +29,7 @@ interface MyProps {
   bookId: string
   bookTitle: string
 }
-ReactGA.initialize(trackingId);
+
 function getModalStyle() {
   const top = 50;
   const left = 50;
@@ -80,6 +80,10 @@ const PaymentCheckout: React.FC<MyProps> = ({
     success: undefined,
     message: '',
   });
+
+  useEffect(() => {
+    ReactGA.initialize(trackingId);
+  }, []);
 
   const handleChange = (event: any) => {
     if (event.error) {
