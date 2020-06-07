@@ -18,7 +18,7 @@ const ReviewersList: React.FC = (): JSX.Element => {
   }, [filters.page]);
 
   const filter = () => {
-    listRequest(filters);
+    listRequest({ ...filters, page: 1 });
   };
 
   return (

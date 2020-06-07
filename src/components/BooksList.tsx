@@ -21,7 +21,7 @@ const BooksList = () => {
   }, [filters.page]);
 
   const filter = () => {
-    listRequest(filters);
+    listRequest({ ...filters, page: 1 });
   };
 
   return (
