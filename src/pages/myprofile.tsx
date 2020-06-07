@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import React, { useContext, useState, useEffect } from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import styledComponents from 'styled-components';
@@ -41,11 +42,15 @@ const MyProfile: React.FC = (): JSX.Element => {
     message: undefined,
   });
   const { user, setUserLogged } = useContext(UserContext);
-  const [updateForm, setUpdateForm] = useForm(user);
+  const [updateForm, setUpdateForm, loadForm] = useForm(user);
   const [avatarURL, uploadAvatar] = useUploadImages(updateForm.avatar);
   const [open, setOpen] = useState(false);
   const [openDeleteAccountModal, setDeleteAccountModal] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    loadForm({ ...user });
+  }, [user._id]);
 
   useEffect(() => {
     setUpdateForm('avatar', avatarURL);
