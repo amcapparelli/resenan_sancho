@@ -15,7 +15,9 @@
     "register": "Registrar",
     "save": "guardar",
     "uploadCover": "Subir portada",
-    "filter": "Filtrar lista"
+    "filter": "Filtrar lista",
+    "saving": "Guardando...",
+    "loading": "Cargando..."
   },
   "form": {
     "name": "Nombre",

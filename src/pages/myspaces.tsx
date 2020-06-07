@@ -16,6 +16,8 @@ import {
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import Alert from '@material-ui/lab/Alert';
+import ReactGA from 'react-ga';
+import { trackingId } from '../utils/constants/GATrackingID';
 import { MyProfileLayout } from '../components/Layouts';
 import { MyMediasForm, FormatsCheckBoxSelector } from '../components';
 import { useForm, useRequiredFieldsValidation, useFetchReviewer } from '../utils/customHooks';
@@ -75,6 +77,11 @@ const MySpaces: React.FC = (): JSX.Element => {
     }
   }, [reviewerResponse.author]);
 
+  useEffect(() => {
+    ReactGA.initialize(trackingId);
+    ReactGA.pageview('/myspaces');
+  }, []);
+
   const [succeeded, setSucceeded] = useState<boolean>(false);
   const [response, setResponse] = useState<Response>({
     success: undefined,
@@ -96,6 +103,12 @@ const MySpaces: React.FC = (): JSX.Element => {
           ? acum : { ...acum, [key]: value }
       ), {},
     );
+    if (!isEditing) {
+      ReactGA.event({
+        category: 'reviewers',
+        action: `New Reviewer ${user.name} ${user.lastName || ''}`,
+      });
+    }
     try {
       const res = await fetch(URL, {
         method: isEditing || succeeded ? 'put' : 'post',

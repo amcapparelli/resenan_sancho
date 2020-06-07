@@ -9,6 +9,8 @@ import {
   Typography,
 } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
+import ReactGA from 'react-ga';
+import { trackingId } from '../utils/constants/GATrackingID';
 import {
   useForm,
   useFetch,
@@ -21,9 +23,15 @@ interface MyProps {
   open: boolean
   onClose: Function,
   book: string,
+  bookTitle: string,
 }
-
-const ModalContact: React.FC<MyProps> = ({ open, onClose, book }: MyProps): JSX.Element => {
+ReactGA.initialize(trackingId);
+const ModalContact: React.FC<MyProps> = ({
+  open,
+  onClose,
+  book,
+  bookTitle,
+}: MyProps): JSX.Element => {
   const { user } = useContext(UserContext);
   const [orderBookResponse, orderBookRequest, loading] = useFetch();
   const [contactForm, setContactForm, loadContactForm] = useForm({});
@@ -44,6 +52,10 @@ const ModalContact: React.FC<MyProps> = ({ open, onClose, book }: MyProps): JSX.
 
   const handleSubmit = () => {
     orderBookRequest(URL, 'post', contactForm);
+    ReactGA.event({
+      category: 'book copies',
+      action: `New Order book: ${bookTitle}, reviewer: ${user.name} ${user.lastName || ''}`,
+    });
   };
 
   const handleCloseModal = () => {

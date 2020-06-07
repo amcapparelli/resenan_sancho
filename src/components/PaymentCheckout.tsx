@@ -14,6 +14,8 @@ import {
 } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import PaymentIcon from '@material-ui/icons/Payment';
+import ReactGA from 'react-ga';
+import { trackingId } from '../utils/constants/GATrackingID';
 import UserContext from '../store/context/userContext/UserContext';
 import { paymentCheckout } from '../config/routes';
 
@@ -25,8 +27,9 @@ interface MyProps {
   description: string
   chosenPromo: number
   bookId: string
+  bookTitle: string
 }
-
+ReactGA.initialize(trackingId);
 function getModalStyle() {
   const top = 50;
   const left = 50;
@@ -64,6 +67,7 @@ const PaymentCheckout: React.FC<MyProps> = ({
   image,
   description,
   chosenPromo,
+  bookTitle,
 }: MyProps): JSX.Element => {
   const { user } = useContext(UserContext);
   const classes = useStyles();
@@ -112,6 +116,10 @@ const PaymentCheckout: React.FC<MyProps> = ({
         });
         const resJSON = await res.json();
         setResponse(resJSON);
+        ReactGA.event({
+          category: 'payment',
+          action: `New Payment: ${amount}, book: ${bookTitle}`,
+        });
       } catch (err) {
         setResponse(err);
       } finally {

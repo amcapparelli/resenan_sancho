@@ -1,5 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import { NextPage } from 'next';
+import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import styledComponents from 'styled-components';
@@ -12,7 +13,7 @@ import { StyledLink } from '../components';
 
 const Login: NextPage = (): JSX.Element => {
   const { t } = useTranslation();
-  const [loginResponse, loginRequest] = useFetch();
+  const [loginResponse, loginRequest, loading] = useFetch();
   const [loginForm, setLoginForm] = useForm({});
   const { setUserLogged } = useContext(UserContext);
   const router = useRouter();
@@ -30,7 +31,9 @@ const Login: NextPage = (): JSX.Element => {
 
   return (
     <StyledForm>
-      <StyledLogo src="/static/logo.png" alt="logo reseñan sancho" />
+      <Link href="/">
+        <StyledLogo src="/static/logo.png" alt="logo reseñan sancho" />
+      </Link>
       {['email', 'password'].map((text) => (
         <TextField
           id="standard-password-input"
@@ -42,12 +45,13 @@ const Login: NextPage = (): JSX.Element => {
         />
       ))}
       <StyledButton
+        disabled={loading}
         variant="contained"
         color="primary"
         onClick={login}
         size="large"
       >
-        Login
+        {loading ? t('buttons.loading') : 'Login'}
       </StyledButton>
       <StyledLink
         anchor={t('link.forgotPassword')}

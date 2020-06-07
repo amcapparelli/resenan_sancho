@@ -15,7 +15,9 @@
     "register": "Register",
     "save": "save",
     "uploadCover": "Upload Cover",
-    "filter": "Filter list"
+    "filter": "Filter list",
+    "saving": "Saving...",
+    "loading": "Loading..."
   },
   "form": {
     "name": "Name",

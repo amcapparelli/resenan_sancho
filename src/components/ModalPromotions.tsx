@@ -190,6 +190,7 @@ const ModalPromotions: React.FC<MyProps> = (props: MyProps): JSX.Element => {
             onClose={() => setOpenPayment(false)}
             amount={amount}
             image={bookSelected && bookSelected.cover}
+            bookTitle={bookSelected && bookSelected.title}
             description={
               `Añadir 
               ${promotions.find((p) => p.price === amount).copies} 

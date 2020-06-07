@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styledComponents from 'styled-components';
+import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import {
@@ -7,16 +8,19 @@ import {
   TextField,
 } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
+import ReactGA from 'react-ga';
 import { register as registerURL } from '../config/routes';
 import { useForm, useRequiredFieldsValidation, useFetch } from '../utils/customHooks';
 import { PasswordFields } from '../components';
+import { trackingId } from '../utils/constants/GATrackingID';
 
 const fields = ['name', 'lastName', 'email'];
+ReactGA.initialize(trackingId);
 
 const Register: React.FC = (): JSX.Element => {
   const { t } = useTranslation();
   const router = useRouter();
-  const [signupResponse, signupRequest] = useFetch();
+  const [signupResponse, signupRequest, loading] = useFetch();
   const [registerForm, setRegisterForm] = useForm({
     name: '',
     lastName: '',
@@ -58,6 +62,10 @@ const Register: React.FC = (): JSX.Element => {
 
   const signup = (): void => {
     signupRequest(registerURL, 'post', registerForm);
+    ReactGA.event({
+      category: 'Sign Up',
+      action: 'Usuario Registrado',
+    });
   };
 
   const submit = () => {
@@ -71,7 +79,9 @@ const Register: React.FC = (): JSX.Element => {
 
   return (
     <StyledForm>
-      <StyledLogo src="/static/logo.png" alt="logo reseñan sancho" />
+      <Link href="/">
+        <StyledLogo src="/static/logo.png" alt="logo reseñan sancho" />
+      </Link>
       {fields.map((text) => (
         <TextField
           error={errors[text].length > 0}
@@ -95,12 +105,13 @@ const Register: React.FC = (): JSX.Element => {
         repeatPasswordLength={registerForm.repeatPassword.length}
       />
       <StyledButton
+        disabled={loading}
         variant="contained"
         color="primary"
         onClick={submit}
         size="large"
       >
-        {t('buttons.register')}
+        {loading ? t('buttons.saving') : t('buttons.register')}
       </StyledButton>
       {
         signupResponse.message

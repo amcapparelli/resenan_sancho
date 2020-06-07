@@ -18,10 +18,18 @@ const Footer = () => (
       </Link>
     </StyledLegal>
     <StyledSocial>
-      <InstagramIcon />
-      <TwitterIcon />
-      <FacebookIcon />
-      <MailIcon />
+      <Link href="https://www.instagram.com/resenansancho/">
+        <InstagramIcon />
+      </Link>
+      <Link href="https://twitter.com/ResenanSancho">
+        <TwitterIcon />
+      </Link>
+      <Link href="https://www.facebook.com/resenansancho/">
+        <FacebookIcon />
+      </Link>
+      <Link href="mailto:alejandro@resenansancho.com">
+        <MailIcon />
+      </Link>
     </StyledSocial>
   </StyledFooter>
 );

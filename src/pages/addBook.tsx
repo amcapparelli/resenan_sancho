@@ -20,6 +20,8 @@ import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
+import ReactGA from 'react-ga';
+import { trackingId } from '../utils/constants/GATrackingID';
 import {
   useForm,
   useUploadImages,
@@ -43,7 +45,11 @@ const AddBookForm: React.FC = (): JSX.Element => {
   const { query: { book } } = useRouter();
   const { user } = useContext(UserContext);
   const [state, fetchBook] = useFetchBook();
-  const [registerBookResponse, registerBookRequest] = useFetch();
+  const [registerBookResponse, registerBookRequest, loading] = useFetch();
+  useEffect(() => {
+    ReactGA.initialize(trackingId);
+    ReactGA.pageview('/addBooks');
+  }, []);
 
   const initForm: BookForm = {
     title: '',
@@ -112,6 +118,10 @@ const AddBookForm: React.FC = (): JSX.Element => {
   const registerBook = async (): Promise<void> => {
     if (!book) {
       registerBookRequest(URL, 'post', bookForm);
+      ReactGA.event({
+        category: 'books',
+        action: `New Book ${bookForm.title}`,
+      });
     } else {
       registerBookRequest(`${URL}/${book}`, 'put', bookForm);
     }
@@ -267,6 +277,7 @@ const AddBookForm: React.FC = (): JSX.Element => {
               title="Formatos disponibles:"
             />
             <Button
+              disabled={loading}
               variant="contained"
               color="primary"
               size="large"

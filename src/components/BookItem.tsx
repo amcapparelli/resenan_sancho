@@ -100,6 +100,7 @@ const BookItem: React.FC<MyProps> = (props: MyProps): JSX.Element => {
           setOpenModalContact(false);
         }}
         book={_id}
+        bookTitle={title}
       />
     </>
   );

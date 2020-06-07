@@ -14,6 +14,8 @@ import {
 import CloseIcon from '@material-ui/icons/Close';
 import Alert from '@material-ui/lab/Alert';
 import DeleteIcon from '@material-ui/icons/Delete';
+import ReactGA from 'react-ga';
+import { trackingId } from '../utils/constants/GATrackingID';
 import UserContext from '../store/context/userContext/UserContext';
 import { MyProfileLayout } from '../components/Layouts';
 import { UploadImagesInput, CountriesSelector, ModalDeleteAccount } from '../components';
@@ -43,13 +45,20 @@ const MyProfile: React.FC = (): JSX.Element => {
   const [avatarURL, uploadAvatar] = useUploadImages(updateForm.avatar);
   const [open, setOpen] = useState(false);
   const [openDeleteAccountModal, setDeleteAccountModal] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setUpdateForm('avatar', avatarURL);
   }, [avatarURL]);
 
+  useEffect(() => {
+    ReactGA.initialize(trackingId);
+    ReactGA.pageview('/myprofile');
+  }, []);
+
   const update = async (): Promise<void> => {
     try {
+      setLoading(true);
       const res = await fetch(URL, {
         method: 'post',
         mode: 'cors',
@@ -72,6 +81,8 @@ const MyProfile: React.FC = (): JSX.Element => {
     } catch (error) {
       setResponse(error);
       setOpen(true);
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -115,12 +126,13 @@ const MyProfile: React.FC = (): JSX.Element => {
               />
             </StyledForm>
             <StyledButton
+              disabled={loading}
               variant="contained"
               color="primary"
               size="large"
               onClick={update}
             >
-              {t('buttons.update')}
+              {loading ? t('buttons.saving') : t('buttons.update')}
             </StyledButton>
             <StyledResponseContainer>
               {
