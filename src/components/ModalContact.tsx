@@ -25,7 +25,7 @@ interface MyProps {
   book: string,
   bookTitle: string,
 }
-ReactGA.initialize(trackingId);
+
 const ModalContact: React.FC<MyProps> = ({
   open,
   onClose,
@@ -49,6 +49,10 @@ const ModalContact: React.FC<MyProps> = ({
   useEffect(() => {
     if (orderBookResponse.success) setCopiesOrdered(1);
   }, [orderBookResponse.success]);
+
+  useEffect(() => {
+    ReactGA.initialize(trackingId);
+  }, []);
 
   const handleSubmit = () => {
     orderBookRequest(URL, 'post', contactForm);

@@ -15,7 +15,6 @@ import { PasswordFields } from '../components';
 import { trackingId } from '../utils/constants/GATrackingID';
 
 const fields = ['name', 'lastName', 'email'];
-ReactGA.initialize(trackingId);
 
 const Register: React.FC = (): JSX.Element => {
   const { t } = useTranslation();
@@ -37,6 +36,10 @@ const Register: React.FC = (): JSX.Element => {
     email: '',
   };
   const [errors, validateRequiredFields] = useRequiredFieldsValidation(initialErrors);
+
+  useEffect(() => {
+    ReactGA.initialize(trackingId);
+  }, []);
 
   useEffect(() => {
     if (signupResponse.success) {
