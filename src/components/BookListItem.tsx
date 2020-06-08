@@ -51,7 +51,7 @@ const BookListItem: React.FC<Props> = ({ book }: Props): JSX.Element => {
           </StyledCardHeader>
           <StyledCardMain>
             <Typography component="span" align="left">
-              {synopsis.substring(0, 150)}
+              {synopsis.substring(0, 200)}
               ...
             </Typography>
             <Link href={{ pathname: '/books', query: { book: _id } }}>
