@@ -29,6 +29,7 @@
   "link": {
     "forgotPassword": "Olvidé mi contraseña...",
     "backToLogin": "¡Volver al login!",
+    "login": "Ya tengo cuenta",
     "readMore": "Lee más",
     "register": "Registrarme"
   },

@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import {
   Elements,
@@ -59,9 +59,16 @@ const ModalPromotions: React.FC<MyProps> = (props: MyProps): JSX.Element => {
     row: '',
   });
   const [response, asyncRequest] = useFetch();
+  const [tableMinWidth, setTableMinWidth] = useState(650);
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(max-width: 768px)');
+    if (mediaQuery.matches) {
+      setTableMinWidth(500);
+    }
+  }, []);
   const useStyles = makeStyles({
     table: {
-      minWidth: 650,
+      minWidth: tableMinWidth,
     },
   });
   const classes = useStyles();

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import Link from 'next/link';
 import styledComponents from 'styled-components';
 import clsx from 'clsx';
@@ -109,6 +109,14 @@ const MyProfileLayout: React.FC<MyProps> = ({ children, title }: MyProps): JSX.E
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = useState(true);
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(max-width: 768px)');
+    if (mediaQuery.matches) {
+      setOpen(false);
+    } else {
+      setOpen(true);
+    }
+  }, []);
   return (
     <div className={classes.root}>
       <CssBaseline>

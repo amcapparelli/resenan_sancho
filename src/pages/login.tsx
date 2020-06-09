@@ -32,7 +32,7 @@ const Login: NextPage = (): JSX.Element => {
   return (
     <StyledForm>
       <Link href="/">
-        <StyledLogo src="/static/logo.png" alt="logo reseñan sancho" />
+        <StyledLogo src="/static/logo-web.webp" alt="logo reseñan sancho" />
       </Link>
       {['email', 'password'].map((text) => (
         <TextField

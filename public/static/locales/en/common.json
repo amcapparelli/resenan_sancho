@@ -48,6 +48,7 @@
   "link": {
     "forgotPassword": "I forgot my password...",
     "backToLogin": "Go back to login!",
+    "login": "I have an account",
     "readMore": "Read More",
     "register": "Sign up"
   },

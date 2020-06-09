@@ -11,7 +11,7 @@ import Alert from '@material-ui/lab/Alert';
 import ReactGA from 'react-ga';
 import { register as registerURL } from '../config/routes';
 import { useForm, useRequiredFieldsValidation, useFetch } from '../utils/customHooks';
-import { PasswordFields } from '../components';
+import { PasswordFields, StyledLink } from '../components';
 import { trackingId } from '../utils/constants/GATrackingID';
 
 const fields = ['name', 'lastName', 'email'];
@@ -83,7 +83,7 @@ const Register: React.FC = (): JSX.Element => {
   return (
     <StyledForm>
       <Link href="/">
-        <StyledLogo src="/static/logo.png" alt="logo reseñan sancho" />
+        <StyledLogo src="/static/logo-web.webp" alt="logo reseñan sancho" />
       </Link>
       {fields.map((text) => (
         <TextField
@@ -116,6 +116,10 @@ const Register: React.FC = (): JSX.Element => {
       >
         {loading ? t('buttons.saving') : t('buttons.register')}
       </StyledButton>
+      <StyledLink
+        anchor={t('link.login')}
+        href="/login"
+      />
       {
         signupResponse.message
         && (
