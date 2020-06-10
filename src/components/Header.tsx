@@ -18,10 +18,10 @@ const Header: React.FC = (): JSX.Element => {
       </header>
       <StyledNav>
         <Link href="/books">
-          <StyledLink>{t('nav.availableBooks')}</StyledLink>
+          <StyledLink aria-label="Find Books">{t('nav.availableBooks')}</StyledLink>
         </Link>
         <Link href="/reviewers">
-          <StyledLink>{t('nav.reviewers')}</StyledLink>
+          <StyledLink aria-label="Find Reviewers">{t('nav.reviewers')}</StyledLink>
         </Link>
       </StyledNav>
       <StyledPrivateNav>
@@ -31,17 +31,18 @@ const Header: React.FC = (): JSX.Element => {
               <>
                 <Link href="/myprofile">
                   <StyledProfileButton
+                    aria-label="Private Area"
                     variant="contained"
                     color="primary"
                   >
                     {t('nav.myProfile')}
                   </StyledProfileButton>
                 </Link>
-                <Button onClick={logoutRequest}>Logout</Button>
+                <Button onClick={logoutRequest} aria-label="Logout">Logout</Button>
               </>
             ) : (
               <Link href="/login">
-                <StyledLink>Login</StyledLink>
+                <StyledLink aria-label="Login">Login</StyledLink>
               </Link>
             )
         }
