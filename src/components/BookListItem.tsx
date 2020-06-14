@@ -122,7 +122,7 @@ const StyledButtonContainer = styledComponents.div`
 `;
 
 const StyledCardContentContainer = styledComponents.div`
-  height: 550px;
+  height: 650px;
   display: grid;
   grid-template-areas: "head cover"
                        "main main"
