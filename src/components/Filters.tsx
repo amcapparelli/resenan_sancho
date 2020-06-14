@@ -72,18 +72,34 @@ const Filters = ({
 };
 
 const StyledText = styledComponents(Typography)`
+  @media (max-width: 768px) {
+    justify-self: center;
+    width: 100%;
+  }
   width: 50%;
   justify-self: right;
 `;
 const StyledFiltersContainer = styledComponents.div`
   display: grid;
   grid-gap: 1rem;
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
   grid-template-columns: repeat(${(props) => (props.id === 'reviewersFilters' ? 5 : 4)}, 1fr);
   margin-top: 2%;
   margin-bottom: 1%;
 `;
 
 const StyledButton = styledComponents(Button)`
+  @media (max-width: 375px) {
+    width: 100%;
+    height: 100%;
+  }
+  @media (max-width: 768px) {
+    width: 30%;
+    height: 100%;
+    justify-self: center;
+  }
   width: 50%;
   height: 50%;
   align-self: ${(props) => (props.id === 'reviewersFilters' ? 'flex-start' : 'center')};

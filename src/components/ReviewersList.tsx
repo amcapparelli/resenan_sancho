@@ -54,6 +54,12 @@ const ReviewersList: React.FC = (): JSX.Element => {
 const StyledList = styledComponents.ul`
   display: grid;
   grid-gap: 1rem;
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (max-width: 375px) {
+    grid-template-columns: 1fr;
+  }
   grid-template-columns: repeat(3, 1fr);
   list-style-type: none;
 `;

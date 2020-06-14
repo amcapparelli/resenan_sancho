@@ -139,6 +139,7 @@ const AddBookForm: React.FC = (): JSX.Element => {
         <StyledFormContainer>
           <StyledFirstColumnContainer>
             <StyledInputFile
+              disabled={loadingCover}
               accept="image/*"
               id="raised-button-file"
               multiple
@@ -146,7 +147,7 @@ const AddBookForm: React.FC = (): JSX.Element => {
               onChange={(e) => uploadCover(e, 'covers')}
             />
             <StyledLabel htmlFor="raised-button-file">
-              {t('buttons.uploadCover')}
+              {loadingCover ? t('buttons.loading') : t('buttons.uploadCover')}
             </StyledLabel>
             <FormHelperText error>{errors.cover}</FormHelperText>
             {

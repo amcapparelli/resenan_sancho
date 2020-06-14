@@ -17,6 +17,9 @@ import { Reviewer } from '../interfaces/reviewer';
 const useStyles = makeStyles(() => createStyles({
   root: {
     maxWidth: 400,
+    ['@media (max-width:768px)']: { // eslint-disable-line no-useless-computed-key
+      maxWidth: 300,
+    },
   },
   media: {
     height: 0,

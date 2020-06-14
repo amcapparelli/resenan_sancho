@@ -87,10 +87,10 @@ const BookListItem: React.FC<Props> = ({ book }: Props): JSX.Element => {
               <Link href={{ pathname: '/books', query: { book: _id } }}>
                 <StyledButton
                   variant="contained"
-                  color="secondary"
+                  color="primary"
                   size="large"
                 >
-                  Ver más información
+                  Ver más / Pedir ejemplar
                 </StyledButton>
               </Link>
             </StyledButtonContainer>
@@ -101,6 +101,7 @@ const BookListItem: React.FC<Props> = ({ book }: Props): JSX.Element => {
   );
 };
 
+
 const StyledButton = styledComponents(Button)`
   color: ${(props) => props.theme.main};
   :hover{
@@ -110,6 +111,12 @@ const StyledButton = styledComponents(Button)`
 `;
 
 const StyledButtonContainer = styledComponents.div`
+  @media (max-width: 768px) {
+    margin-left: 15%;
+  }
+  @media (max-width: 375px) {
+    margin-left: 0;
+  }
   margin-top: 5%;
   margin-left: 30%;
 `;

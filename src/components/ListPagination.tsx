@@ -16,6 +16,9 @@ const ListPagination = ({ onChange, totalPages }: MyProps) => (
 );
 
 const StyledPagination = styledComponents(Pagination)`
+  @media (max-width: 375px) {
+    margin-left: 0;
+  }
   margin-left: 35%;
 `;
 

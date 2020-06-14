@@ -83,6 +83,10 @@ const StyledPrivateNav = styledComponents.nav`
 `;
 
 const StyledLogo = styledComponents.img`
+  @media (max-width: 375px) {
+    width: 100%;
+    padding: 0;
+  }
   padding: 1rem 0 1rem 2rem;
   width: 30%;
 `;

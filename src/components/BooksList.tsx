@@ -60,6 +60,12 @@ const BooksList = () => {
 const StyledList = styledComponents.ul`
   list-style-type: none;
   display: grid;
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (max-width: 375px) {
+    grid-template-columns: 1fr;
+  }
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 1rem;
 `;
