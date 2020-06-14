@@ -189,7 +189,7 @@ const StyledNav = styledComponents.div`
 const StyledArticleButton = styledComponents.button`
   font-family: ${(props) => props.theme.fontFamily};
   font-size: 1rem;
-  width: 100%;
+  width: 90%;
   margin: 5%;
   padding: 5%;
   color: ${(props) => props.theme.dark};
@@ -203,6 +203,14 @@ const StyledArticleButton = styledComponents.button`
 `;
 
 const StyledArticleContainer = styledComponents.article`
+  @media (max-width: 375px) {
+    display: grid;
+    grid-template-areas: "head"
+                          "main"
+                          "nav";
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr;
+  }
   padding: 0 5% 0 5%;
   display: grid;
   grid-template-areas: "head nav"
@@ -212,6 +220,14 @@ const StyledArticleContainer = styledComponents.article`
 `;
 
 const StyledArticleBContainer = styledComponents.article`
+  @media (max-width: 375px) {
+    display: grid;
+    grid-template-areas: "head"
+                          "main"
+                          "nav";
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr;
+  }
   padding: 0 5% 0 5%;
   display: grid;
   grid-template-areas: "nav head"

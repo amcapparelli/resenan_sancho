@@ -47,7 +47,13 @@ const ModalContact: React.FC<MyProps> = ({
   }, [book, user._id]);
 
   useEffect(() => {
-    if (orderBookResponse.success) setCopiesOrdered(1);
+    if (orderBookResponse.success) {
+      setCopiesOrdered(1);
+      ReactGA.event({
+        category: 'Ejemplar pedido',
+        action: `Libro pedido: ${bookTitle}, reseñador: ${user.name} ${user.lastName || ''}`,
+      });
+    }
   }, [orderBookResponse.success]);
 
   useEffect(() => {
@@ -56,10 +62,6 @@ const ModalContact: React.FC<MyProps> = ({
 
   const handleSubmit = () => {
     orderBookRequest(URL, 'post', contactForm);
-    ReactGA.event({
-      category: 'book copies',
-      action: `New Order book: ${bookTitle}, reviewer: ${user.name} ${user.lastName || ''}`,
-    });
   };
 
   const handleCloseModal = () => {

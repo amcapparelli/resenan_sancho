@@ -52,6 +52,9 @@ const Header: React.FC = (): JSX.Element => {
 };
 
 const StyledProfileButton = styledComponents(Button)`
+  @media (max-width: 768px) {
+    height: 100%;
+  }
   width: 60%;
   height: 40%;
   justify-self: end;
@@ -62,6 +65,10 @@ const StyledProfileButton = styledComponents(Button)`
   }
 `;
 const StyledHeaderContainer = styledComponents.div`
+  @media (max-width: 375px) {
+    grid-gap: 3%;
+    grid-template-columns: 1fr 2fr 2fr;
+  }
   grid-template-columns: 1fr 1fr 1fr;
   grid-gap: 5%;
   margin: 0;
@@ -77,6 +84,9 @@ const StyledNav = styledComponents.nav`
 `;
 
 const StyledPrivateNav = styledComponents.nav`
+  @media (max-width: 375px) {
+    grid-gap: 1%;
+  }
   display: grid;
   grid-template-columns: repeat(2, auto);
   gap: 2rem;

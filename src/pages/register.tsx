@@ -44,6 +44,10 @@ const Register: React.FC = (): JSX.Element => {
   useEffect(() => {
     if (signupResponse.success) {
       router.push('/login');
+      ReactGA.event({
+        category: 'Usuario Registrado',
+        action: `Nuevo Usuario: ${registerForm.name} ${registerForm.lastName}`,
+      });
     }
   }, [signupResponse.success]);
 
@@ -65,10 +69,6 @@ const Register: React.FC = (): JSX.Element => {
 
   const signup = (): void => {
     signupRequest(registerURL, 'post', registerForm);
-    ReactGA.event({
-      category: 'Sign Up',
-      action: 'Usuario Registrado',
-    });
   };
 
   const submit = () => {

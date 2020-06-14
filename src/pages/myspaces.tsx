@@ -105,8 +105,8 @@ const MySpaces: React.FC = (): JSX.Element => {
     );
     if (!isEditing) {
       ReactGA.event({
-        category: 'reviewers',
-        action: `New Reviewer ${user.name} ${user.lastName || ''}`,
+        category: 'Nuevo reseñador',
+        action: `Reseñador ${user.name} ${user.lastName || ''}`,
       });
     }
     try {
