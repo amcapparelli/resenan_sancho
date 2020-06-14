@@ -122,13 +122,21 @@ const StyledButtonContainer = styledComponents.div`
 `;
 
 const StyledCardContentContainer = styledComponents.div`
-  height: 650px;
   display: grid;
   grid-template-areas: "head cover"
-                       "main main"
-                       "foot foot";
-  grid-template-rows: auto 200px 100px;
-  grid-template-columns: 2fr 1fr;           
+                      "main main"
+                      "foot foot";
+  grid-template-columns: 2fr 1fr;
+  @media (max-width: 1280px) {
+    height: 550px;
+    grid-template-rows: 250px 200px 100px;
+  }
+  @media (max-width: 768px) {
+    height: 650px;
+    grid-template-rows: 350px 200px 100px; 
+  }
+  height: 650px;
+  grid-template-rows: 350px 200px 100px;         
 `;
 
 const StyledCardHeader = styledComponents.div`
@@ -149,6 +157,12 @@ const StyledCardFooter = styledComponents.div`
 `;
 
 const StyledChipsFormatsContainer = styledComponents.div`
+  @media (max-width: 375px) {
+    margin-top: 5%;
+    display: grid;
+    grid-gap: .1rem;
+    grid-template-columns: repeat(3, auto);
+  }
   display: grid;
   grid-gap: .1rem;
   grid-template-columns: repeat(6, auto);
