@@ -40,7 +40,8 @@ const BookListItem: React.FC<Props> = ({ book }: Props): JSX.Element => {
               title={
                 (
                   <Typography variant="h5" align="left">
-                    {title}
+                    {title.substring(0, 100)}
+                    {title.length > 100 && '...'}
                   </Typography>
                 )
               }
@@ -51,7 +52,7 @@ const BookListItem: React.FC<Props> = ({ book }: Props): JSX.Element => {
           </StyledCardHeader>
           <StyledCardMain>
             <Typography component="span" align="left">
-              {synopsis.substring(0, 200)}
+              {synopsis.substring(0, 250)}
               ...
             </Typography>
             <Link href={{ pathname: '/books', query: { book: _id } }}>
@@ -101,7 +102,6 @@ const BookListItem: React.FC<Props> = ({ book }: Props): JSX.Element => {
   );
 };
 
-
 const StyledButton = styledComponents(Button)`
   color: ${(props) => props.theme.main};
   :hover{
@@ -118,15 +118,16 @@ const StyledButtonContainer = styledComponents.div`
     margin-left: 0;
   }
   margin-top: 5%;
-  margin-left: 30%;
+  margin-left: 20%;
 `;
 
 const StyledCardContentContainer = styledComponents.div`
+  height: 550px;
   display: grid;
   grid-template-areas: "head cover"
-                       "main cover"
+                       "main main"
                        "foot foot";
-  grid-template-rows: 1fr 2fr 1fr;
+  grid-template-rows: auto 200px 100px;
   grid-template-columns: 2fr 1fr;           
 `;
 
@@ -148,7 +149,6 @@ const StyledCardFooter = styledComponents.div`
 `;
 
 const StyledChipsFormatsContainer = styledComponents.div`
-  margin-top: 1rem;
   display: grid;
   grid-gap: .1rem;
   grid-template-columns: repeat(6, auto);
