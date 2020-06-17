@@ -4,7 +4,6 @@ import styledComponents from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import {
   Button,
-  Paper,
   Typography,
   Chip,
 } from '@material-ui/core';
@@ -46,53 +45,51 @@ const BookItem: React.FC<MyProps> = (props: MyProps): JSX.Element => {
 
   return (
     <>
-      <Paper>
-        <StyledCardContentContainer>
-          <StyledHeadContainer>
-            <Typography variant="h2">{title}</Typography>
-            <Typography variant="subtitle1">
-              {`${author.name} ${author.lastName || ''} (${editorial || 'autor independiente'})`}
-            </Typography>
-          </StyledHeadContainer>
-          <StyledMainContainer>
-            <Typography variant="body1">{synopsis}</Typography>
-            <Typography variant="body1" align="left">{`${t('books.pages')}: ${pages}`}</Typography>
-            <StyledGenreChip
-              size="small"
-              label={genre && t(`genres.${genres.find((g) => g.code === genre).name}`)}
-              color="primary"
-            />
-          </StyledMainContainer>
-          <StyledFootContainer>
-            {
-              isLogged
-                ? (
+      <StyledCardContentContainer>
+        <StyledHeadContainer>
+          <Typography variant="h2">{title}</Typography>
+          <Typography variant="subtitle1">
+            {`${author.name} ${author.lastName || ''} (${editorial || 'autor independiente'})`}
+          </Typography>
+        </StyledHeadContainer>
+        <StyledMainContainer>
+          <Typography variant="body1">{synopsis}</Typography>
+          <Typography variant="body1" align="left">{`${t('books.pages')}: ${pages}`}</Typography>
+          <StyledGenreChip
+            size="small"
+            label={genre && t(`genres.${genres.find((g) => g.code === genre).name}`)}
+            color="primary"
+          />
+        </StyledMainContainer>
+        <StyledFootContainer>
+          {
+            isLogged
+              ? (
+                <Button
+                  disabled={copies === 0}
+                  variant="contained"
+                  startIcon={<LibraryBooksIcon />}
+                  color="secondary"
+                  size="large"
+                  onClick={handleOrderCopy}
+                >
+                  {`Pedir un ejemplar. Hay ${copies} disponibles`}
+                </Button>
+              )
+              : (
+                <Link href="/login">
                   <Button
-                    disabled={copies === 0}
-                    variant="contained"
-                    startIcon={<LibraryBooksIcon />}
                     color="secondary"
-                    size="large"
-                    onClick={handleOrderCopy}
                   >
-                    {`Pedir un ejemplar. Hay ${copies} disponibles`}
+                    Para Pedir un ejemplar tienes que estar logueado.
                   </Button>
-                )
-                : (
-                  <Link href="/login">
-                    <Button
-                      color="secondary"
-                    >
-                      Para Pedir un ejemplar tienes que estar logueado.
-                    </Button>
-                  </Link>
-                )
-            }
+                </Link>
+              )
+          }
 
-          </StyledFootContainer>
-          <StyledImageContainer src={cover} />
-        </StyledCardContentContainer>
-      </Paper>
+        </StyledFootContainer>
+        <StyledImageContainer src={cover} />
+      </StyledCardContentContainer>
       <ModalContact
         open={openModalContact}
         onClose={(copiesOrdered: number) => {
@@ -111,6 +108,10 @@ const StyledGenreChip = styledComponents(Chip)`
 `;
 
 const StyledHeadContainer = styledComponents.div`
+  @media (max-width: 375px) {
+    text-align: center;
+    padding-right: 10%;
+  }
   grid-area: head;
 `;
 
@@ -129,20 +130,34 @@ const StyledFootContainer = styledComponents.div`
 `;
 
 const StyledImageContainer = styledComponents.img`
+  @media (max-width: 375px) {
+    justify-self: center;
+  }
   grid-area: cover;
-  width: 60%;
+  width: 50%;
   border:2px solid #fff;
   box-shadow: 10px 10px 5px #ccc;
 `;
 
 const StyledCardContentContainer = styledComponents.div`
+  @media (max-width: 375px) {
+    display: grid;
+    grid-template-areas: "head"
+                          "cover"
+                          "main"
+                          "foot";
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr auto;
+    grid-gap: 3%;
+    padding: 0% 3% 0 0;
+  }
   margin-top: 3%;
   display: grid;
   grid-template-areas: "head cover"
                        "main cover"
                        "foot cover";
   grid-template-columns: 2fr 1fr;
-  grid-template-rows: 1fr 2fr .5fr;
+  grid-template-rows: 1fr auto;
   padding: 2%;
 `;
 
