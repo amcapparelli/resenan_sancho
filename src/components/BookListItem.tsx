@@ -115,7 +115,8 @@ const StyledButtonContainer = styledComponents.div`
     margin-left: 15%;
   }
   @media (max-width: 375px) {
-    margin-left: 0;
+    margin-top: 10%;
+    margin-left: 10%;
   }
   margin-top: 5%;
   margin-left: 20%;
@@ -124,8 +125,8 @@ const StyledButtonContainer = styledComponents.div`
 const StyledCardContentContainer = styledComponents.div`
   display: grid;
   grid-template-areas: "head cover"
-                      "main main"
-                      "foot foot";
+                       "main main"
+                       "foot foot";
   grid-template-columns: 2fr 1fr;
   @media (max-width: 1280px) {
     height: 550px;
@@ -134,6 +135,9 @@ const StyledCardContentContainer = styledComponents.div`
   @media (max-width: 768px) {
     height: 650px;
     grid-template-rows: 350px 200px 100px; 
+  }
+  @media (max-width: 375px) {
+    grid-template-rows: 300px 200px 100px; 
   }
   height: 650px;
   grid-template-rows: 350px 200px 100px;         

@@ -1,5 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import styledComponents from 'styled-components';
+import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 import ReactGA from 'react-ga';
 import { trackingId } from '../utils/constants/GATrackingID';
@@ -8,6 +9,7 @@ import { StyledTitle } from '../components';
 import UserContext from '../store/context/userContext/UserContext';
 
 const index = () => {
+  const { t } = useTranslation();
   const { isLogged } = useContext(UserContext);
   useEffect(() => {
     ReactGA.initialize(trackingId);
@@ -16,13 +18,13 @@ const index = () => {
   return (
     <PublicZoneLayout showFooter>
       <StyledTitle
-        text="Un libro sin reseñas es un libro aún sin publicar."
+        text={t('titles.main')}
       />
       <StyledSection>
         <StyledArticleContainer>
           <StyledArticleTitle>
             <h2>
-              Reseñan Sancho es un sitio para conectar a escritores con reseñadores literarios.
+              {t('titles.homeFirst')}
             </h2>
           </StyledArticleTitle>
           <StyledArticleP>
@@ -41,10 +43,10 @@ const index = () => {
           </StyledArticleP>
           <StyledNav>
             <Link href="/reviewers">
-              <StyledArticleButton aria-label="Find Reviewers">Encontrar reseñadores</StyledArticleButton>
+              <StyledArticleButton aria-label="Find Reviewers">{t('buttons.findReviewers')}</StyledArticleButton>
             </Link>
             <Link href="/books">
-              <StyledArticleButton aria-label="Find Books">Encontrar Libros</StyledArticleButton>
+              <StyledArticleButton aria-label="Find Books">{t('buttons.seeBooks')}</StyledArticleButton>
             </Link>
           </StyledNav>
         </StyledArticleContainer>
@@ -53,7 +55,7 @@ const index = () => {
         <StyledArticleBContainer>
           <StyledArticleTitleB>
             <h2>
-              Libros para Reseñadores Literarios.
+              {t('titles.homeSecond')}
             </h2>
           </StyledArticleTitleB>
           <StyledArticleBP>
@@ -76,18 +78,18 @@ const index = () => {
           </StyledArticleBP>
           <StyledNav>
             <Link href="/books">
-              <StyledArticleButton aria-label="Find Books">Ver Libros Disponibles</StyledArticleButton>
+              <StyledArticleButton aria-label="Find Books">{t('buttons.seeBooks')}</StyledArticleButton>
             </Link>
             {
               !isLogged
                 ? (
                   <Link href="/register">
-                    <StyledArticleButton aria-label="Register">Darme de alta</StyledArticleButton>
+                    <StyledArticleButton aria-label="Register">{t('buttons.signUp')}</StyledArticleButton>
                   </Link>
                 )
                 : (
                   <Link href="/myspaces">
-                    <StyledArticleButton aria-label="Add literary spaces">Añadir Mi espacio literario</StyledArticleButton>
+                    <StyledArticleButton aria-label="Add literary spaces">{t('buttons.addLiterarySpaces')}</StyledArticleButton>
                   </Link>
                 )
             }
@@ -98,7 +100,7 @@ const index = () => {
         <StyledArticleContainer>
           <StyledArticleTitleB>
             <h2>
-              Promoción para escritores.
+              {t('titles.homeThird')}
             </h2>
           </StyledArticleTitleB>
           <StyledArticleP>
@@ -115,18 +117,18 @@ const index = () => {
           </StyledArticleP>
           <StyledNav>
             <Link href="/reviewers">
-              <StyledArticleButton aria-label="Find Reviewers">Encontrar reseñadores</StyledArticleButton>
+              <StyledArticleButton aria-label="Find Reviewers">{t('buttons.findReviewers')}</StyledArticleButton>
             </Link>
             {
               !isLogged
                 ? (
                   <Link href="/register">
-                    <StyledArticleButton aria-label="Register">Darme de alta</StyledArticleButton>
+                    <StyledArticleButton aria-label="Register">{t('buttons.signUp')}</StyledArticleButton>
                   </Link>
                 )
                 : (
                   <Link href="/addBook">
-                    <StyledArticleButton aria-label="Add Book">Añadir Libro</StyledArticleButton>
+                    <StyledArticleButton aria-label="Add Book">{t('buttons.addBook')}</StyledArticleButton>
                   </Link>
                 )
             }

@@ -52,6 +52,10 @@ const MyBooks: React.FC = (): JSX.Element => {
   }, [suscribeUserResponse.message]);
 
   useEffect(() => {
+    setSuscribe(!!(user.emailAuthorListStatus && user.emailAuthorListStatus === 'subscribed'));
+  }, [user.emailAuthorListStatus]);
+
+  useEffect(() => {
     ReactGA.initialize(trackingId);
     ReactGA.pageview('/myBooks');
   }, []);

@@ -1,6 +1,7 @@
 /* eslint-disable no-nested-ternary */
 import React, { useEffect } from 'react';
 import styledComponents from 'styled-components';
+import { useTranslation } from 'react-i18next';
 import { useBooksListFetch, useFilters } from '../utils/customHooks';
 import {
   BookListItem,
@@ -11,6 +12,7 @@ import {
 } from '.';
 
 const BooksList = () => {
+  const { t } = useTranslation();
   const [filters, setFilters] = useFilters({
     page: 1,
   });
@@ -33,7 +35,7 @@ const BooksList = () => {
         onClick={() => filter()}
         genreSelected={filters.genre}
         formatSelected={filters.format}
-        text="Busca libros según tus preferencias: "
+        text={t('helpers.searchBooks')}
       />
       <ListPagination
         onChange={(e: React.ChangeEvent<HTMLInputElement>, page: number) => setFilters('page', page)}

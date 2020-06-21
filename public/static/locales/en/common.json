@@ -17,7 +17,12 @@
     "uploadCover": "Upload Cover",
     "filter": "Filter list",
     "saving": "Saving...",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "findReviewers": "Find reviewers",
+    "seeBooks": "See available books",
+    "signUp": "Sign Up",
+    "addBook": "Add Book",
+    "addLiterarySpaces": "Add my literary spaces"
   },
   "form": {
     "name": "Name",
@@ -62,13 +67,17 @@
   "titles": {
     "updateProfile": "Update Profile",
     "chooseFormats": "Elige tus preferencias de lectura",
-    "describeYourself": "Cuentale al mundo cómo te gusta escribir tus reseñas",
+    "describeYourself": "Tell the world how do you like to write your reviews",
     "mybooks": "My Books",
     "mySpaces": "My literary spaces",
     "addBook": "Add Book",
     "whereDoYouReview": "Where do you post your literary reviews?",
-    "whichGenres": "What literary genres do you prefer?",
-    "help": "Help!"
+    "whichGenres": "Which literary genres do you prefer?",
+    "help": "Help!",
+    "main": "A book without reviews is a book not yet published.",
+    "homeFirst": "Reseñan Sancho is a site to connect writers with literary reviewers.",
+    "homeSecond": "Books for Literary Reviewers.",
+    "homeThird": "Promotion for writers."
   },
   "components": {
     "countriesSelector": {
@@ -110,5 +119,16 @@
   "books": {
     "pages": "pages",
     "availableFormats": "Available formats"
+  },
+  "helpers": {
+    "describeYourself": "Some ideas to answer this question: For example, the type of books you like, if you usually interview authors, if you make raffles among your readers, if you publish only positive reviews or also negative ones, if you have a rating scale, the time it takes you to write a review since you start reading the book, etc.",
+    "searchBooks": "Find Books according to your preferences: ",
+    "searchReviewers": "Find reviewers for your novel: "
+  },
+  "responses": {
+    "userUpdatedSuccessfully": "Your profile was successfully updated",
+    "authorizationFailed": "We have not been able to verify your identity. This is usually due to a problem with your browser's cookies. Please try from another browser.",
+    "noPermissions": "You don´t have permissions to do this operation. Contact support if you think it´s a mistake.",
+    "unexpectedTokenFailure": "Somthing went wrong. Please try to login again or contact support."
   }
 }

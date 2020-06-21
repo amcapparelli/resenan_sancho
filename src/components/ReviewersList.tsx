@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import styledComponents from 'styled-components';
+import { useTranslation } from 'react-i18next';
 import {
   ReviewerListItem,
   Loading,
@@ -9,6 +10,7 @@ import {
 import { useReviewersListFetch, useFilters } from '../utils/customHooks';
 
 const ReviewersList: React.FC = (): JSX.Element => {
+  const { t } = useTranslation();
   const [filters, setFilters] = useFilters({
     page: 1,
   });
@@ -30,7 +32,7 @@ const ReviewersList: React.FC = (): JSX.Element => {
         onClick={() => filter()}
         genreSelected={filters.genre}
         formatSelected={filters.format}
-        text="Busca reseñadores para tu novela:"
+        text={t('helpers.searchReviewers')}
         showInputSearch
       />
       <ListPagination

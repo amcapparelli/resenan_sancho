@@ -160,7 +160,7 @@ const MyProfile: React.FC = (): JSX.Element => {
                       variant="filled"
                       severity={response.success ? 'success' : 'error'}
                     >
-                      {response.message}
+                      {t(`responses.${response.message}`)}
                     </Alert>
                   </Collapse>
                 )
@@ -190,6 +190,10 @@ const MyProfile: React.FC = (): JSX.Element => {
 const StyledCard = styledComponents(Card)`
   display: grid;
   grid-template-columns: 1fr 3fr;
+  @media (max-width: 375px) {
+    display: grid;
+    grid-template-columns: 1fr; 
+  }
 `;
 
 const StyledAvatarContainer = styledComponents.div`
@@ -201,6 +205,10 @@ const StyledAvatarContainer = styledComponents.div`
 `;
 
 const StyledForm = styledComponents.form`
+  @media (max-width: 375px) {
+    display: grid;
+    grid-template-columns: 1fr; 
+  }
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-gap: 1rem;
@@ -209,6 +217,9 @@ const StyledForm = styledComponents.form`
 `;
 
 const StyledButton = styledComponents(Button)`
+  @media (max-width: 375px) {
+    width: 50%; 
+  }
   width: 30%;
   justify-self: center;
 `;

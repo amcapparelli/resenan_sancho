@@ -295,6 +295,10 @@ const AddBookForm: React.FC = (): JSX.Element => {
 };
 
 const StyledFormContainer = styledComponents(CardContent)`
+  @media (max-width: 375px) {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
   display: grid;
   grid-template-columns: 0.70fr 2fr 1fr;
   grid-gap: 2rem;

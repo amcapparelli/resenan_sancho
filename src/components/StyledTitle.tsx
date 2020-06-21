@@ -11,6 +11,10 @@ const StyledTitle = ({ text }: MyProps) => (
 
 
 const StyledText = styledComponents.h1`
+  @media (max-width: 375px) {
+    font-size: 2rem;
+    line-height: 60px;
+  }
   margin: 0;
   padding: 0 5% 0 5%;
   font-family: ${(props) => props.theme.fontTitles};

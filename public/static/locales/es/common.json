@@ -17,7 +17,12 @@
     "uploadCover": "Subir portada",
     "filter": "Filtrar lista",
     "saving": "Guardando...",
-    "loading": "Cargando..."
+    "loading": "Cargando...",
+    "findReviewers": "Encontrar Reseñadores",
+    "seeBooks": "Ver libros disponibles",
+    "signUp": "Darme de alta",
+    "addBook": "Añadir Libro",
+    "addLiterarySpaces": "Añadir mi especio literario"
   },
   "form": {
     "name": "Nombre",
@@ -68,7 +73,11 @@
     "addBook": "Añade Libro",
     "whereDoYouReview": "¿Dónde publicas tus reseñas literarias?",
     "whichGenres": "¿Qué géneros literarios prefieres?",
-    "help": "¡Ayuda!"
+    "help": "¡Ayuda!",
+    "main": "Un libro sin reseñas es un libro aún sin publicar.",
+    "homeFirst": "Reseñan Sancho es un sitio para conectar a escritores con reseñadores literarios.",
+    "homeSecond": "Libros para Reseñadores Literarios.",
+    "homeThird": "Promoción para escritores."
   },
   "components": {
     "countriesSelector": {
@@ -110,5 +119,16 @@
   "books": {
     "pages": "páginas",
     "availableFormats": "Formatos disponibles"
+  },
+  "helpers": {
+    "describeYourself": "Algunas ideas para contestar a esta pregunta: Por ejemplo, el tipo de libros que te gusta, si sueles entrevistar a autores, si realizas sorteos entre tus lectores, si publicas tanto reseñas positivas como negativas, si tienes una escala de puntuación, el tiempo que te lleva una reseña desde que comienzas a leer el libro, etc.",
+    "searchBooks": "Busca libros según tus preferencias: ",
+    "searchReviewers": "Busca reseñadores para tu novela:"
+  },
+  "responses": {
+    "userUpdatedSuccessfully": "Tu perfil fue actualizado con éxito",
+    "authorizationFailed": "No hemos podido verificar tu identidad. Esto suele deberse a un problema con las cookies del navegador. Por favor, intenta desde otro navegador.",
+    "noPermissions": "No tienes permisos para realizar esta operación. Si crees que puede ser un error contacta con nosotros.",
+    "unexpectedTokenFailure": "Algo salió mal. Por favor, intenta iniciar sesión otra vez o contacta con nosotros."
   }
 }

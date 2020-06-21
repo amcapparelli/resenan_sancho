@@ -93,6 +93,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     ...theme.mixins.toolbar,
   },
   content: {
+    ['@media (max-width:768px)']: { // eslint-disable-line no-useless-computed-key
+      padding: theme.spacing(1),
+    },
     flexGrow: 1,
     padding: theme.spacing(3),
   },

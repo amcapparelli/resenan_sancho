@@ -228,17 +228,12 @@ const MySpaces: React.FC = (): JSX.Element => {
         <StyledSection>
           <Typography variant="h3" align="center">{t('titles.describeYourself')}</Typography>
           <FormHelperText>
-            Algunas ideas para contestar a esta pregunta: Por ejemplo,
-            el tipo de libros que te gusta, si sueles entrevistar a autores, si
-            realizas sorteos entre tus lectores, si publicas tanto reseñas positivas
-            como negativas, si tienes una escala de puntuación, el tiempo que te lleva
-            una reseña desde que comienzas a leer el libro, etc.
+            {t('helpers.describeYourself')}
           </FormHelperText>
           <Card>
             <CardContent>
               <TextField
                 id="standard-full-width"
-                label={t('titles.describeYourself')}
                 multiline
                 style={{ margin: 8 }}
                 name="description"
@@ -324,6 +319,10 @@ const MySpaces: React.FC = (): JSX.Element => {
 };
 
 const StyledListContainer = styledComponents.ul`
+  @media (max-width: 375px) {
+    display: grid;
+    grid-template-columns: 1fr; 
+  }
   margin-left: 0;  
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -331,15 +330,25 @@ const StyledListContainer = styledComponents.ul`
 `;
 
 const StyledSection = styledComponents.section`
+  @media (max-width: 375px) {
+    margin-top: 7rem;
+  }
   margin-top: 1.5rem;
 `;
 
 const StyledCenteredContainer = styledComponents.div`
+  @media (max-width: 375px) {
+    margin-left: 25%;
+  }
   margin-top: 1rem;
   margin-left: 45%;
 `;
 
 const StyledGenresContainer = styledComponents(CardContent)`
+  @media (max-width: 375px) {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   grid-gap: 1%;
