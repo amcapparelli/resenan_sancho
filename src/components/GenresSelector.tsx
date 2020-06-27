@@ -9,7 +9,6 @@ import {
 } from '@material-ui/core';
 import genres from '../utils/constants/genres';
 
-
 interface MyProps {
   genreSelected: string
   onChange: Function
@@ -53,9 +52,21 @@ const GenresSelector: React.FC<MyProps> = (props: MyProps): JSX.Element => {
           {t('components.genresSelector.title')}
         </MenuItem>
         {
-          genres.map(({ name, code }) => (
-            <MenuItem value={code}>{t(`genres.${name}`)}</MenuItem>
-          ))
+          genres
+            .sort((a, b) => {
+              const genreA = t(`genres.${a.name}`);
+              const genreB = t(`genres.${b.name}`);
+              let comparison = 0;
+              if (genreA > genreB) {
+                comparison = 1;
+              } else if (genreA < genreB) {
+                comparison = -1;
+              }
+              return comparison;
+            })
+            .map(({ name, code }) => (
+              <MenuItem value={code}>{t(`genres.${name}`)}</MenuItem>
+            ))
         }
       </Select>
     </FormControl>
