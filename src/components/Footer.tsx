@@ -10,11 +10,11 @@ const Footer = () => (
   <StyledFooter>
     <StyledLegal>
       <Typography variant="h6">Avisos Legales</Typography>
-      <Link href="/">
-        <Typography component="p" color="secondary">Política de Privacidad.</Typography>
-      </Link>
-      <Link href="/">
+      <Link href="/about">
         <Typography component="p" color="secondary">¿Qué es Reseñan Sancho? Preguntas frecuentes.</Typography>
+      </Link>
+      <Link href="/legal">
+        <Typography component="p" color="secondary">Aviso legal y Política de Privacidad.</Typography>
       </Link>
     </StyledLegal>
     <StyledSocial>
