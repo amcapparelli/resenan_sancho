@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import styledComponents from 'styled-components';
 import { useRouter } from 'next/router';
 import {
@@ -8,6 +8,7 @@ import {
 } from '@material-ui/core';
 import { ModalDialog } from '.';
 import { deleteUser as URL } from '../config/routes';
+import UserContext from '../store/context/userContext/UserContext';
 
 interface MyProps {
   open: boolean
@@ -15,6 +16,7 @@ interface MyProps {
 }
 
 const ModalDeleteAccount: React.FC<MyProps> = ({ open, onClose }: MyProps): JSX.Element => {
+  const { resetUser } = useContext(UserContext);
   const [responseDeleteRequest, setResponseDeleteRequest] = useState({
     success: undefined,
     message: '',
@@ -23,6 +25,7 @@ const ModalDeleteAccount: React.FC<MyProps> = ({ open, onClose }: MyProps): JSX.
 
   useEffect(() => {
     if (responseDeleteRequest.success) {
+      resetUser();
       router.push('/register');
     }
   }, [responseDeleteRequest.success]);

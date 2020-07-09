@@ -50,6 +50,12 @@ const UserContextProvider: React.FC<MyProps> = (props: MyProps) => {
     setUser(userLogged);
     if (userLogged.token) setIsLogged(true);
   };
+
+  const resetUser = (): void => {
+    setUser(initialUser);
+    setIsLogged(false);
+  };
+
   const logoutRequest = async (): Promise<void> => {
     try {
       await fetch(logout, {
@@ -74,6 +80,7 @@ const UserContextProvider: React.FC<MyProps> = (props: MyProps) => {
       isLogged,
       logoutRequest,
       loading,
+      resetUser,
     }}
     >
       {children}

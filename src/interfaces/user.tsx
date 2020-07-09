@@ -34,4 +34,5 @@ export interface IUserContext {
   isLogged: boolean,
   logoutRequest(): void,
   loading: boolean,
+  resetUser(): void,
 }
