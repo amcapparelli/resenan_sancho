@@ -79,6 +79,17 @@
     "homeSecond": "Books for Literary Reviewers.",
     "homeThird": "Promotion for writers."
   },
+  "paragraphs": {
+    "homeOne": "We know that a literary review can be positive or negative, but the most important thing is it has to be honest.",
+    "homeTwo": "Not only to publicize our novel but to improve as writers, reviews are a very important part of the editorial process.",
+    "homeThree": "Reseñan Sancho (They Review Sancho) takes its name from the famous phrase: 'They bark, Sancho, sign that we ride'.",
+    "homeFour": "If you have a literary blog, you are a booktuber or a bookstagramer, or you just love writing reviews of the books you read, on goodreads or amazon, we know that you will always be interested in discovering a new writer.",
+    "homeFive": "Create your account to find books and connect with their authors. They will thank you and will be willing to send you a copy of their novel.",
+    "homeSix": "In addition, you will participate in review contests, group reading proposals and book launches in your country.",
+    "homeSeven": "The best way to promote your novel is someone else talking about it.",
+    "homeEight": "A literary review is a reader recommending a book to other readers.",
+    "homeNine": "If you want to start publicizing your work, create your account and start offering your Book hundreds of literary reviewers interested in the genre of your novel."
+  },
   "components": {
     "countriesSelector": {
       "title": "Country"

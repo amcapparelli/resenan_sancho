@@ -29,16 +29,13 @@ const index = () => {
           </StyledArticleTitle>
           <StyledArticleP>
             <p>
-              Sabemos que una reseña literaria puede ser positiva o negativa,
-              pero lo importante es que sea honesta.
+              {t('paragraphs.homeOne')}
             </p>
             <p>
-              No solo para dar a conocer nuestra novela sino para mejorar como escritores,
-              las reseñas son una parte muy importante del proceso editorial.
+              {t('paragraphs.homeTwo')}
             </p>
             <p>
-              Por eso, Reseñan Sancho toma su nombre de la célebre frase:
-              «Ladran, Sancho, señal que cabalgamos».
+              {t('paragraphs.homeThree')}
             </p>
           </StyledArticleP>
           <StyledNav>
@@ -60,20 +57,13 @@ const index = () => {
           </StyledArticleTitleB>
           <StyledArticleBP>
             <p>
-              Si tienes un blog literario, eres booktuber o bookstagramer,
-              o simplemente te encanta escribir reseñas de los libros que lees, en goodreads
-              o amazon, sabemos que siempre tendrás interés en descubrir a una escritora o
-              escritor nuevos.
+              {t('paragraphs.homeFour')}
             </p>
             <p>
-              Crea tu cuenta para encotrar libros y conectar con sus autores.
-              Ellos te lo agradecerán y estarán dispuestos a enviarte un ejemplar de su novela.
+              {t('paragraphs.homeFive')}
             </p>
             <p>
-              Además, participarás en
-              <b> concursos de reseñas</b>
-              , propuestas de lecturas conjuntas
-              y lanzamientos de libros en tu país.
+              {t('paragraphs.homeSix')}
             </p>
           </StyledArticleBP>
           <StyledNav>
@@ -105,14 +95,13 @@ const index = () => {
           </StyledArticleTitleB>
           <StyledArticleP>
             <p>
-              La mejor forma de promocionar una novela es que los demás hablen de ella.
+              {t('paragraphs.homeSeven')}
             </p>
             <p>
-              Una reseña literaria es un lector recomendándole a otros lectores un libro.
+              {t('paragraphs.homeEight')}
             </p>
             <p>
-              Si quieres empezar a dar a conocer tu obra, crea tu cuenta y empieza a ofrecer tu
-              libro a cientos de reseñadores liteararios interesados en el género de tu novela.
+              {t('paragraphs.homeNine')}
             </p>
           </StyledArticleP>
           <StyledNav>

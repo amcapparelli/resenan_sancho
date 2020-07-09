@@ -79,6 +79,17 @@
     "homeSecond": "Libros para Reseñadores Literarios.",
     "homeThird": "Promoción para escritores."
   },
+  "paragraphs": {
+    "homeOne": "Sabemos que una reseña literaria puede ser positiva o negativa, pero lo importante es que sea honesta.",
+    "homeTwo": "No solo para dar a conocer nuestra novela sino para mejorar como escritores, las reseñas son una parte muy importante del proceso editorial.",
+    "homeThree": "Por eso, Reseñan Sancho toma su nombre de la célebre frase: «Ladran, Sancho, señal que cabalgamos».",
+    "homeFour": "Si tienes un blog literario, eres booktuber o bookstagramer, o simplemente te encanta escribir reseñas de los libros que lees, en goodreads o amazon, sabemos que siempre tendrás interés en descubrir a una escritora o escritor nuevos.",
+    "homeFive": "Crea tu cuenta para encotrar libros y conectar con sus autores. Ellos te lo agradecerán y estarán dispuestos a enviarte un ejemplar de su novela.",
+    "homeSix": "Además, participarás en concursos de reseñas, propuestas de lecturas conjuntas y lanzamientos de libros en tu país.",
+    "homeSeven": "La mejor forma de promocionar tu novela es que los demás hablen de ella.",
+    "homeEight": "Una reseña literaria es un lector recomendándole a otros lectores un libro.",
+    "homeNine": "Si quieres empezar a dar a conocer tu obra, crea tu cuenta y empieza a ofrecer tu libro a cientos de reseñadores liteararios interesados en el género de tu novela."
+  },
   "components": {
     "countriesSelector": {
       "title": "País"
