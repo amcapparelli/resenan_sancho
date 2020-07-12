@@ -13,6 +13,7 @@ export { default as Header } from './Header';
 export { default as Footer } from './Footer';
 export { default as Loading } from './Loading';
 export { default as NotLogged } from './NotLogged';
+export { default as LanguageSelector } from './LanguageSelector';
 export { default as ListPagination } from './ListPagination';
 export { default as Meta } from './Meta';
 export { default as ModalContact } from './ModalContact';

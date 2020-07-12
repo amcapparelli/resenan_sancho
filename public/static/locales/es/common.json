@@ -100,6 +100,12 @@
     "formatsSelector": {
       "title": "Formato",
       "all": "todos"
+    },
+    "languageSelector": {
+      "chooseLanguage": "Elige idioma"
+    },
+    "filters": {
+      "searchLabel": "Introduce un texto para buscar por el nombre del blog, canal o perfil."
     }
   },
   "mediasHelpers": {

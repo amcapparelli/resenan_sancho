@@ -111,15 +111,11 @@ const StyledButton = styledComponents(Button)`
 `;
 
 const StyledButtonContainer = styledComponents.div`
-  @media (max-width: 768px) {
-    margin-left: 15%;
-  }
   @media (max-width: 375px) {
     margin-top: 10%;
-    margin-left: 10%;
   }
   margin-top: 5%;
-  margin-left: 20%;
+  text-align: center;
 `;
 
 const StyledCardContentContainer = styledComponents.div`

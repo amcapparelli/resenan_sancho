@@ -51,7 +51,7 @@ const Filters = ({
               name="searchText"
               type="text"
               variant="outlined"
-              helperText="Introduce un texto para buscar por el nombre del blog, canal o perfil"
+              helperText={t('components.filters.searchLabel')}
               onChange={(e) => onChange && onChange(e)}
             />
           )

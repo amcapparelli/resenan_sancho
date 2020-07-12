@@ -5,49 +5,53 @@ import { useTranslation } from 'react-i18next';
 import styledComponents from 'styled-components';
 import { Button } from '@material-ui/core';
 import UserContext from '../store/context/userContext/UserContext';
+import { LanguageSelector } from '.';
 
 const Header: React.FC = (): JSX.Element => {
   const { t } = useTranslation();
   const { isLogged, logoutRequest } = useContext(UserContext);
   return (
-    <StyledHeaderContainer>
-      <header>
-        <Link href="/">
-          <StyledLogo src="/static/logo-web.webp" alt="logo reseñan sancho" />
-        </Link>
-      </header>
-      <StyledNav>
-        <Link href="/books">
-          <StyledLink aria-label="Find Books">{t('nav.availableBooks')}</StyledLink>
-        </Link>
-        <Link href="/reviewers">
-          <StyledLink aria-label="Find Reviewers">{t('nav.reviewers')}</StyledLink>
-        </Link>
-      </StyledNav>
-      <StyledPrivateNav>
-        {
-          isLogged
-            ? (
-              <>
-                <Link href="/myprofile">
-                  <StyledProfileButton
-                    aria-label="Private Area"
-                    variant="contained"
-                    color="primary"
-                  >
-                    {t('nav.myProfile')}
-                  </StyledProfileButton>
+    <>
+      <LanguageSelector />
+      <StyledHeaderContainer>
+        <header>
+          <Link href="/">
+            <StyledLogo src="/static/logo-web.webp" alt="logo reseñan sancho" />
+          </Link>
+        </header>
+        <StyledNav>
+          <Link href="/books">
+            <StyledLink aria-label="Find Books">{t('nav.availableBooks')}</StyledLink>
+          </Link>
+          <Link href="/reviewers">
+            <StyledLink aria-label="Find Reviewers">{t('nav.reviewers')}</StyledLink>
+          </Link>
+        </StyledNav>
+        <StyledPrivateNav>
+          {
+            isLogged
+              ? (
+                <>
+                  <Link href="/myprofile">
+                    <StyledProfileButton
+                      aria-label="Private Area"
+                      variant="contained"
+                      color="primary"
+                    >
+                      {t('nav.myProfile')}
+                    </StyledProfileButton>
+                  </Link>
+                  <Button onClick={logoutRequest} aria-label="Logout">Logout</Button>
+                </>
+              ) : (
+                <Link href="/login">
+                  <StyledLink aria-label="Login">Login</StyledLink>
                 </Link>
-                <Button onClick={logoutRequest} aria-label="Logout">Logout</Button>
-              </>
-            ) : (
-              <Link href="/login">
-                <StyledLink aria-label="Login">Login</StyledLink>
-              </Link>
-            )
-        }
-      </StyledPrivateNav>
-    </StyledHeaderContainer>
+              )
+          }
+        </StyledPrivateNav>
+      </StyledHeaderContainer>
+    </>
   );
 };
 
