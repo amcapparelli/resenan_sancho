@@ -103,7 +103,7 @@ const MySpaces: React.FC = (): JSX.Element => {
           ? acum : { ...acum, [key]: value }
       ), {},
     );
-    if (!isEditing) {
+    if (!isEditing && !succeeded) {
       ReactGA.event({
         category: 'Nuevo reseñador',
         action: `Reseñador ${user.name} ${user.lastName || ''}`,
