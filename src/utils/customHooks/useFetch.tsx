@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { Response } from '../../interfaces/response';
+import UserContext from '../../store/context/userContext/UserContext';
 
 const useFetch = (): [any, Function, boolean] => {
+  const { user } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
   const [responseJSON, setResponse] = useState<Response>({
     success: undefined,
@@ -18,6 +20,7 @@ const useFetch = (): [any, Function, boolean] => {
         body: JSON.stringify({ ...body }),
         headers: {
           'Content-Type': 'application/json',
+          'access-token': user.token,
         },
       });
       const resJSON = await res.json();

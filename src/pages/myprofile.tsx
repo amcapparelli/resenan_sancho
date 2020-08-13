@@ -72,6 +72,7 @@ const MyProfile: React.FC = (): JSX.Element => {
         body: JSON.stringify({ ...updateForm }),
         headers: {
           'Content-Type': 'application/json',
+          'access-token': user.token,
         },
       });
       const resJSON = await res.json();
