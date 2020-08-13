@@ -116,7 +116,10 @@ const MySpaces: React.FC = (): JSX.Element => {
         cache: 'no-cache',
         credentials: 'include',
         body: JSON.stringify({ ...mediasFormClean }),
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'access-token': user.token,
+        },
       });
       const resJSON = await res.json();
       const {

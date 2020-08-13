@@ -1,8 +1,9 @@
-import { useReducer, useState } from 'react';
+import { useReducer, useState, useContext } from 'react';
 import { booksListLoad } from '../../store/reducers';
 import { Book } from '../../interfaces/books';
 import { mybooks as URL } from '../../config/routes';
 import { Response } from '../../interfaces/response';
+import UserContext from '../../store/context/userContext/UserContext';
 
 interface State {
   books: Array<Book>;
@@ -12,6 +13,7 @@ const initialState: State = {
 };
 
 const useUsersBooksListFetch = (): [State, Function, boolean, any] => {
+  const { user } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState<Response>({
     success: undefined,
@@ -28,6 +30,7 @@ const useUsersBooksListFetch = (): [State, Function, boolean, any] => {
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
+          'access-token': user.token,
         },
       });
       const books = await res.json();
