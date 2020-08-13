@@ -8,12 +8,12 @@ import {
 import Register from '../../src/pages/register';
 
 describe('Register Component', () => {
-  test('it renders five inputs fields', () => {
+  test.skip('it renders five inputs fields', () => {
     const { root } = create(<Register />);
     const formInputs = root.findAllByType(TextField);
     expect(formInputs).toHaveLength(5);
   });
-  test('button click without password values', () => {
+  test.skip('button click without password values', () => {
     const { root } = create(<Register />);
     const button = root.findByType(Button);
     const formHelperText = root.findByType(FormHelperText);
