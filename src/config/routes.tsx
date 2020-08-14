@@ -1,4 +1,4 @@
-const API_BASE_URL: string = process.env.NODE_ENV === 'production' ? 'https://resenan-sancho.herokuapp.com/' : 'http://localhost:9000/';
+const API_BASE_URL: string = process.env.NODE_ENV === 'production' ? 'https://backend.resenansancho.com/' : 'http://localhost:9000/';
 
 export const register: string = `${API_BASE_URL}register`;
 export const login: string = `${API_BASE_URL}login`;
