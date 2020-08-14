@@ -116,6 +116,7 @@ const PaymentCheckout: React.FC<MyProps> = ({
           }),
           headers: {
             'Content-Type': 'application/json',
+            'access-token': user.token,
           },
         });
         const resJSON = await res.json();

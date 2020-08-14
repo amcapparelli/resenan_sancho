@@ -36,7 +36,6 @@ const Login: NextPage = (): JSX.Element => {
       </Link>
       {['email', 'password'].map((text) => (
         <TextField
-          id="standard-password-input"
           label={t(`form.${text}`)}
           name={text}
           type={text}
