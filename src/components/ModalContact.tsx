@@ -1,6 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import React, { useContext, useEffect, useState } from 'react';
 import styledComponents from 'styled-components';
+import { useTranslation } from 'react-i18next';
 import {
   Button,
   Checkbox,
@@ -32,6 +33,7 @@ const ModalContact: React.FC<MyProps> = ({
   book,
   bookTitle,
 }: MyProps): JSX.Element => {
+  const { t } = useTranslation();
   const { user } = useContext(UserContext);
   const [orderBookResponse, orderBookRequest, loading] = useFetch();
   const [contactForm, setContactForm, loadContactForm] = useForm({});
@@ -71,8 +73,8 @@ const ModalContact: React.FC<MyProps> = ({
 
   const content: JSX.Element = (
     <>
-      <Typography variant="h4" align="center">¡Contacta con el autor!</Typography>
-      <Typography variant="body1" align="center">Envíale un mensaje personalizado:</Typography>
+      <Typography variant="h4" align="center">{t('titles.contactAuthor')}</Typography>
+      <Typography variant="body1" align="center">{t('titles.sendMessage')}</Typography>
       <TextField
         label="Mensaje"
         multiline
