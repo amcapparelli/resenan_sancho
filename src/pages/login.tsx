@@ -21,6 +21,7 @@ const Login: NextPage = (): JSX.Element => {
   useEffect(() => {
     if (loginResponse.success) {
       setUserLogged({ ...loginResponse.user });
+      if (router.query.previous) router.back();
       router.push('/');
     }
   }, [loginResponse.success]);

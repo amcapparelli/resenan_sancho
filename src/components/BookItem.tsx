@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import Link from 'next/link';
 import styledComponents from 'styled-components';
+import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import {
   Button,
@@ -23,6 +24,7 @@ const BookItem: React.FC<MyProps> = (props: MyProps): JSX.Element => {
   const [openModalContact, setOpenModalContact] = useState(false);
   const [copiesDecrease, setCopiesDecrease] = useState<number>(0);
   const { t } = useTranslation();
+  const router = useRouter();
   const { id } = props;
   const {
     _id,
@@ -77,7 +79,7 @@ const BookItem: React.FC<MyProps> = (props: MyProps): JSX.Element => {
                 </Button>
               )
               : (
-                <Link href="/login">
+                <Link href={{ pathname: '/login', query: { previous: router.asPath } }}>
                   <Button
                     color="secondary"
                   >
