@@ -3,6 +3,7 @@ export interface Book {
   editorial: string,
   title: string,
   formats: Array<string>,
+  freePromoAvailable: boolean,
   genre: string,
   author: {
     name: string,

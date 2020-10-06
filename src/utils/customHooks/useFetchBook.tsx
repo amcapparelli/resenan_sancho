@@ -9,6 +9,7 @@ const initialState: Book = {
   editorial: '',
   title: '',
   formats: [],
+  freePromoAvailable: false,
   genre: '',
   author: {
     name: '',

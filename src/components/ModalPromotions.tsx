@@ -159,12 +159,13 @@ const ModalPromotions: React.FC<MyProps> = (props: MyProps): JSX.Element => {
                       row.id === 1
                         ? (
                           <Button
+                            disabled={bookSelected && !bookSelected.freePromoAvailable}
                             variant="contained"
                             color="primary"
                             onClick={() => handleClickFreePromo(bookSelected, row.id)}
                             size="small"
                           >
-                            ¡Lo Quiero!
+                            {bookSelected && !bookSelected.freePromoAvailable ? 'Oferta ya utilizada' : '¡Lo Quiero!'}
                           </Button>
                         )
                         : (
