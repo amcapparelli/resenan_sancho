@@ -13,6 +13,8 @@ import {
 } from '@material-ui/core';
 import StarsIcon from '@material-ui/icons/Stars';
 import EditIcon from '@material-ui/icons/Edit';
+import ErrorIcon from '@material-ui/icons/Error';
+import CheckIcon from '@material-ui/icons/Check';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 import { Book } from '../interfaces/books';
 
@@ -33,6 +35,21 @@ const MyBooksListItem: React.FC<Props> = (
   return (
     <Card>
       <CardContent>
+        {
+          copies < 1
+            ? (
+              <ListItem>
+                <ListItemIcon><ErrorIcon color="error" fontSize="large" /></ListItemIcon>
+                <ListItemText primary="No lo estás promocionando" />
+              </ListItem>
+            )
+            : (
+              <ListItem>
+                <ListItemIcon><CheckIcon color="primary" fontSize="large" /></ListItemIcon>
+                <ListItemText primary="¡Lo estás promocionando!" />
+              </ListItem>
+            )
+        }
         <StyledContentContainer>
           <div>
             <Typography variant="h3" align="center">{title}</Typography>
@@ -60,12 +77,15 @@ const MyBooksListItem: React.FC<Props> = (
           </StyledOptionsContainer>
         </StyledContentContainer>
         <CardActions>
-          <Typography variant="body1" align="left">
-            {`Agrega ejemplares de 
+          {
+            copies < 1 &&
+            <Typography variant="body1" align="left">
+              {`Agrega ejemplares de 
             ${title} 
             con la opción PROMOCIONAR para que estén
             visibles en la sección «Libros disponibles».`}
-          </Typography>
+            </Typography>
+          }
         </CardActions>
       </CardContent>
     </Card>
