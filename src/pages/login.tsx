@@ -4,12 +4,12 @@ import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import styledComponents from 'styled-components';
+import { StyledLink } from '../components';
 import { Button, TextField } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import { login as loginURL } from '../config/routes';
 import UserContext from '../store/context/userContext/UserContext';
 import { useForm, useFetch } from '../utils/customHooks';
-import { StyledLink } from '../components';
 
 const Login: NextPage = (): JSX.Element => {
   const { t } = useTranslation();
