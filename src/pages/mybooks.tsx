@@ -15,8 +15,6 @@ import {
   Switch,
 } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
-import ReactGA from 'react-ga';
-import { trackingId } from '../utils/constants/GATrackingID';
 import UserContext from '../store/context/userContext/UserContext';
 import { MyProfileLayout } from '../components/Layouts';
 import {
@@ -54,11 +52,6 @@ const MyBooks: React.FC = (): JSX.Element => {
   useEffect(() => {
     setSuscribe(!!(user.emailAuthorListStatus && user.emailAuthorListStatus === 'subscribed'));
   }, [user.emailAuthorListStatus]);
-
-  useEffect(() => {
-    ReactGA.initialize(trackingId);
-    ReactGA.pageview('/myBooks');
-  }, []);
 
   const handleSuscribe = () => {
     suscribeUserRequest(URL, 'post', {

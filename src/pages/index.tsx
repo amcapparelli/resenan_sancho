@@ -1,9 +1,7 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import styledComponents from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
-import ReactGA from 'react-ga';
-import { trackingId } from '../utils/constants/GATrackingID';
 import { PublicZoneLayout } from '../components/Layouts';
 import { StyledTitle } from '../components';
 import UserContext from '../store/context/userContext/UserContext';
@@ -11,10 +9,7 @@ import UserContext from '../store/context/userContext/UserContext';
 const index = () => {
   const { t } = useTranslation();
   const { isLogged } = useContext(UserContext);
-  useEffect(() => {
-    ReactGA.initialize(trackingId);
-    ReactGA.pageview('/');
-  }, []);
+
   return (
     <PublicZoneLayout showFooter>
       <StyledTitle

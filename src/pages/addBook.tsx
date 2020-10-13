@@ -21,7 +21,6 @@ import {
   KeyboardDatePicker,
 } from '@material-ui/pickers';
 import ReactGA from 'react-ga';
-import { trackingId } from '../utils/constants/GATrackingID';
 import {
   useForm,
   useUploadImages,
@@ -46,10 +45,6 @@ const AddBookForm: React.FC = (): JSX.Element => {
   const { user } = useContext(UserContext);
   const [state, fetchBook] = useFetchBook();
   const [registerBookResponse, registerBookRequest, loading] = useFetch();
-  useEffect(() => {
-    ReactGA.initialize(trackingId);
-    ReactGA.pageview('/addBooks');
-  }, []);
 
   const initForm: BookForm = {
     title: '',

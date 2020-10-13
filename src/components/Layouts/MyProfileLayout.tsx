@@ -3,6 +3,8 @@ import Link from 'next/link';
 import styledComponents from 'styled-components';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
+import { useRouter } from 'next/router';
+import ReactGA from 'react-ga';
 import {
   createStyles,
   makeStyles,
@@ -112,6 +114,7 @@ const MyProfileLayout: React.FC<MyProps> = ({ children, title }: MyProps): JSX.E
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = useState(true);
+  const router = useRouter();
   useEffect(() => {
     const mediaQuery = window.matchMedia('(max-width: 768px)');
     if (mediaQuery.matches) {
@@ -119,6 +122,9 @@ const MyProfileLayout: React.FC<MyProps> = ({ children, title }: MyProps): JSX.E
     } else {
       setOpen(true);
     }
+  }, []);
+  useEffect(() => {
+    ReactGA.pageview(router.asPath);
   }, []);
   return (
     <div className={classes.root}>

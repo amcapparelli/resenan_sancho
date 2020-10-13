@@ -1,15 +1,21 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import styledComponents from 'styled-components';
 import { Button } from '@material-ui/core';
+import ReactGA from 'react-ga';
 import UserContext from '../store/context/userContext/UserContext';
 import { LanguageSelector } from '.';
 
 const Header: React.FC = (): JSX.Element => {
   const { t } = useTranslation();
   const { isLogged, logoutRequest } = useContext(UserContext);
+  const router = useRouter();
+  useEffect(() => {
+    ReactGA.pageview(router.asPath);
+  }, []);
   return (
     <>
       <LanguageSelector />

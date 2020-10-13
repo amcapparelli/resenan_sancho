@@ -12,7 +12,6 @@ import ReactGA from 'react-ga';
 import { register as registerURL } from '../config/routes';
 import { useForm, useRequiredFieldsValidation, useFetch } from '../utils/customHooks';
 import { PasswordFields, StyledLink } from '../components';
-import { trackingId } from '../utils/constants/GATrackingID';
 
 const fields = ['name', 'lastName', 'email'];
 
@@ -36,10 +35,6 @@ const Register: React.FC = (): JSX.Element => {
     email: '',
   };
   const [errors, validateRequiredFields] = useRequiredFieldsValidation(initialErrors);
-
-  useEffect(() => {
-    ReactGA.initialize(trackingId);
-  }, []);
 
   useEffect(() => {
     if (signupResponse.success) {

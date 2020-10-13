@@ -15,8 +15,6 @@ import {
 import CloseIcon from '@material-ui/icons/Close';
 import Alert from '@material-ui/lab/Alert';
 import DeleteIcon from '@material-ui/icons/Delete';
-import ReactGA from 'react-ga';
-import { trackingId } from '../utils/constants/GATrackingID';
 import UserContext from '../store/context/userContext/UserContext';
 import { MyProfileLayout } from '../components/Layouts';
 import { UploadImagesInput, CountriesSelector, ModalDeleteAccount } from '../components';
@@ -55,11 +53,6 @@ const MyProfile: React.FC = (): JSX.Element => {
   useEffect(() => {
     setUpdateForm('avatar', avatarURL);
   }, [avatarURL]);
-
-  useEffect(() => {
-    ReactGA.initialize(trackingId);
-    ReactGA.pageview('/myprofile');
-  }, []);
 
   const update = async (): Promise<void> => {
     try {

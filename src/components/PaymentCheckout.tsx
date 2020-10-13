@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import styledComponents from 'styled-components';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
@@ -15,7 +15,6 @@ import {
 import Alert from '@material-ui/lab/Alert';
 import PaymentIcon from '@material-ui/icons/Payment';
 import ReactGA from 'react-ga';
-import { trackingId } from '../utils/constants/GATrackingID';
 import UserContext from '../store/context/userContext/UserContext';
 import { paymentCheckout } from '../config/routes';
 
@@ -80,10 +79,6 @@ const PaymentCheckout: React.FC<MyProps> = ({
     success: undefined,
     message: '',
   });
-
-  useEffect(() => {
-    ReactGA.initialize(trackingId);
-  }, []);
 
   const handleChange = (event: any) => {
     if (event.error) {

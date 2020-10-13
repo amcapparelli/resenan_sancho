@@ -11,7 +11,6 @@ import {
 } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import ReactGA from 'react-ga';
-import { trackingId } from '../utils/constants/GATrackingID';
 import {
   useForm,
   useFetch,
@@ -57,10 +56,6 @@ const ModalContact: React.FC<MyProps> = ({
       });
     }
   }, [orderBookResponse.success]);
-
-  useEffect(() => {
-    ReactGA.initialize(trackingId);
-  }, []);
 
   const handleSubmit = () => {
     orderBookRequest(URL, 'post', contactForm);
