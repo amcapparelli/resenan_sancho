@@ -87,6 +87,7 @@ const MySpaces: React.FC = (): JSX.Element => {
     description: '',
   };
   const [errors, validateRequiredFields] = useRequiredFieldsValidation(initErrors);
+  const [loading, setLoading] = useState(false);
 
   const medias = Object.keys(AvailableMedias);
   const registerMedias = async (): Promise<void> => {
@@ -104,6 +105,7 @@ const MySpaces: React.FC = (): JSX.Element => {
       });
     }
     try {
+      setLoading(true);
       const res = await fetch(URL, {
         method: isEditing || succeeded ? 'put' : 'post',
         mode: 'cors',
@@ -138,6 +140,8 @@ const MySpaces: React.FC = (): JSX.Element => {
     } catch (error) {
       setResponse(error);
       setOpen(true);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -274,6 +278,7 @@ const MySpaces: React.FC = (): JSX.Element => {
         </StyledSection>
         <StyledCenteredContainer>
           <Button
+            disabled={loading}
             variant="contained"
             color="primary"
             size="large"
