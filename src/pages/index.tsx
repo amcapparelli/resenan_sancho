@@ -130,7 +130,7 @@ const StyledSectionB = styledComponents.section`
 `;
 
 const StyledSection = styledComponents.section`
-  margin-top: 5%;
+  margin-top: 3%;
   margin-left: calc(50% - 50vw);
   width: 100vw;
   background-color: #f5f5f0;

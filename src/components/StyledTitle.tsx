@@ -19,7 +19,7 @@ const StyledText = styledComponents.h1`
   padding: 0 5% 0 5%;
   font-family: ${(props) => props.theme.fontTitles};
   color: #252525;
-  font-size: 4rem;
+  font-size: 3.5rem;
   line-height: 120px;
   text-align: center;
   font-weight: 100;

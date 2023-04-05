@@ -20,7 +20,7 @@ export const StyledTheme = {
   light,
   contrastText,
   fontFamily: 'Rambla',
-  fontTitles: 'Rock Salt',
+  fontTitles: 'Rambla',
 };
 
 export const MuiTheme = createMuiTheme({

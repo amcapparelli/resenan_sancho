@@ -21,7 +21,6 @@ const Meta = ({ children }: MyProps): JSX.Element => {
         <link rel="shortcut icon" href="/static/favicon.jpg" />
         <title>Reseñan Sancho</title>
         <link href="https://fonts.googleapis.com/css?family=Rambla&display=swap" rel="stylesheet" />
-        <link href="https://fonts.googleapis.com/css?family=Rock+Salt&display=swap" rel="stylesheet" />
       </Head>
       {children}
     </>
