@@ -4,7 +4,7 @@ import styledComponents from 'styled-components';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
-import ReactGA from 'react-ga';
+import ReactGA from "react-ga4";
 import {
   createStyles,
   makeStyles,
@@ -124,7 +124,7 @@ const MyProfileLayout: React.FC<MyProps> = ({ children, title }: MyProps): JSX.E
     }
   }, []);
   useEffect(() => {
-    ReactGA.pageview(router.asPath);
+    ReactGA.send({ hitType: "pageview", page: router.asPath });
   }, []);
   return (
     <div className={classes.root}>

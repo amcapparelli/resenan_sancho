@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import styledComponents from 'styled-components';
 import { Button } from '@material-ui/core';
-import ReactGA from 'react-ga';
+import ReactGA from "react-ga4";
 import UserContext from '../store/context/userContext/UserContext';
 import { LanguageSelector } from '.';
 
@@ -14,7 +14,7 @@ const Header: React.FC = (): JSX.Element => {
   const { isLogged, logoutRequest } = useContext(UserContext);
   const router = useRouter();
   useEffect(() => {
-    ReactGA.pageview(router.asPath);
+    ReactGA.send({ hitType: "pageview", page: router.asPath });
   }, []);
   return (
     <>

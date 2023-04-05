@@ -8,7 +8,7 @@ import {
   TextField,
 } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
-import ReactGA from 'react-ga';
+import ReactGA from "react-ga4";
 import { register as registerURL } from '../config/routes';
 import { useForm, useRequiredFieldsValidation, useFetch } from '../utils/customHooks';
 import { PasswordFields, StyledLink } from '../components';

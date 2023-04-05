@@ -16,7 +16,7 @@ import {
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import Alert from '@material-ui/lab/Alert';
-import ReactGA from 'react-ga';
+import ReactGA from "react-ga4";
 import { MyProfileLayout } from '../components/Layouts';
 import { MyMediasForm, FormatsCheckBoxSelector } from '../components';
 import { useForm, useRequiredFieldsValidation, useFetchReviewer } from '../utils/customHooks';

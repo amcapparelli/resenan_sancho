@@ -20,7 +20,7 @@ import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
-import ReactGA from 'react-ga';
+import ReactGA from "react-ga4";
 import {
   useForm,
   useUploadImages,

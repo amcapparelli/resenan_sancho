@@ -14,7 +14,7 @@ import {
 } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import PaymentIcon from '@material-ui/icons/Payment';
-import ReactGA from 'react-ga';
+import ReactGA from "react-ga4";
 import UserContext from '../store/context/userContext/UserContext';
 import { paymentCheckout } from '../config/routes';
 

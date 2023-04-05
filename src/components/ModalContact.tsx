@@ -10,7 +10,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
-import ReactGA from 'react-ga';
+import ReactGA from "react-ga4";
 import {
   useForm,
   useFetch,
