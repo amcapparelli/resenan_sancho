@@ -1,2 +1,2 @@
 // eslint-disable-next-line import/prefer-default-export
-export const trackingId: string = 'UA-36138824-2';
+export const trackingId: string = 'G-Q2QC0103K4';
