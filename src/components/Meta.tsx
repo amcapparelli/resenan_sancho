@@ -20,7 +20,12 @@ const Meta = ({ children }: MyProps): JSX.Element => {
         <meta name="description" content="Platform where reviewers can find free books to review on their literary blogs, booktube or bookstagram. Authors can contact literary reviewers to promote their books." />
         <link rel="shortcut icon" href="/static/favicon.jpg" />
         <title>Reseñan Sancho</title>
-        <link href="https://fonts.googleapis.com/css?family=Rambla&display=swap" rel="stylesheet" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Source+Sans+3:wght@400;600;700&display=swap"
+          rel="stylesheet"
+        />
       </Head>
       {children}
     </>
