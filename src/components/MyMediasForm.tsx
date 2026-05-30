@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styledComponents from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { Theme } from '@mui/material/styles';
-import makeStyles from '@mui/styles/makeStyles';
-import createStyles from '@mui/styles/createStyles';
 import {
   Card,
   CardHeader,
@@ -17,26 +14,6 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-
-const useStyles = makeStyles((theme: Theme) => createStyles({
-  root: {
-    maxWidth: 250,
-  },
-  media: {
-    height: 0,
-    paddingTop: '56.25%', // 16:9,
-  },
-  expand: {
-    transform: 'rotate(0deg)',
-    marginLeft: 'auto',
-    transition: theme.transitions.create('transform', {
-      duration: theme.transitions.duration.shortest,
-    }),
-  },
-  expandOpen: {
-    transform: 'rotate(180deg)',
-  },
-}));
 
 interface MyProps {
   media: string,
@@ -53,7 +30,6 @@ interface MyProps {
 
 const MyMediasForm: React.FC<MyProps> = (props: MyProps): JSX.Element => {
   const { t } = useTranslation();
-  const classes = useStyles();
   const {
     errors,
     media,
@@ -93,12 +69,12 @@ const MyMediasForm: React.FC<MyProps> = (props: MyProps): JSX.Element => {
   };
 
   return (
-    <Card className={classes.root}>
+    <Card sx={{ maxWidth: 250 }}>
       <CardHeader
         title={media}
       />
       <CardMedia
-        className={classes.media}
+        sx={{ height: 0, paddingTop: '56.25%' }}
         image={showIcon(media)}
         title="Paella dish"
       />

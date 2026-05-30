@@ -2,29 +2,13 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styledComponents from 'styled-components';
 import { Avatar, Card, CardContent, CardHeader, Chip, Link, Typography } from '@mui/material';
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
 import { Reviewer } from '../interfaces/reviewer';
-
-const useStyles = makeStyles(() => createStyles({
-  root: {
-    maxWidth: 400,
-    ['@media (max-width:768px)']: { // eslint-disable-line no-useless-computed-key
-      maxWidth: 300,
-    },
-  },
-  media: {
-    height: 0,
-    paddingTop: '56.25%', // 16:9
-  },
-}));
 
 interface Props {
   reviewer: Reviewer
 }
 
 const ReviewerListItem: React.FC<Props> = ({ reviewer }: Props): JSX.Element => {
-  const classes = useStyles();
   const { t } = useTranslation();
   const {
     description,
@@ -44,7 +28,7 @@ const ReviewerListItem: React.FC<Props> = ({ reviewer }: Props): JSX.Element => 
   } = reviewer.author;
 
   return (
-    <Card className={classes.root}>
+    <Card sx={{ maxWidth: 400, '@media (max-width:768px)': { maxWidth: 300 } }}>
       <CardHeader
         avatar={
           <Avatar alt="avatar" src={avatar || '/static/default-avatar.png'} />

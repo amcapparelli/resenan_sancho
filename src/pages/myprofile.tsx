@@ -1,8 +1,5 @@
 /* eslint-disable no-underscore-dangle */
 import React, { useContext, useState, useEffect } from 'react';
-import { Theme } from '@mui/material/styles';
-import makeStyles from '@mui/styles/makeStyles';
-import createStyles from '@mui/styles/createStyles';
 import styledComponents from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import {
@@ -24,19 +21,8 @@ import { useForm, useUploadImages } from '../utils/customHooks';
 import { update as URL } from '../config/routes';
 import { Response } from '../interfaces/response';
 
-const useStyles = makeStyles((theme: Theme) => createStyles({
-  large: {
-    width: theme.spacing(7),
-    height: theme.spacing(7),
-    alignContent: 'center',
-    justifySelf: 'center',
-    justifyContent: 'center',
-  },
-}));
-
 const MyProfile: React.FC = (): JSX.Element => {
   const { t } = useTranslation();
-  const classes = useStyles();
   const [response, setResponse] = useState<Response>({
     success: undefined,
     message: undefined,
@@ -99,7 +85,7 @@ const MyProfile: React.FC = (): JSX.Element => {
             />
             {
               updateForm.avatar
-              && <Avatar alt="avatar" src={updateForm.avatar} className={classes.large} />
+              && <Avatar alt="avatar" src={updateForm.avatar} sx={{ width: 56, height: 56, alignContent: 'center', justifySelf: 'center', justifyContent: 'center' }} />
             }
           </StyledAvatarContainer>
           <StyledContentContainer>

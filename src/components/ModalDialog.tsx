@@ -1,7 +1,5 @@
-import React, { useState } from 'react';
-import { Theme } from '@mui/material/styles';
-import makeStyles from '@mui/styles/makeStyles';
-import createStyles from '@mui/styles/createStyles';
+import React from 'react';
+import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 
 interface MyProps {
@@ -10,37 +8,8 @@ interface MyProps {
   content: JSX.Element
 }
 
-function getModalStyle() {
-  const top = 50;
-  const left = 50;
-
-  return {
-    top: `${top}%`,
-    left: `${left}%`,
-    transform: `translate(-${top}%, -${left}%)`,
-  };
-}
-
-const useStyles = makeStyles((theme: Theme) => createStyles({
-  paper: {
-    position: 'absolute',
-    width: '80%',
-    backgroundColor: theme.palette.background.paper,
-    border: '2px solid #000',
-    boxShadow: theme.shadows[5],
-    padding: theme.spacing(2, 4, 3),
-  },
-}));
-
 const ModalDialog: React.FC<MyProps> = (props: MyProps): JSX.Element => {
-  const classes = useStyles();
-  const [modalStyle] = useState(getModalStyle);
   const { open, onClose, content } = props;
-  const body = (
-    <div style={modalStyle} className={classes.paper}>
-      {content}
-    </div>
-  );
   return (
     <Modal
       open={open}
@@ -48,7 +17,19 @@ const ModalDialog: React.FC<MyProps> = (props: MyProps): JSX.Element => {
       aria-labelledby="simple-modal-title"
       aria-describedby="simple-modal-description"
     >
-      {body}
+      <Box sx={{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: '80%',
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 5,
+        p: '16px 32px 24px',
+      }}>
+        {content}
+      </Box>
     </Modal>
   );
 };

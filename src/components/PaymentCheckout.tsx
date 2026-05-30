@@ -1,12 +1,10 @@
 /* eslint-disable no-underscore-dangle */
 import React, { useState, useContext } from 'react';
 import styledComponents from 'styled-components';
-import { Theme } from '@mui/material/styles';
-import makeStyles from '@mui/styles/makeStyles';
-import createStyles from '@mui/styles/createStyles';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import {
   Avatar,
+  Box,
   Card,
   CardContent,
   Button,
@@ -31,35 +29,6 @@ interface MyProps {
   bookTitle: string
 }
 
-function getModalStyle() {
-  const top = 50;
-  const left = 50;
-
-  return {
-    top: `${top}%`,
-    left: `${left}%`,
-    transform: `translate(-${top}%, -${left}%)`,
-  };
-}
-
-const useStyles = makeStyles((theme: Theme) => createStyles({
-  paper: {
-    position: 'absolute',
-    width: '40%',
-    backgroundColor: '#525f7f',
-    border: '2px solid #000',
-    boxShadow: theme.shadows[5],
-    padding: theme.spacing(2, 4, 3),
-  },
-  large: {
-    width: theme.spacing(9),
-    height: theme.spacing(9),
-    alignContent: 'center',
-    justifySelf: 'center',
-    justifyContent: 'center',
-  },
-}));
-
 const PaymentCheckout: React.FC<MyProps> = ({
   amount,
   bookId,
@@ -71,8 +40,6 @@ const PaymentCheckout: React.FC<MyProps> = ({
   bookTitle,
 }: MyProps): JSX.Element => {
   const { user } = useContext(UserContext);
-  const classes = useStyles();
-  const [modalStyle] = useState(getModalStyle);
   const elements = useElements();
   const stripe = useStripe();
   const [clicked, setClicked] = useState(false);
@@ -140,9 +107,29 @@ const PaymentCheckout: React.FC<MyProps> = ({
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"
       >
-        <div style={modalStyle} className={classes.paper}>
+        <Box sx={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '40%',
+          backgroundColor: '#525f7f',
+          border: '2px solid #000',
+          boxShadow: 5,
+          p: '16px 32px 24px',
+        }}>
           <StyledForm onSubmit={handleSubmit}>
-            <Avatar alt="cover" src={image} className={classes.large} />
+            <Avatar
+              alt="cover"
+              src={image}
+              sx={{
+                width: (t) => t.spacing(9),
+                height: (t) => t.spacing(9),
+                alignContent: 'center',
+                justifySelf: 'center',
+                justifyContent: 'center',
+              }}
+            />
             <Typography variant="body1" color="primary" align="center">{description}</Typography>
             <Typography variant="body1" color="secondary" align="center">Pago con tarjeta: </Typography>
             <Card>
@@ -190,7 +177,7 @@ const PaymentCheckout: React.FC<MyProps> = ({
               </Alert>
             )
           }
-        </div>
+        </Box>
       </Modal>
     </div>
   );
