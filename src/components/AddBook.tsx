@@ -4,8 +4,8 @@ import Link from 'next/link';
 import {
   Button,
   Typography,
-} from '@material-ui/core';
-import AddCircleIcon from '@material-ui/icons/AddCircle';
+} from '@mui/material';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 const AddBook = () => (
   <StyledContainer>

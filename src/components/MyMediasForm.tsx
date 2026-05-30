@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import styledComponents from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import { Theme } from '@mui/material/styles';
+import makeStyles from '@mui/styles/makeStyles';
+import createStyles from '@mui/styles/createStyles';
 import {
   Card,
   CardHeader,
@@ -14,7 +16,7 @@ import {
   Switch,
   TextField,
   Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   root: {

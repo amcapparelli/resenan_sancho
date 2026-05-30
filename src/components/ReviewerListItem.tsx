@@ -1,17 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styledComponents from 'styled-components';
-import {
-  Avatar,
-  Card,
-  CardContent,
-  CardHeader,
-  Chip,
-  createStyles,
-  makeStyles,
-  Link,
-  Typography,
-} from '@material-ui/core';
+import { Avatar, Card, CardContent, CardHeader, Chip, Link, Typography } from '@mui/material';
+import createStyles from '@mui/styles/createStyles';
+import makeStyles from '@mui/styles/makeStyles';
 import { Reviewer } from '../interfaces/reviewer';
 
 const useStyles = makeStyles(() => createStyles({

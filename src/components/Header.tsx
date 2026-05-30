@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import styledComponents from 'styled-components';
-import { Button } from '@material-ui/core';
+import { Button } from '@mui/material';
 import ReactGA from "react-ga4";
 import UserContext from '../store/context/userContext/UserContext';
 import { LanguageSelector } from '.';

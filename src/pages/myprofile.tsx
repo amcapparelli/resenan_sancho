@@ -1,6 +1,8 @@
 /* eslint-disable no-underscore-dangle */
 import React, { useContext, useState, useEffect } from 'react';
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
+import { Theme } from '@mui/material/styles';
+import makeStyles from '@mui/styles/makeStyles';
+import createStyles from '@mui/styles/createStyles';
 import styledComponents from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import {
@@ -11,10 +13,10 @@ import {
   Collapse,
   IconButton,
   TextField,
-} from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
-import Alert from '@material-ui/lab/Alert';
-import DeleteIcon from '@material-ui/icons/Delete';
+} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import Alert from '@mui/material/Alert';
+import DeleteIcon from '@mui/icons-material/Delete';
 import UserContext from '../store/context/userContext/UserContext';
 import { MyProfileLayout } from '../components/Layouts';
 import { UploadImagesInput, CountriesSelector, ModalDeleteAccount } from '../components';

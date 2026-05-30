@@ -1,7 +1,9 @@
 /* eslint-disable no-underscore-dangle */
 import React, { useState, useContext } from 'react';
 import styledComponents from 'styled-components';
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import { Theme } from '@mui/material/styles';
+import makeStyles from '@mui/styles/makeStyles';
+import createStyles from '@mui/styles/createStyles';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import {
   Avatar,
@@ -11,9 +13,9 @@ import {
   Modal,
   FormHelperText,
   Typography,
-} from '@material-ui/core';
-import Alert from '@material-ui/lab/Alert';
-import PaymentIcon from '@material-ui/icons/Payment';
+} from '@mui/material';
+import Alert from '@mui/material/Alert';
+import PaymentIcon from '@mui/icons-material/Payment';
 import ReactGA from "react-ga4";
 import UserContext from '../store/context/userContext/UserContext';
 import { paymentCheckout } from '../config/routes';

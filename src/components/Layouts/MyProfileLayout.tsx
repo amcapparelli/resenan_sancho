@@ -5,12 +5,9 @@ import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import ReactGA from "react-ga4";
-import {
-  createStyles,
-  makeStyles,
-  Theme,
-  useTheme,
-} from '@material-ui/core/styles';
+import { Theme, useTheme } from '@mui/material/styles';
+import createStyles from '@mui/styles/createStyles';
+import makeStyles from '@mui/styles/makeStyles';
 import {
   AppBar,
   CssBaseline,
@@ -23,16 +20,16 @@ import {
   ListItemText,
   Toolbar,
   Typography,
-} from '@material-ui/core';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import MenuIcon from '@material-ui/icons/Menu';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
-import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
-import ContactSupportIcon from '@material-ui/icons/ContactSupport';
-import HomeIcon from '@material-ui/icons/Home';
-import ImportantDevicesIcon from '@material-ui/icons/ImportantDevices';
+} from '@mui/material';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import MenuIcon from '@mui/icons-material/Menu';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
+import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
+import ContactSupportIcon from '@mui/icons-material/ContactSupport';
+import HomeIcon from '@mui/icons-material/Home';
+import ImportantDevicesIcon from '@mui/icons-material/ImportantDevices';
 import { NotLogged, Loading } from '..';
 import UserContext from '../../store/context/userContext/UserContext';
 
@@ -144,7 +141,7 @@ const MyProfileLayout: React.FC<MyProps> = ({ children, title }: MyProps): JSX.E
               color="secondary"
               edge="start"
               onClick={() => setOpen(!open)}
-            >
+              size="large">
               <MenuIcon />
             </IconButton>
             <Typography color="secondary" variant="h6" noWrap>
@@ -169,7 +166,7 @@ const MyProfileLayout: React.FC<MyProps> = ({ children, title }: MyProps): JSX.E
           variant="permanent"
         >
           <div className={classes.toolbar}>
-            <IconButton onClick={() => setOpen(!open)}>
+            <IconButton onClick={() => setOpen(!open)} size="large">
               {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
             </IconButton>
           </div>

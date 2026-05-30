@@ -13,9 +13,9 @@ import {
   Switch,
   TextField,
   Typography,
-} from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
-import Alert from '@material-ui/lab/Alert';
+} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import Alert from '@mui/material/Alert';
 import ReactGA from "react-ga4";
 import { MyProfileLayout } from '../components/Layouts';
 import { MyMediasForm, FormatsCheckBoxSelector } from '../components';

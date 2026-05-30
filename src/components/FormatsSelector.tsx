@@ -6,7 +6,7 @@ import {
   InputLabel,
   MenuItem,
   OutlinedInput,
-} from '@material-ui/core';
+} from '@mui/material';
 import formats from '../utils/constants/formats';
 
 
@@ -44,7 +44,7 @@ const FormatsSelector: React.FC<MyProps> = (props: MyProps): JSX.Element => {
               name="format"
               id="outlined-country-simple"
               notched
-              labelWidth={formatSelected ? 65 : 0}
+              label={formatSelected ? t('components.formatsSelector.title') : ''}
             />
           )
         }

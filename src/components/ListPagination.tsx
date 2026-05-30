@@ -1,6 +1,8 @@
 import React from 'react';
-import Pagination from '@material-ui/lab/Pagination';
-import { makeStyles, createStyles, withStyles } from '@material-ui/core/styles';
+import Pagination from '@mui/material/Pagination';
+import makeStyles from '@mui/styles/makeStyles';
+import createStyles from '@mui/styles/createStyles';
+import withStyles from '@mui/styles/withStyles';
 
 interface MyProps {
   onChange: Function,

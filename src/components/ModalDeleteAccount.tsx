@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import {
   Button,
   Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 import { ModalDialog } from '.';
 import { deleteUser as URL } from '../config/routes';
 import UserContext from '../store/context/userContext/UserContext';

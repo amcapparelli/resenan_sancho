@@ -2,7 +2,7 @@ import React from 'react';
 import styledComponents from 'styled-components';
 import {
   Button,
-} from '@material-ui/core';
+} from '@mui/material';
 
 interface MyProps {
   text: string,

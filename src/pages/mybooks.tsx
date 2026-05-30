@@ -13,8 +13,8 @@ import {
   CardContent,
   FormControlLabel,
   Switch,
-} from '@material-ui/core';
-import Alert from '@material-ui/lab/Alert';
+} from '@mui/material';
+import Alert from '@mui/material/Alert';
 import UserContext from '../store/context/userContext/UserContext';
 import { MyProfileLayout } from '../components/Layouts';
 import {

@@ -15,15 +15,13 @@ import {
   TableHead,
   Table,
   TableBody,
-} from '@material-ui/core';
-import {
-  makeStyles,
-  withStyles,
-  Theme,
-  createStyles,
-} from '@material-ui/core/styles';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import Alert from '@material-ui/lab/Alert';
+} from '@mui/material';
+import { Theme } from '@mui/material/styles';
+import makeStyles from '@mui/styles/makeStyles';
+import withStyles from '@mui/styles/withStyles';
+import createStyles from '@mui/styles/createStyles';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import Alert from '@mui/material/Alert';
 import UserContext from '../store/context/userContext/UserContext';
 import { useFetch } from '../utils/customHooks';
 import { Book } from '../interfaces/books';

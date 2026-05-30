@@ -1,4 +1,4 @@
-import { createMuiTheme } from '@material-ui/core';
+import { createTheme } from '@mui/material/styles';
 
 enum Palette {
   main = '#FFDE00',
@@ -23,7 +23,7 @@ export const StyledTheme = {
   fontTitles: 'Rambla',
 };
 
-export const MuiTheme = createMuiTheme({
+export const MuiTheme = createTheme({
   typography: {
     fontFamily: 'Rambla',
   },

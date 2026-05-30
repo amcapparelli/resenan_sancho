@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import styledComponents from 'styled-components';
 import {
   Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
 const LanguageSelector = () => {

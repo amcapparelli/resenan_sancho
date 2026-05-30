@@ -6,7 +6,7 @@ import {
   InputLabel,
   MenuItem,
   OutlinedInput,
-} from '@material-ui/core';
+} from '@mui/material';
 import genres from '../utils/constants/genres';
 
 interface MyProps {
@@ -43,7 +43,7 @@ const GenresSelector: React.FC<MyProps> = (props: MyProps): JSX.Element => {
               name="genre"
               id="outlined-country-simple"
               notched
-              labelWidth={genreSelected ? 110 : 0}
+              label={genreSelected ? t('components.genresSelector.title') : ''}
             />
           )
         }

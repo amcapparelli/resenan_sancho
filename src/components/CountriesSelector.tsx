@@ -6,7 +6,7 @@ import {
   Select,
   InputLabel,
   OutlinedInput,
-} from '@material-ui/core';
+} from '@mui/material';
 import { countriesListLoad } from '../store/reducers';
 
 interface State {
@@ -62,7 +62,7 @@ const CountriesSelector: React.FC<MyProps> = (props: MyProps): JSX.Element => {
                 name="country"
                 id="outlined-country-simple"
                 notched
-                labelWidth={countrySelected ? 25 : 0}
+                label={countrySelected ? t('components.countriesSelector.title') : ''}
               />
             )
           }

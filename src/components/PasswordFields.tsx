@@ -6,10 +6,10 @@ import {
   TextField,
   InputAdornment,
   Tooltip,
-} from '@material-ui/core';
-import HelpIcon from '@material-ui/icons/Help';
-import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
-import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
+} from '@mui/material';
+import HelpIcon from '@mui/icons-material/Help';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
 interface MyProps {
   passwordIsValid: boolean,

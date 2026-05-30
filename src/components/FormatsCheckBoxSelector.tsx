@@ -5,7 +5,7 @@ import {
   FormGroup,
   FormHelperText,
   FormLabel,
-} from '@material-ui/core';
+} from '@mui/material';
 
 interface MyProps {
   errors: string,

@@ -4,8 +4,8 @@ import Link from 'next/link';
 import {
   Button,
   Typography,
-} from '@material-ui/core';
-import AddToHomeScreenIcon from '@material-ui/icons/AddToHomeScreen';
+} from '@mui/material';
+import AddToHomeScreenIcon from '@mui/icons-material/AddToHomeScreen';
 
 const NotLogged = () => (
   <StyledContainer>

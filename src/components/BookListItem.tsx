@@ -10,7 +10,7 @@ import {
   Card,
   CardContent,
   Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 import { Book } from '../interfaces/books';
 import genres from '../utils/constants/genres';
 
