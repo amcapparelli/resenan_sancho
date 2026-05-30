@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 
 const LanguageSelector = () => {
   const { t, i18n } = useTranslation();
-  const [language, setLanguage] = useState<string>();
+  const [language, setLanguage] = useState<string>('es');
   useEffect(() => {
     i18n.changeLanguage(language);
   }, [language]);

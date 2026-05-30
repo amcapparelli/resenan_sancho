@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useContext, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -26,33 +25,28 @@ const Header: React.FC = (): JSX.Element => {
           </Link>
         </header>
         <StyledNav>
-          <Link href="/books">
-            <StyledLink aria-label="Find Books">{t('nav.availableBooks')}</StyledLink>
-          </Link>
-          <Link href="/reviewers">
-            <StyledLink aria-label="Find Reviewers">{t('nav.reviewers')}</StyledLink>
-          </Link>
+          <StyledNavLink href="/books" aria-label="Find Books">{t('nav.availableBooks')}</StyledNavLink>
+          <StyledNavLink href="/reviewers" aria-label="Find Reviewers">{t('nav.reviewers')}</StyledNavLink>
         </StyledNav>
         <StyledPrivateNav>
           {
             isLogged
               ? (
                 <>
-                  <Link href="/myprofile">
-                    <StyledProfileButton
-                      aria-label="Private Area"
-                      variant="contained"
-                      color="primary"
-                    >
-                      {t('nav.myProfile')}
-                    </StyledProfileButton>
-                  </Link>
+                  <StyledProfileButton
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    component={Link as any}
+                    href="/myprofile"
+                    aria-label="Private Area"
+                    variant="contained"
+                    color="primary"
+                  >
+                    {t('nav.myProfile')}
+                  </StyledProfileButton>
                   <Button onClick={logoutRequest} aria-label="Logout">Logout</Button>
                 </>
               ) : (
-                <Link href="/login">
-                  <StyledLink aria-label="Login">Login</StyledLink>
-                </Link>
+                <StyledNavLink href="/login" aria-label="Login">Login</StyledNavLink>
               )
           }
         </StyledPrivateNav>
@@ -111,14 +105,14 @@ const StyledLogo = styledComponents.img`
   width: 30%;
 `;
 
-const StyledLink = styledComponents.a`
+const StyledNavLink = styledComponents(Link)`
   text-decoration: none;
   align-self: center;
   justify-self: center;
   font-family: ${(props) => props.theme.fontFamily};
   font-size: 1.2rem;
   color: ${(props) => props.theme.dark};
-  :hover{
+  :hover {
     cursor: pointer;
   }
 `;

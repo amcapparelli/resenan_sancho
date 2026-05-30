@@ -18,9 +18,7 @@ const index = () => {
       <StyledSection>
         <StyledArticleContainer>
           <StyledArticleTitle>
-            <h2>
-              {t('titles.homeFirst')}
-            </h2>
+            {t('titles.homeFirst')}
           </StyledArticleTitle>
           <StyledArticleP>
             <p>
@@ -34,21 +32,15 @@ const index = () => {
             </p>
           </StyledArticleP>
           <StyledNav>
-            <Link href="/reviewers">
-              <StyledArticleButton aria-label="Find Reviewers">{t('buttons.findReviewers')}</StyledArticleButton>
-            </Link>
-            <Link href="/books">
-              <StyledArticleButton aria-label="Find Books">{t('buttons.seeBooks')}</StyledArticleButton>
-            </Link>
+            <StyledArticleButton href="/reviewers" aria-label="Find Reviewers">{t('buttons.findReviewers')}</StyledArticleButton>
+            <StyledArticleButton href="/books" aria-label="Find Books">{t('buttons.seeBooks')}</StyledArticleButton>
           </StyledNav>
         </StyledArticleContainer>
       </StyledSection>
       <StyledSectionB>
         <StyledArticleBContainer>
           <StyledArticleTitleB>
-            <h2>
-              {t('titles.homeSecond')}
-            </h2>
+            {t('titles.homeSecond')}
           </StyledArticleTitleB>
           <StyledArticleBP>
             <p>
@@ -62,20 +54,14 @@ const index = () => {
             </p>
           </StyledArticleBP>
           <StyledNav>
-            <Link href="/books">
-              <StyledArticleButton aria-label="Find Books">{t('buttons.seeBooks')}</StyledArticleButton>
-            </Link>
+            <StyledArticleButton href="/books" aria-label="Find Books">{t('buttons.seeBooks')}</StyledArticleButton>
             {
               !isLogged
                 ? (
-                  <Link href="/register">
-                    <StyledArticleButton aria-label="Register">{t('buttons.signUp')}</StyledArticleButton>
-                  </Link>
+                  <StyledArticleButton href="/register" aria-label="Register">{t('buttons.signUp')}</StyledArticleButton>
                 )
                 : (
-                  <Link href="/myspaces">
-                    <StyledArticleButton aria-label="Add literary spaces">{t('buttons.addLiterarySpaces')}</StyledArticleButton>
-                  </Link>
+                  <StyledArticleButton href="/myspaces" aria-label="Add literary spaces">{t('buttons.addLiterarySpaces')}</StyledArticleButton>
                 )
             }
           </StyledNav>
@@ -84,9 +70,7 @@ const index = () => {
       <StyledSection>
         <StyledArticleContainer>
           <StyledArticleTitleB>
-            <h2>
-              {t('titles.homeThird')}
-            </h2>
+            {t('titles.homeThird')}
           </StyledArticleTitleB>
           <StyledArticleP>
             <p>
@@ -100,23 +84,16 @@ const index = () => {
             </p>
           </StyledArticleP>
           <StyledNav>
-            <Link href="/reviewers">
-              <StyledArticleButton aria-label="Find Reviewers">{t('buttons.findReviewers')}</StyledArticleButton>
-            </Link>
+            <StyledArticleButton href="/reviewers" aria-label="Find Reviewers">{t('buttons.findReviewers')}</StyledArticleButton>
             {
               !isLogged
                 ? (
-                  <Link href="/register">
-                    <StyledArticleButton aria-label="Register">{t('buttons.signUp')}</StyledArticleButton>
-                  </Link>
+                  <StyledArticleButton href="/register" aria-label="Register">{t('buttons.signUp')}</StyledArticleButton>
                 )
                 : (
-                  <Link href="/addBook">
-                    <StyledArticleButton aria-label="Add Book">{t('buttons.addBook')}</StyledArticleButton>
-                  </Link>
+                  <StyledArticleButton href="/addBook" aria-label="Add Book">{t('buttons.addBook')}</StyledArticleButton>
                 )
             }
-
           </StyledNav>
         </StyledArticleContainer>
       </StyledSection>
@@ -152,14 +129,14 @@ const StyledArticleTitleB = styledComponents.h2`
   margin-bottom: 0;
 `;
 
-const StyledArticleP = styledComponents.p`
+const StyledArticleP = styledComponents.div`
   margin-top: 0;
   font-family: ${(props) => props.theme.fontFamily};
   font-size: 1rem;
   grid-area: main;
 `;
 
-const StyledArticleBP = styledComponents.p`
+const StyledArticleBP = styledComponents.div`
   margin-top: 0;
   font-family: ${(props) => props.theme.fontFamily};
   font-size: 1rem;
@@ -172,7 +149,9 @@ const StyledNav = styledComponents.div`
   align-self: center;
 `;
 
-const StyledArticleButton = styledComponents.button`
+const StyledArticleButton = styledComponents(Link)`
+  display: inline-block;
+  text-decoration: none;
   font-family: ${(props) => props.theme.fontFamily};
   font-size: 1rem;
   width: 90%;
@@ -181,6 +160,7 @@ const StyledArticleButton = styledComponents.button`
   color: ${(props) => props.theme.dark};
   background-color: ${(props) => props.theme.main};
   border-radius: 25px;
+  text-align: center;
   :hover{
     cursor: pointer;
     background-color: ${(props) => props.theme.dark};

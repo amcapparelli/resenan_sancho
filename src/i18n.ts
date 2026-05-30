@@ -1,25 +1,24 @@
 import i18next from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import HttpBackend from 'i18next-http-backend';
-import LanguageDetector from 'i18next-browser-languagedetector';
+// Bundled resources: imported at build time so translations are available
+// synchronously during SSR, preventing React hydration mismatches caused by
+// the async HttpBackend + browser LanguageDetector combination.
+import esCommon from '../public/static/locales/es/common.json';
+import enCommon from '../public/static/locales/en/common.json';
 
 if (!i18next.isInitialized) {
   i18next
-    .use(HttpBackend)
-    .use(LanguageDetector)
     .use(initReactI18next)
     .init({
+      resources: {
+        es: { common: esCommon },
+        en: { common: enCommon },
+      },
+      lng: 'es',
       fallbackLng: 'es',
       supportedLngs: ['es', 'en'],
       defaultNS: 'common',
       ns: ['common'],
-      backend: {
-        loadPath: '/static/locales/{{lng}}/{{ns}}.json',
-      },
-      detection: {
-        order: ['querystring', 'cookie', 'localStorage', 'navigator'],
-        caches: ['cookie'],
-      },
       interpolation: {
         escapeValue: false,
       },

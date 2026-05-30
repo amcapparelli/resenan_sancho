@@ -85,15 +85,16 @@ const BookListItem: React.FC<Props> = ({ book }: Props): JSX.Element => {
               }
             </StyledChipsFormatsContainer>
             <StyledButtonContainer>
-              <Link href={{ pathname: '/books', query: { book: _id } }}>
-                <StyledButton
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                >
-                  Ver más / Pedir ejemplar
-                </StyledButton>
-              </Link>
+              <StyledButton
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                component={Link as any}
+                href={{ pathname: '/books', query: { book: _id } }}
+                variant="contained"
+                color="primary"
+                size="large"
+              >
+                Ver más / Pedir ejemplar
+              </StyledButton>
             </StyledButtonContainer>
           </StyledCardFooter>
         </StyledCardContentContainer>
