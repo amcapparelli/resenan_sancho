@@ -1,4 +1,4 @@
-const API_BASE_URL: string = process.env.NEXT_PUBLIC_API_URL;
+const API_BASE_URL: string = `${process.env.NEXT_PUBLIC_API_URL}/`;
 
 export const register: string = `${API_BASE_URL}register`;
 export const login: string = `${API_BASE_URL}login`;
