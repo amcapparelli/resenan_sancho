@@ -13,7 +13,7 @@ const StyledLink = ({ anchor, href }: MyProps) => (
   </Link>
 );
 
-const StyledA = styledComponents.a`
+const StyledA = styledComponents.span`
   text-decoration: none;
   align-self: center;
   justify-self: center;
