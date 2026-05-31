@@ -63,7 +63,7 @@ const StyledProfileButton = styledComponents(Button)`
   height: 40%;
   justify-self: end;
   align-self: center;
-  :hover{
+  &&:hover {
     cursor: pointer;
     color: ${(props) => props.theme.main};
   }
@@ -112,7 +112,7 @@ const StyledNavLink = styledComponents(Link)`
   font-family: ${(props) => props.theme.fontFamily};
   font-size: 1.2rem;
   color: ${(props) => props.theme.dark};
-  :hover {
+  &&:hover {
     cursor: pointer;
   }
 `;

@@ -40,7 +40,7 @@ const StyledLabel = styledComponents.label`
   text-align: center;
   justify-self: center;
   background-color: ${(props) => props.theme.main};
-  :hover{
+  &&:hover {
     cursor: pointer;
   }
 `;
