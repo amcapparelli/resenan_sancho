@@ -203,7 +203,7 @@ const StyledHomeIcon = styledComponents(HomeIcon)`
   align-self: center;
   justify-self: center;
   margin-left: 70%;
-  :hover{
+  &&:hover {
     cursor: pointer;
   }
   color: ${(props) => props.theme.contrastText};

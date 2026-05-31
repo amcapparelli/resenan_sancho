@@ -137,7 +137,7 @@ const ReviewerListItem: React.FC<Props> = ({ reviewer }: Props): JSX.Element => 
 };
 
 const StyledChip = styledComponents(Chip)`
-  :hover{
+  &&:hover {
     cursor: pointer;
     background-color: ${(props) => props.theme.dark};
     color: ${(props) => props.theme.main};

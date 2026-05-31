@@ -341,7 +341,7 @@ const StyledLabel = styledComponents.label`
   text-align: center;
   font-weight: 600;
   background-color: ${(props) => props.theme.main};
-  :hover{
+  &&:hover {
     cursor: pointer;
     background-color: ${(props) => props.theme.dark};
     color: ${(props) => props.theme.main};

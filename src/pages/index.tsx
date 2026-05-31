@@ -161,7 +161,7 @@ const StyledArticleButton = styledComponents(Link)`
   background-color: ${(props) => props.theme.main};
   border-radius: 25px;
   text-align: center;
-  :hover{
+  &&:hover {
     cursor: pointer;
     background-color: ${(props) => props.theme.dark};
     color: ${(props) => props.theme.main};

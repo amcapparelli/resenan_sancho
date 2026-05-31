@@ -20,7 +20,7 @@ const StyledA = styledComponents.span`
   font-family: ${(props) => props.theme.fontFamily};
   font-size: 1.2rem;
   color: ${(props) => props.theme.dark};
-  :hover{
+  &&:hover {
     cursor: pointer;
     color: ${(props) => props.theme.main};
   }
