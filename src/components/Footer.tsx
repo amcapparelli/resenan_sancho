@@ -1,10 +1,10 @@
 import React from 'react';
 import styledComponents from 'styled-components';
-import { Typography, Link } from '@material-ui/core';
-import InstagramIcon from '@material-ui/icons/Instagram';
-import TwitterIcon from '@material-ui/icons/Twitter';
-import FacebookIcon from '@material-ui/icons/Facebook';
-import MailIcon from '@material-ui/icons/Mail';
+import { Typography, Link } from '@mui/material';
+import InstagramIcon from '@mui/icons-material/Instagram';
+import TwitterIcon from '@mui/icons-material/Twitter';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import MailIcon from '@mui/icons-material/Mail';
 
 const Footer = () => (
   <StyledFooter>

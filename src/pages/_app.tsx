@@ -1,29 +1,39 @@
 /* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable react/react-in-jsx-scope */
 import React from 'react';
-import App, { AppProps } from 'next/app';
-import { MuiThemeProvider } from '@material-ui/core';
-import { ThemeProvider } from 'styled-components';
+import type { AppProps } from 'next/app';
+import { CacheProvider, EmotionCache } from '@emotion/react';
+import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import { ThemeProvider as ScThemeProvider } from 'styled-components';
 import UserContextProvider from '../store/context/userContext/UserContextProvider';
 import { MuiTheme, StyledTheme } from '../store/context/StylesContext/Theme';
-import { appWithTranslation } from '../i18n';
+import createEmotionCache from '../utils/createEmotionCache';
 import { Meta } from '../components';
+import '../i18n';
 
-class MyApp extends App {
-  render() {
-    const { Component, pageProps }: AppProps = this.props;
-    return (
-      <ThemeProvider theme={StyledTheme}>
-        <MuiThemeProvider theme={MuiTheme}>
-          <UserContextProvider>
-            <Meta>
-              <Component {...pageProps} />
-            </Meta>
-          </UserContextProvider>
-        </MuiThemeProvider>
-      </ThemeProvider>
-    );
-  }
+const clientSideEmotionCache = createEmotionCache();
+
+interface MyAppProps extends AppProps {
+  emotionCache?: EmotionCache;
 }
 
-export default appWithTranslation(MyApp);
+const MyApp = ({
+  Component,
+  emotionCache = clientSideEmotionCache,
+  pageProps,
+}: MyAppProps) => (
+  <CacheProvider value={emotionCache}>
+    <MuiThemeProvider theme={MuiTheme}>
+      <CssBaseline />
+      <ScThemeProvider theme={StyledTheme}>
+        <UserContextProvider>
+          <Meta>
+            <Component {...pageProps} />
+          </Meta>
+        </UserContextProvider>
+      </ScThemeProvider>
+    </MuiThemeProvider>
+  </CacheProvider>
+);
+
+export default MyApp;

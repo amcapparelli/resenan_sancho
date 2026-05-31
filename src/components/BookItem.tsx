@@ -7,8 +7,8 @@ import {
   Button,
   Typography,
   Chip,
-} from '@material-ui/core';
-import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
+} from '@mui/material';
+import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import { ModalContact } from '.';
 import { useFetchBook } from '../utils/customHooks';
 import UserContext from '../store/context/userContext/UserContext';

@@ -2,7 +2,7 @@ import React from 'react';
 import {
   Card,
   CardContent,
-} from '@material-ui/core';
+} from '@mui/material';
 import { PublicZoneLayout } from '../components/Layouts';
 
 const legal = () => (

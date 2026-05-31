@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styledComponents from 'styled-components';
-import { Button, TextField } from '@material-ui/core';
-import Alert from '@material-ui/lab/Alert';
+import { Button, TextField } from '@mui/material';
+import Alert from '@mui/material/Alert';
 import { useForm } from '../utils/customHooks';
 import { forgotPass } from '../config/routes';
 import { Response } from '../interfaces/response';

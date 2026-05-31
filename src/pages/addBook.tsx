@@ -12,14 +12,12 @@ import {
   Grid,
   IconButton,
   TextField,
-} from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
-import Alert from '@material-ui/lab/Alert';
-import DateFnsUtils from '@date-io/date-fns';
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker,
-} from '@material-ui/pickers';
+} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import Alert from '@mui/material/Alert';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import ReactGA from "react-ga4";
 import {
   useForm,
@@ -192,24 +190,25 @@ const AddBookForm: React.FC = (): JSX.Element => {
               error={errors.synopsis.length > 0}
               value={bookForm.synopsis}
             />
-            <MuiPickersUtilsProvider utils={DateFnsUtils}>
-              <Grid container justify="space-around">
-                <KeyboardDatePicker
-                  margin="normal"
-                  id="date-picker-dialog"
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <Grid container justifyContent="space-around">
+                <DatePicker
                   label="Fecha de publicación"
                   format="MM/dd/yyyy"
-                  value={bookForm.datePublished || null}
-                  name="datePublished"
+                  value={bookForm.datePublished ? new Date(bookForm.datePublished) : null}
                   onChange={(date) => setBookForm('datePublished', date)}
-                  KeyboardButtonProps={{
-                    'aria-label': 'change date',
+                  slotProps={{
+                    textField: {
+                      margin: 'normal',
+                      id: 'date-picker-dialog',
+                      name: 'datePublished',
+                      required: true,
+                    },
                   }}
-                  required
                 />
               </Grid>
               <FormHelperText error>{errors.datePublished}</FormHelperText>
-            </MuiPickersUtilsProvider>
+            </LocalizationProvider>
             {
               registerBookResponse.message
               && (

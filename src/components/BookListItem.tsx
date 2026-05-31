@@ -10,7 +10,7 @@ import {
   Card,
   CardContent,
   Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 import { Book } from '../interfaces/books';
 import genres from '../utils/constants/genres';
 
@@ -85,15 +85,16 @@ const BookListItem: React.FC<Props> = ({ book }: Props): JSX.Element => {
               }
             </StyledChipsFormatsContainer>
             <StyledButtonContainer>
-              <Link href={{ pathname: '/books', query: { book: _id } }}>
-                <StyledButton
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                >
-                  Ver más / Pedir ejemplar
-                </StyledButton>
-              </Link>
+              <StyledButton
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                component={Link as any}
+                href={{ pathname: '/books', query: { book: _id } }}
+                variant="contained"
+                color="primary"
+                size="large"
+              >
+                Ver más / Pedir ejemplar
+              </StyledButton>
             </StyledButtonContainer>
           </StyledCardFooter>
         </StyledCardContentContainer>

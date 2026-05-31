@@ -15,15 +15,11 @@ import {
   TableHead,
   Table,
   TableBody,
-} from '@material-ui/core';
-import {
-  makeStyles,
-  withStyles,
-  Theme,
-  createStyles,
-} from '@material-ui/core/styles';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import Alert from '@material-ui/lab/Alert';
+} from '@mui/material';
+import { Theme } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import Alert from '@mui/material/Alert';
 import UserContext from '../store/context/userContext/UserContext';
 import { useFetch } from '../utils/customHooks';
 import { Book } from '../interfaces/books';
@@ -45,8 +41,16 @@ interface Row {
   moreInfo: string
 }
 
-const PUBLISHABLE_KEY: string = process.env.NODE_ENV === 'production' ? 'pk_live_hnHykpu6AzNWJfUxxFdbB12a00pLwBhUR9' : 'pk_test_CcNp900cqt0Ps35Yp1iT1XYY00cu0xb9VY';
+const PUBLISHABLE_KEY: string = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 const stripePromise = loadStripe(PUBLISHABLE_KEY);
+
+const StyledTableCell = styled(TableCell)(({ theme }: { theme: Theme }) => ({
+  '&.MuiTableCell-body': {
+    backgroundColor: theme.palette.primary.light,
+    color: theme.palette.primary.contrastText,
+    padding: '2%',
+  },
+}));
 
 const ModalPromotions: React.FC<MyProps> = (props: MyProps): JSX.Element => {
   const { user } = useContext(UserContext);
@@ -66,12 +70,7 @@ const ModalPromotions: React.FC<MyProps> = (props: MyProps): JSX.Element => {
       setTableMinWidth(500);
     }
   }, []);
-  const useStyles = makeStyles({
-    table: {
-      minWidth: tableMinWidth,
-    },
-  });
-  const classes = useStyles();
+
   function createData(
     id: number,
     more: string,
@@ -97,14 +96,6 @@ const ModalPromotions: React.FC<MyProps> = (props: MyProps): JSX.Element => {
     )),
   ];
 
-  const StyledTableCell = withStyles((theme: Theme) => createStyles({
-    body: {
-      backgroundColor: theme.palette.primary.light,
-      color: theme.palette.primary.contrastText,
-      padding: '2%',
-    },
-  }))(TableCell);
-
   const handleClickFreePromo = (book: Book, id: number) => {
     setPromo(id);
     asyncRequest(`${URL}/${book._id}`, 'put', {
@@ -127,7 +118,7 @@ const ModalPromotions: React.FC<MyProps> = (props: MyProps): JSX.Element => {
       </Typography>
       <Typography variant="subtitle1" align="center">Estas son las opciones que tienes:</Typography>
       <TableContainer component={Paper}>
-        <Table className={classes.table} aria-label="simple table">
+        <Table sx={{ minWidth: tableMinWidth }} aria-label="simple table">
           <TableHead>
             <TableRow>
               <TableCell>Más información</TableCell>
@@ -200,9 +191,9 @@ const ModalPromotions: React.FC<MyProps> = (props: MyProps): JSX.Element => {
             image={bookSelected && bookSelected.cover}
             bookTitle={bookSelected && bookSelected.title}
             description={
-              `Añadir 
-              ${promotions.find((p) => p.price === amount).copies} 
-              ejemplares para reseña de 
+              `Añadir
+              ${promotions.find((p) => p.price === amount).copies}
+              ejemplares para reseña de
               ${bookSelected && bookSelected.title}`
             }
             chosenPromo={promo}

@@ -8,8 +8,8 @@ import {
   FormControlLabel,
   TextField,
   Typography,
-} from '@material-ui/core';
-import Alert from '@material-ui/lab/Alert';
+} from '@mui/material';
+import Alert from '@mui/material/Alert';
 import ReactGA from "react-ga4";
 import {
   useForm,

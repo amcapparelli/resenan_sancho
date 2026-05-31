@@ -3,12 +3,12 @@ import React, { useState, useEffect } from 'react';
 import styledComponents from 'styled-components';
 import {
   Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
 const LanguageSelector = () => {
   const { t, i18n } = useTranslation();
-  const [language, setLanguage] = useState<string>();
+  const [language, setLanguage] = useState<string>('es');
   useEffect(() => {
     i18n.changeLanguage(language);
   }, [language]);

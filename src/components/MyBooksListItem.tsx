@@ -10,12 +10,12 @@ import {
   ListItemIcon,
   ListItemText,
   Typography,
-} from '@material-ui/core';
-import StarsIcon from '@material-ui/icons/Stars';
-import EditIcon from '@material-ui/icons/Edit';
-import ErrorIcon from '@material-ui/icons/Error';
-import CheckIcon from '@material-ui/icons/Check';
-import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
+} from '@mui/material';
+import StarsIcon from '@mui/icons-material/Stars';
+import EditIcon from '@mui/icons-material/Edit';
+import ErrorIcon from '@mui/icons-material/Error';
+import CheckIcon from '@mui/icons-material/Check';
+import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import { Book } from '../interfaces/books';
 
 interface Props {

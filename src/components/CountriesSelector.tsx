@@ -6,7 +6,7 @@ import {
   Select,
   InputLabel,
   OutlinedInput,
-} from '@material-ui/core';
+} from '@mui/material';
 import { countriesListLoad } from '../store/reducers';
 
 interface State {
@@ -27,7 +27,7 @@ const CountriesSelector: React.FC<MyProps> = (props: MyProps): JSX.Element => {
   const [state, dispatch] = useReducer(countriesListLoad, initialState);
   useEffect(() => {
     const listCountries = async () => {
-      const response = await fetch('https://restcountries.eu/rest/v2/all');
+      const response = await fetch('https://restcountries.com/v3.1/all?fields=name');
       const countries = await response.json();
       dispatch({
         type: 'COUNTRIES_LIST_LOAD',
@@ -62,7 +62,7 @@ const CountriesSelector: React.FC<MyProps> = (props: MyProps): JSX.Element => {
                 name="country"
                 id="outlined-country-simple"
                 notched
-                labelWidth={countrySelected ? 25 : 0}
+                label={countrySelected ? t('components.countriesSelector.title') : ''}
               />
             )
           }

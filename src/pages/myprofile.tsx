@@ -1,6 +1,5 @@
 /* eslint-disable no-underscore-dangle */
 import React, { useContext, useState, useEffect } from 'react';
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import styledComponents from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import {
@@ -11,10 +10,10 @@ import {
   Collapse,
   IconButton,
   TextField,
-} from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
-import Alert from '@material-ui/lab/Alert';
-import DeleteIcon from '@material-ui/icons/Delete';
+} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import Alert from '@mui/material/Alert';
+import DeleteIcon from '@mui/icons-material/Delete';
 import UserContext from '../store/context/userContext/UserContext';
 import { MyProfileLayout } from '../components/Layouts';
 import { UploadImagesInput, CountriesSelector, ModalDeleteAccount } from '../components';
@@ -22,19 +21,8 @@ import { useForm, useUploadImages } from '../utils/customHooks';
 import { update as URL } from '../config/routes';
 import { Response } from '../interfaces/response';
 
-const useStyles = makeStyles((theme: Theme) => createStyles({
-  large: {
-    width: theme.spacing(7),
-    height: theme.spacing(7),
-    alignContent: 'center',
-    justifySelf: 'center',
-    justifyContent: 'center',
-  },
-}));
-
 const MyProfile: React.FC = (): JSX.Element => {
   const { t } = useTranslation();
-  const classes = useStyles();
   const [response, setResponse] = useState<Response>({
     success: undefined,
     message: undefined,
@@ -97,7 +85,7 @@ const MyProfile: React.FC = (): JSX.Element => {
             />
             {
               updateForm.avatar
-              && <Avatar alt="avatar" src={updateForm.avatar} className={classes.large} />
+              && <Avatar alt="avatar" src={updateForm.avatar} sx={{ width: 56, height: 56, alignContent: 'center', justifySelf: 'center', justifyContent: 'center' }} />
             }
           </StyledAvatarContainer>
           <StyledContentContainer>

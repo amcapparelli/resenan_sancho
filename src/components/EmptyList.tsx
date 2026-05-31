@@ -2,8 +2,8 @@ import React from 'react';
 import styledComponents from 'styled-components';
 import {
   Typography,
-} from '@material-ui/core';
-import SearchIcon from '@material-ui/icons/Search';
+} from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 
 const EmptyList = () => (
   <StyledContainer>
