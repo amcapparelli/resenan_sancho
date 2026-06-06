@@ -11,9 +11,12 @@ interface NavBarProps {
 
 const NavBar = ({ isLoggedIn, userInitials, onLogout }: NavBarProps): JSX.Element => (
   <NavBarWrapper>
-    <Link href="/">
-      <StyledLogo src="/static/logo-web.webp" alt="logo reseñan sancho" />
-    </Link>
+    <LogoGroup>
+      <Link href="/">
+        <StyledLogo src="/static/logo-web.webp" alt="logo reseñan sancho" />
+      </Link>
+      <Tagline>Reseñan, Sancho, señal que somos escritores.</Tagline>
+    </LogoGroup>
     <NavActions
       isLoggedIn={isLoggedIn}
       userInitials={userInitials}
@@ -32,6 +35,12 @@ const NavBarWrapper = styledComponents.header`
   padding: 18px 28px;
 `;
 
+const LogoGroup = styledComponents.div`
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+`;
+
 const StyledLogo = styledComponents.img`
   height: 48px;
   width: auto;
@@ -39,6 +48,16 @@ const StyledLogo = styledComponents.img`
   @media (max-width: 480px) {
     height: 36px;
   }
+`;
+
+const Tagline = styledComponents.p`
+  margin: 0;
+  padding-left: 3px;
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 12px;
+  color: ${({ theme }) => theme.brown};
 `;
 
 export default NavBar;
