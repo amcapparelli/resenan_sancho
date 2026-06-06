@@ -16,7 +16,7 @@ const CARD_CONTENT: Record<Variant, {
   href: string;
 }> = {
   writer: {
-    label: 'SOY ESCRITOR',
+    label: 'ESCRIBO LIBROS',
     title: 'Quiero reseñas para mi libro',
     description:
       'Encuentra reseñadores que encajan con tu género literario y solicita reseñas directamente.',
@@ -24,7 +24,7 @@ const CARD_CONTENT: Record<Variant, {
     href: '/reviewers',
   },
   reviewer: {
-    label: 'SOY RESEÑADOR',
+    label: 'ESCRIBO RESEÑAS LITERARIAS',
     title: 'Quiero descubrir libros nuevos',
     description:
       'Filtra por género y formato. Pide ejemplares gratuitos de libros que te interesen reseñar.',
