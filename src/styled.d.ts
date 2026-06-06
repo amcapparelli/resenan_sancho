@@ -8,5 +8,12 @@ declare module 'styled-components' {
     contrastText: string;
     fontFamily: string;
     fontTitles: string;
+    amber: string;
+    terracotta: string;
+    cream: string;
+    ink: string;
+    brown: string;
+    white: string;
+    lightBorder: string;
   }
 }

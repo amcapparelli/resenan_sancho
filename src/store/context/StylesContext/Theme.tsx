@@ -4,7 +4,14 @@ enum Palette {
   main = '#FFDE00',
   dark = '#EB8500',
   light = '#FAF5AE',
-  contrastText = '#DE4A10'
+  contrastText = '#DE4A10',
+  amber = '#F2B705',
+  terracotta = '#C75B22',
+  cream = '#FBF1D8',
+  ink = '#3D3A35',
+  brown = '#6B4A16',
+  white = '#FFFFFF',
+  lightBorder = '#d4c9b0',
 }
 
 const {
@@ -12,6 +19,13 @@ const {
   dark,
   light,
   contrastText,
+  amber,
+  terracotta,
+  cream,
+  ink,
+  brown,
+  white,
+  lightBorder,
 } = Palette;
 
 export const StyledTheme = {
@@ -21,6 +35,13 @@ export const StyledTheme = {
   contrastText,
   fontFamily: 'Rambla',
   fontTitles: 'Rambla',
+  amber,
+  terracotta,
+  cream,
+  ink,
+  brown,
+  white,
+  lightBorder,
 };
 
 export const MuiTheme = createTheme({
