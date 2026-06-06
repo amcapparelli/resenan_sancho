@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import styledComponents from 'styled-components';
 import NavActions from './NavActions';
 
@@ -10,7 +11,9 @@ interface NavBarProps {
 
 const NavBar = ({ isLoggedIn, userInitials, onLogout }: NavBarProps): JSX.Element => (
   <NavBarWrapper>
-    <StyledLogo src="/static/logo-web.webp" alt="logo reseñan sancho" />
+    <Link href="/">
+      <StyledLogo src="/static/logo-web.webp" alt="logo reseñan sancho" />
+    </Link>
     <NavActions
       isLoggedIn={isLoggedIn}
       userInitials={userInitials}
@@ -23,10 +26,10 @@ const NavBarWrapper = styledComponents.header`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 32px;
+  gap: 64px;
   background: ${({ theme }) => theme.white};
   border-bottom: 0.5px solid ${({ theme }) => theme.lightBorder};
-  padding: 10px 28px;
+  padding: 18px 28px;
 `;
 
 const StyledLogo = styledComponents.img`

@@ -33,7 +33,7 @@ const Header: React.FC = (): JSX.Element => {
 
   return (
     <>
-      <LanguageSelector />
+      {/* <LanguageSelector /> */}
       <NavBar
         isLoggedIn={isLogged}
         userInitials={userInitials}

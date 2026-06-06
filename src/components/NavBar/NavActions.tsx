@@ -45,7 +45,7 @@ const ActionsWrapper = styledComponents.div`
 
 const NavLink = styledComponents(Link)`
   font-family: 'Source Sans 3', sans-serif;
-  font-size: 13px;
+  font-size: 18px;
   font-weight: 400;
   color: ${({ theme }) => theme.brown};
   text-decoration: none;
