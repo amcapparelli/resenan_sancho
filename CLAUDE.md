@@ -44,7 +44,10 @@ manteniendo la web viva. NO hacer un rewrite de golpe.
 
 ### Estado actual
 - [x] Fase A0: corregir erratas de la home ("encotrar", "liteararios")
-- [ ] Fase A1: definir sistema de diseño
-- [ ] Fase A2: estabilizar en Next 15 + React 18 + Node LTS (router actual)
-- [ ] Fase A3: rediseñar home
+- [x] Fase A1: definir sistema de diseño
+- [x] Fase A2: estabilizar en Next 15 + React 18 + Node LTS (router actual)
+- [x] Fase A3: rediseñar home hero
+- [ ] Fase A5: rediseñar home header
+- [ ] Fase A6: rediseñar home sections
+
 - (actualiza esta lista según avances)

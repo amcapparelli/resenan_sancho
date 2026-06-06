@@ -65,6 +65,21 @@ y mantendrá tu código mañana. Escribe pensando en ese lector.
   sorprendería a quien lo lea por primera vez.
 - No comentes lo obvio ni dejes código muerto comentado.
 
+## 5. Idioma: el código siempre en inglés
+- **Nombres en inglés** para variables, funciones, componentes, hooks, tipos, props,
+  archivos y carpetas. Ejemplo: `getReviewerById`, no `obtenerResenadorPorId`;
+  `BookCard.tsx`, no `TarjetaLibro.tsx`; `useReviewerSearch`, no `useBuscadorResenadores`.
+- **Comentarios en inglés.** Aunque la conversación contigo sea en español, el código
+  y los comentarios están en inglés.
+- **Excepción explícita: los textos visibles para el usuario final** (copy de la UI,
+  labels, mensajes, traducciones) van en español. Eso es contenido del producto, no
+  código. Lo mismo para nombres propios de dominio del negocio que solo existen en
+  español (nombre del producto, términos de marca).
+- **Si tocas código existente con nombres en español, no renombres por iniciativa
+  propia.** Respeta la convención del archivo en el que estás trabajando para no
+  romper imports ni dejar inconsistencias a medias. Si crees que conviene una
+  refactorización de nomenclatura, propónla como tarea aparte y espera confirmación.
+
 # Cómo trabajas
 
 1. **Entiende antes de tocar.** Lee el código relevante y la estructura del proyecto
@@ -89,3 +104,5 @@ y mantendrá tu código mañana. Escribe pensando en ese lector.
 - No dejas `any`, `// @ts-ignore` ni `console.log` de depuración en el código final.
 - No reescribes a App Router ni cambias de versión de Next por iniciativa propia; si lo
   ves recomendable, lo propones y esperas confirmación.
+- No escribes nombres ni comentarios en español dentro del código; solo el texto visible
+  al usuario va en español.
