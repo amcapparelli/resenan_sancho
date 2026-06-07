@@ -1,6 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
 import styled, { css } from 'styled-components';
+import { useTranslation } from 'react-i18next';
+
 import { Book } from '../../interfaces/books';
 import genres from '../../utils/constants/genres';
 
@@ -46,7 +48,7 @@ const CoverArea = styled.div`
    cream background fills any empty space around it. */
 const CoverImage = styled.img`
   width: 100%;
-    height: 100%;
+  height: 100%;
   object-fit: cover;
   object-position: center top;
   display: block;
@@ -216,9 +218,9 @@ const BookFallbackIcon: React.FC = () => (
 );
 
 const BookCard: React.FC<BookCardProps> = ({ book }) => {
+  const { t } = useTranslation();
   const genreName =
-    genres.find((g) => g.code === book.genre)?.name ?? book.genre;
-
+    genres.find((g) => g.code === book.genre)?.name;
   const hasCover = Boolean(book.cover);
 
   return (
@@ -235,7 +237,7 @@ const BookCard: React.FC<BookCardProps> = ({ book }) => {
             <BookFallbackIcon />
           </CoverFallback>
         )}
-        {genreName && <GenreBadge>{genreName}</GenreBadge>}
+        {genreName && <GenreBadge>{t(`genres.${genreName}`)}</GenreBadge>}
       </CoverArea>
 
       <CardBody>

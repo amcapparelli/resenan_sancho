@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 // Chevron SVG encoded for use as CSS background-image (terracotta stroke)
@@ -129,45 +130,48 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
   onGenreChange,
   onFormatChange,
   onFilter,
-}) => (
-  <Bar role="search" aria-label="Filtros de búsqueda">
-    <VisuallyHidden htmlFor="genre-filter">Género literario</VisuallyHidden>
-    <FilterSelect
-      id="genre-filter"
-      value={selectedGenre}
-      onChange={(e) => onGenreChange(e.target.value)}
-    >
-      <option value="">Todos los géneros</option>
-      {genres.map((genre) => (
-        <option key={genre.code} value={genre.code}>
-          {genre.name}
-        </option>
-      ))}
-    </FilterSelect>
+}) => {
+  const { t } = useTranslation();
+  return (
+    <Bar role="search" aria-label="Filtros de búsqueda">
+      <VisuallyHidden htmlFor="genre-filter">Género literario</VisuallyHidden>
+      <FilterSelect
+        id="genre-filter"
+        value={selectedGenre}
+        onChange={(e) => onGenreChange(e.target.value)}
+      >
+        <option value="">Todos los géneros</option>
+        {genres.map((genre) => (
+          <option key={genre.code} value={genre.code}>
+            {t(`genres.${genre.name}`)}
+          </option>
+        ))}
+      </FilterSelect>
 
-    <VisuallyHidden htmlFor="format-filter">Formato del libro</VisuallyHidden>
-    <FilterSelect
-      id="format-filter"
-      value={selectedFormat}
-      onChange={(e) => onFormatChange(e.target.value)}
-    >
-      <option value="">Todos los formatos</option>
-      {formats.map((format) => (
-        <option key={format} value={format}>
-          {format}
-        </option>
-      ))}
-    </FilterSelect>
+      <VisuallyHidden htmlFor="format-filter">Formato del libro</VisuallyHidden>
+      <FilterSelect
+        id="format-filter"
+        value={selectedFormat}
+        onChange={(e) => onFormatChange(e.target.value)}
+      >
+        <option value="">Todos los formatos</option>
+        {formats.map((format) => (
+          <option key={format} value={format}>
+            {format}
+          </option>
+        ))}
+      </FilterSelect>
 
-    <FilterButton
-      type="button"
-      onClick={onFilter}
-      aria-label="Filtrar libros"
-    >
-      <SearchIcon />
-      Filtrar
-    </FilterButton>
-  </Bar>
-);
+      <FilterButton
+        type="button"
+        onClick={onFilter}
+        aria-label="Filtrar libros"
+      >
+        <SearchIcon />
+        Filtrar
+      </FilterButton>
+    </Bar>
+  )
+};
 
 export default SearchFilters;
