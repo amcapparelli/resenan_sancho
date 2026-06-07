@@ -17,6 +17,11 @@ const LanguageSelector = () => {
     setLanguage(i18n.language);
   }, []);
 
+  // Disable for now...
+  if (true) {
+    return null
+  }
+
   return (
     <StyledLanguageSelector>
       <Typography variant="body1" display="inline">{t('components.languageSelector.chooseLanguage')}: </Typography>
