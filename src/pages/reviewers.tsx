@@ -1,13 +1,11 @@
 import React from 'react';
-import { ReviewersList } from '../components';
+import ReviewersPage from '../views/ReviewersPage';
 import { PublicZoneLayout } from '../components/Layouts';
 
 const Home: React.FC = (): JSX.Element => (
   <>
     <PublicZoneLayout>
-      <div>
-        <ReviewersList />
-      </div>
+      <ReviewersPage />
     </PublicZoneLayout>
   </>
 );

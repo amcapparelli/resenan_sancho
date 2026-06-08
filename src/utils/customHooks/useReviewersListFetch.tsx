@@ -27,7 +27,10 @@ const useReviewersListFetch = (): [State, Function, boolean] => {
         'Content-Type': 'application/json',
       },
     };
-    const queryString = Object.keys(filters).map((key) => `${key}=${filters[key]}`).join('&');
+    const queryString = Object.entries(filters)
+      .filter(([, value]) => value !== '' && value !== null && value !== undefined)
+      .map(([key, value]) => `${key}=${value}`)
+      .join('&');
     try {
       setLoading(true);
       const response = await fetch(`${URL}?${queryString}`, options);

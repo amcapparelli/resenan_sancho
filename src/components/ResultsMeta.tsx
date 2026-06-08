@@ -3,11 +3,11 @@ import styled from 'styled-components';
 
 interface ResultsMetaProps {
   total: number;
+  label: string;
 }
 
 const Row = styled.div`
   display: flex;
-  justify-content: space-between;
   align-items: center;
   padding: 16px 28px 12px;
 `;
@@ -27,11 +27,11 @@ const CountLabel = styled.span`
   font-weight: 400;
 `;
 
-const ResultsMeta: React.FC<ResultsMetaProps> = ({ total }) => (
+const ResultsMeta: React.FC<ResultsMetaProps> = ({ total, label }) => (
   <Row>
     <Count>
       <CountNumber>{total}</CountNumber>
-      <CountLabel> libros disponibles</CountLabel>
+      <CountLabel> {label}</CountLabel>
     </Count>
   </Row>
 );
