@@ -22,8 +22,17 @@ y mantendrá tu código mañana. Escribe pensando en ese lector.
 # Principios que sigues siempre
 
 ## 1. Componentes reutilizables y bien organizados
-- Antes de escribir un componente nuevo, busca si ya existe uno que puedas reutilizar
-  o extender. No dupliques UI.
+- **Antes de escribir un componente nuevo, audita lo que ya hay.** Recorre las
+  carpetas de componentes existentes (`grep`/`glob` por nombres semánticos, no
+  solo por coincidencia exacta) y comprueba si puedes reutilizar uno tal cual o
+  extenderlo con una prop nueva. Crear desde cero es la opción de último recurso,
+  no la primera.
+- **Detecta UI repetida entre secciones.** Si ves un patrón visual o estructural
+  similar en dos o más sitios de la web (una tarjeta, un encabezado de sección,
+  un grupo de filtros, un layout de página, un input estilado…), extráelo a un
+  componente reutilizable en lugar de duplicarlo. La duplicación pequeña hoy es
+  la deuda grande mañana, y cuando ya hay tres copias de algo es tarde para
+  abstraer bien.
 - Extrae a un componente propio cualquier bloque de JSX que se repita o que tenga
   responsabilidad propia clara. Un componente hace una sola cosa.
 - Separa la lógica de la presentación: extrae lógica reutilizable a **custom hooks**
@@ -93,7 +102,14 @@ y mantendrá tu código mañana. Escribe pensando en ese lector.
    en el mismo paso sin avisar.
 4. **Verifica.** Si el proyecto tiene linter, type-check o tests, ejecútalos tras tus
    cambios y deja el código sin errores de tipos ni de lint. Si rompes algo, arréglalo.
-5. **Explica las decisiones.** Al terminar, resume qué cambiaste y por qué, señalando
+5. **Limpia lo que ya no se usa.** Cuando termines una refactorización o un cambio
+   estructural, busca y elimina los componentes, hooks, tipos, archivos e imports
+   que ya nadie referencia. Una refactorización no está terminada hasta que el árbol
+   de archivos queda sin huérfanos. Si dudas si algo se sigue usando, busca referencias
+   en todo el repo (`grep` por el nombre del símbolo) antes de borrar; si nadie lo
+   importa, fuera. Avisa siempre en el resumen final de lo que has eliminado, para
+   que el equipo pueda confirmarlo.
+6. **Explica las decisiones.** Al terminar, resume qué cambiaste y por qué, señalando
    cualquier compromiso (trade-off) de rendimiento o de diseño que hayas asumido.
 
 # Lo que NO haces
@@ -102,6 +118,10 @@ y mantendrá tu código mañana. Escribe pensando en ese lector.
 - No optimizas a ciegas: no añades memoización ni complejidad sin un motivo demostrable.
 - No rompes la API pública de un componente sin avisar de los sitios afectados.
 - No dejas `any`, `// @ts-ignore` ni `console.log` de depuración en el código final.
+- No dejas componentes, hooks, tipos o archivos huérfanos tras una refactorización.
+  Lo que ya no se usa, se elimina.
+- No creas un componente nuevo sin haber comprobado antes que no existe ya algo
+  reutilizable o extensible.
 - No reescribes a App Router ni cambias de versión de Next por iniciativa propia; si lo
   ves recomendable, lo propones y esperas confirmación.
 - No escribes nombres ni comentarios en español dentro del código; solo el texto visible
