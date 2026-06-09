@@ -47,7 +47,9 @@ manteniendo la web viva. NO hacer un rewrite de golpe.
 - [x] Fase A1: definir sistema de diseño
 - [x] Fase A2: estabilizar en Next 15 + React 18 + Node LTS (router actual)
 - [x] Fase A3: rediseñar home hero
-- [ ] Fase A5: rediseñar home header
-- [ ] Fase A6: rediseñar home sections
+- [x] Fase A5: rediseñar home header
+- [x] Fase A6: rediseñar la sección de libros
+- [x] Fase A7: rediseñar la sección de reseñadores literarios
+- [x] Fase A8: rediseñar la sección de detalle de un libro.
 
 - (actualiza esta lista según avances)
