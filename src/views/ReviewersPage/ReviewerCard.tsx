@@ -263,7 +263,7 @@ interface AvatarProps {
 }
 
 const Avatar: React.FC<AvatarProps> = ({ avatar, name, lastName }) => {
-  const fullName = `${name} ${lastName}`.trim();
+  const fullName = `${name ?? ''} ${lastName ?? ''}`.trim();
 
   if (avatar) {
     return (
@@ -301,7 +301,7 @@ const ReviewerCard: React.FC<ReviewerCardProps> = ({ reviewer }) => {
   const [areGenresExpanded, setAreGenresExpanded] = useState(false);
 
   const { author, description, genres, formats } = reviewer;
-  const fullName = `${author.name} ${author.lastName}`.trim();
+  const fullName = `${author.name ?? ''} ${author.lastName ?? ''}`.trim();
 
   // Channels: only render those with a non-empty url
   const activeChannels = CHANNEL_CONFIG.filter(({ key }) => {
