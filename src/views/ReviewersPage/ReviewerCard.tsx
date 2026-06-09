@@ -276,7 +276,7 @@ const Avatar: React.FC<AvatarProps> = ({ avatar, name, lastName }) => {
     );
   }
 
-  const initials = `${name?.charAt(0)}${lastName?.charAt(0)}`;
+  const initials = `${name?.charAt(0) ?? ''}${lastName?.charAt(0) ?? ''}` || '?';
 
   return (
     <AvatarInitials aria-label={`Iniciales de ${fullName}`}>
