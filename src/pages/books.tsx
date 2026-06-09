@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/router';
-import { BookItem } from '../components';
 import BooksPage from '../views/BooksPage';
+import BookDetailPage from '../views/BookDetailPage';
 import { PublicZoneLayout } from '../components/Layouts';
 
 const Books: React.FC = (): JSX.Element => {
@@ -10,7 +10,7 @@ const Books: React.FC = (): JSX.Element => {
     <>
       <PublicZoneLayout>
         {
-          book ? <BookItem id={book} /> : <BooksPage />
+          book ? <BookDetailPage id={book as string} /> : <BooksPage />
         }
       </PublicZoneLayout>
     </>
