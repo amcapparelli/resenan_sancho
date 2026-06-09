@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import { BookItem } from '../components';
-import BooksPage from '../components/BooksPage';
+import BooksPage from '../views/BooksPage';
 import { PublicZoneLayout } from '../components/Layouts';
 
 const Books: React.FC = (): JSX.Element => {

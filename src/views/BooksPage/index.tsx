@@ -3,9 +3,10 @@ import styled from 'styled-components';
 import { useBooksListFetch, useFilters } from '../../utils/customHooks';
 import genresList from '../../utils/constants/genres';
 import formatsList from '../../utils/constants/formats';
-import PageHeader from './PageHeader';
+import EmptyState from '../../components/EmptyState';
+import PageHeader from '../../components/PageHeader';
 import SearchFilters from './SearchFilters';
-import ResultsMeta from './ResultsMeta';
+import ResultsMeta from '../../components/ResultsMeta';
 import BookCard from './BookCard';
 import BookCardSkeleton from './BookCardSkeleton';
 import Pagination from './Pagination';
@@ -33,37 +34,7 @@ const Grid = styled.div`
   }
 `;
 
-// ─── Empty state ───────────────────────────────────────────────────────────
-
-const EmptyWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 28px;
-  text-align: center;
-  gap: 12px;
-`;
-
-const EmptyIcon = styled.div`
-  color: ${({ theme }) => theme.terracotta};
-  opacity: 0.4;
-`;
-
-const EmptyTitle = styled.h2`
-  font-family: 'Fraunces', serif;
-  font-size: 22px;
-  font-weight: 600;
-  color: ${({ theme }) => theme.ink};
-  margin: 0;
-`;
-
-const EmptySubtitle = styled.p`
-  font-family: 'Source Sans 3', sans-serif;
-  font-size: 14px;
-  color: ${({ theme }) => theme.brown};
-  margin: 0;
-`;
+// ─── Empty state icon ──────────────────────────────────────────────────────
 
 const EmptyBookIcon: React.FC = () => (
   <svg
@@ -80,18 +51,6 @@ const EmptyBookIcon: React.FC = () => (
     <line x1="8" y1="10" x2="16" y2="10" />
     <line x1="8" y1="14" x2="13" y2="14" />
   </svg>
-);
-
-const EmptyState: React.FC = () => (
-  <EmptyWrapper>
-    <EmptyIcon>
-      <EmptyBookIcon />
-    </EmptyIcon>
-    <EmptyTitle>Sin resultados</EmptyTitle>
-    <EmptySubtitle>
-      Prueba con otros filtros o explora todos los libros.
-    </EmptySubtitle>
-  </EmptyWrapper>
 );
 
 // ─── Available formats as plain strings ───────────────────────────────────
@@ -126,8 +85,12 @@ const BooksPage: React.FC = () => {
 
   return (
     <Wrapper>
-      <PageHeader />
-
+      <PageHeader
+        eyebrow="LIBROS EN BÚSQUEDA DE RESEÑAS"
+        titleBefore="Encuentra tu próxima"
+        titleAccent="lectura."
+        subtitle="Pide el ejemplar que te interese. El autor recibe tu mensaje y te lo envía."
+      />
       <SearchFilters
         genres={genresList}
         formats={FORMATS}
@@ -138,21 +101,26 @@ const BooksPage: React.FC = () => {
         onFilter={handleFilter}
       />
 
-      <ResultsMeta total={state.totalElements ?? 0} />
+      <ResultsMeta total={state.totalElements ?? 0} label="libros disponibles" />
 
       <Grid>
         {loading
           ? Array.from({ length: 6 }).map((_, i) => (
-              // Index is stable here — the skeleton count never reorders
-              // eslint-disable-next-line react/no-array-index-key
-              <BookCardSkeleton key={i} />
-            ))
+            // Index is stable here — the skeleton count never reorders
+            // eslint-disable-next-line react/no-array-index-key
+            <BookCardSkeleton key={i} />
+          ))
           : state.books.map((book) => (
-              <BookCard key={book._id} book={book} />
-            ))}
+            <BookCard key={book._id} book={book} />
+          ))}
       </Grid>
 
-      {isEmpty && <EmptyState />}
+      {isEmpty && (
+        <EmptyState
+          subtitle="Prueba con otros filtros o explora todos los libros."
+          icon={<EmptyBookIcon />}
+        />
+      )}
 
       {!loading && state.totalPages > 1 && (
         <Pagination

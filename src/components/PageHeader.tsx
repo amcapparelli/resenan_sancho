@@ -1,6 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
 
+interface PageHeaderProps {
+  eyebrow: string;
+  titleBefore: string;
+  titleAccent: string;
+  subtitle: string;
+}
+
 const Wrapper = styled.header`
   background: ${({ theme }) => theme.cream};
   padding: 36px 28px 32px;
@@ -45,19 +52,22 @@ const Subtitle = styled.p`
   font-size: 15px;
   font-weight: 400;
   color: ${({ theme }) => theme.brown};
-  max-width: 460px;
+  max-width: 480px;
   margin: 0 auto;
 `;
 
-const PageHeader: React.FC = () => (
+const PageHeader: React.FC<PageHeaderProps> = ({
+  eyebrow,
+  titleBefore,
+  titleAccent,
+  subtitle,
+}) => (
   <Wrapper>
-    <Eyebrow>LIBROS EN BÚSQUEDA DE RESEÑAS</Eyebrow>
+    <Eyebrow>{eyebrow}</Eyebrow>
     <Title>
-      Encuentra tu próxima <TitleAccent>lectura</TitleAccent>
+      {titleBefore} <TitleAccent>{titleAccent}</TitleAccent>
     </Title>
-    <Subtitle>
-      Pide el ejemplar que te interese. El autor recibe tu mensaje y te lo envía.
-    </Subtitle>
+    <Subtitle>{subtitle}</Subtitle>
   </Wrapper>
 );
 
