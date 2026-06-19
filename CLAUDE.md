@@ -42,6 +42,12 @@ Hay un plan de migración y rediseño por fases en `/docs/plan-mejora.md`.
 Resumen: modernizar Next.js (9 → 15) y rediseñar A LA VEZ, página por página,
 manteniendo la web viva. NO hacer un rewrite de golpe.
 
+## Workflow de PRs
+- Al crear una pull request, aplica la skill `version-bump-frontend`:
+  sube la versión en `package.json` (semver) según el tipo de cambio
+  antes de abrir la PR.
+- El bump va en la rama de la PR, nunca directo en master.
+
 ### Estado actual
 - [x] Fase A0: corregir erratas de la home ("encotrar", "liteararios")
 - [x] Fase A1: definir sistema de diseño
