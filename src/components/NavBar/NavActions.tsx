@@ -19,7 +19,7 @@ const NavActions = ({ isLoggedIn, userInitials = '', onLogout }: NavActionsProps
 
     {isLoggedIn ? (
       <>
-        <ProfileButton href="/myprofile" aria-label="Ir a mi perfil">
+        <ProfileButton href="/account" aria-label="Ir a mi perfil">
           <Avatar aria-hidden="true">{userInitials}</Avatar>
           Mi perfil
         </ProfileButton>

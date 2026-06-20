@@ -12,7 +12,7 @@ const AddBook = () => (
     <Typography variant="h3" align="center">
       No tienes ningún libro todavía, agrega uno.
     </Typography>
-    <Link href="/addBook">
+    <Link href="/account?section=addBook">
       <Button><AddCircleIcon fontSize="large" /></Button>
     </Link>
   </StyledContainer>
