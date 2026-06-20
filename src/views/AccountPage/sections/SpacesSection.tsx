@@ -43,8 +43,8 @@ const CHANNELS: Array<{ key: string; label: string; Icon: React.FC<{ size?: numb
   { key: 'blog', label: 'Blog', Icon: BlogIcon },
   { key: 'booktube', label: 'Booktube', Icon: YoutubeIcon },
   { key: 'bookstagram', label: 'Instagram', Icon: InstagramIcon },
-  { key: 'amazon', label: 'Amazon', Icon: AmazonIcon },
   { key: 'goodreads', label: 'Goodreads', Icon: GoodreadsIcon },
+  { key: 'amazon', label: 'Amazon', Icon: AmazonIcon }
 ];
 
 const defaultMediaValues = {
