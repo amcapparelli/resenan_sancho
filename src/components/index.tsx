@@ -23,5 +23,6 @@ export { default as PasswordFields } from './PasswordFields';
 export { default as PaymentCheckout } from './PaymentCheckout';
 export { default as ReviewerListItem } from './ReviewerListItem';
 export { default as ReviewersList } from './ReviewersList';
+export { default as Seo } from './Seo';
 export { default as StyledLink } from './StyledLink';
 export { default as StyledTitle } from './StyledTitle';

@@ -14,6 +14,9 @@ import createEmotionCache from '../utils/createEmotionCache';
 
 interface MyDocumentInitialProps extends DocumentInitialProps {
   emotionStyleTags: JSX.Element[];
+  // Active request locale, resolved from Next i18n so <Html lang> is accurate
+  // (e.g. lang="en" under /en) instead of a hardcoded value.
+  locale: string;
 }
 
 class MyDocument extends Document<MyDocumentInitialProps> {
@@ -45,6 +48,7 @@ class MyDocument extends Document<MyDocumentInitialProps> {
 
       return {
         ...initialProps,
+        locale: ctx.locale ?? ctx.defaultLocale ?? 'es',
         emotionStyleTags,
         styles: (
           <>
@@ -60,9 +64,19 @@ class MyDocument extends Document<MyDocumentInitialProps> {
 
   render() {
     return (
-      <Html lang="es" dir="ltr">
+      <Html lang={this.props.locale} dir="ltr">
         <Head>
           {this.props.emotionStyleTags}
+          {/*
+            Google Fonts stylesheets belong here (not in next/head): Next 15 warns
+            against adding `rel="stylesheet"` via next/head. preconnect goes first
+            so the font origins are warmed up before the stylesheets request them.
+          */}
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+          <link href="https://fonts.googleapis.com/css?family=Rambla&display=swap" rel="stylesheet" />
+          {/* Fuentes del rediseño: Fraunces (titulares) + Source Sans 3 (cuerpo) */}
+          <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;1,400&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet" />
         </Head>
         <body>
           <Main />

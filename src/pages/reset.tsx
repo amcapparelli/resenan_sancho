@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { Button } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import { useForm, useFetch } from '../utils/customHooks';
-import { PasswordFields, StyledLink } from '../components';
+import { PasswordFields, Seo, StyledLink } from '../components';
 import { resetPass as resetPassURL } from '../config/routes';
 
 const reset = () => {
@@ -44,7 +44,9 @@ const reset = () => {
   };
 
   return (
-    <StyledForm>
+    <>
+      <Seo noindex title="Restablecer contraseña | Reseñan Sancho" description="Define una nueva contraseña para tu cuenta de Reseñan Sancho." path="/reset" />
+      <StyledForm>
       <PasswordFields
         onChange={(
           { target: { name, value } }: React.ChangeEvent<HTMLInputElement>,
@@ -80,7 +82,8 @@ const reset = () => {
           />
         )
       }
-    </StyledForm>
+      </StyledForm>
+    </>
   );
 };
 
