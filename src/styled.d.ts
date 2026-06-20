@@ -15,7 +15,7 @@ declare module 'styled-components' {
     brown: string;
     white: string;
     lightBorder: string;
-    fondoApp: string;
-    exito: string;
+    appBackground: string;
+    success: string;
   }
 }

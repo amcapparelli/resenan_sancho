@@ -97,7 +97,7 @@ const Nav = styled.nav`
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    background: ${({ theme }) => theme.fondoApp};
+    background: ${({ theme }) => theme.appBackground};
     padding: 8px 16px;
     margin: 0 -16px;
     border-bottom: 0.5px solid ${({ theme }) => theme.lightBorder};

@@ -61,7 +61,7 @@ const AccountPage: React.FC = (): JSX.Element => {
 };
 
 const Page = styled.div`
-  background: ${({ theme }) => theme.fondoApp};
+  background: ${({ theme }) => theme.appBackground};
   min-height: 100vh;
 `;
 

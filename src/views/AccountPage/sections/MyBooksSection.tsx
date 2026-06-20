@@ -17,7 +17,6 @@ import {
 import Alert from '@mui/material/Alert';
 import UserContext from '../../../store/context/userContext/UserContext';
 import {
-  AddBook,
   MyBooksListItem,
   ModalPromotions,
   Loading,
@@ -26,6 +25,7 @@ import { useUsersBooksListFetch, useFetch } from '../../../utils/customHooks';
 import { suscribeAuthor as URL } from '../../../config/routes';
 import { Book } from '../../../interfaces/books';
 import SectionHeader from '../SectionHeader';
+import BooksEmptyState from '../components/BooksEmptyState';
 
 const MyBooksSection: React.FC = (): JSX.Element => {
   const { t } = useTranslation();
@@ -107,27 +107,29 @@ const MyBooksSection: React.FC = (): JSX.Element => {
             </StyledCard>
           )
         }
-        <StyledList>
-          {
-            state.books && state.books.length > 0
-              ? state.books.map(
-                // eslint-disable-next-line no-underscore-dangle
-                (book) => (
-                  <li key={book._id}>
-                    <MyBooksListItem
-                      onClickEdit={() => router.push(`/account?section=addBook&book=${book._id}`)}
-                      onClickPromote={() => {
-                        setShowModalPromotions(true);
-                        setBookSelected(book);
-                      }}
-                      book={book}
-                    />
-                  </li>
-                ),
-              )
-              : !loading && <AddBook />
-          }
-        </StyledList>
+        {
+          state.books && state.books.length > 0
+            ? (
+              <StyledList>
+                {state.books.map(
+                  // eslint-disable-next-line no-underscore-dangle
+                  (book) => (
+                    <li key={book._id}>
+                      <MyBooksListItem
+                        onClickEdit={() => router.push(`/account?section=addBook&book=${book._id}`)}
+                        onClickPromote={() => {
+                          setShowModalPromotions(true);
+                          setBookSelected(book);
+                        }}
+                        book={book}
+                      />
+                    </li>
+                  ),
+                )}
+              </StyledList>
+            )
+            : !loading && <BooksEmptyState />
+        }
         {
           response.message
           && (
