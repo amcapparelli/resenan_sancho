@@ -1,23 +1,8 @@
 /* eslint-disable no-underscore-dangle */
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import styledComponents from 'styled-components';
+import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import {
-  Card,
-  CardContent,
-  Button,
-  Collapse,
-  FormHelperText,
-  Grid,
-  IconButton,
-  TextField,
-} from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import Alert from '@mui/material/Alert';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import ReactGA from 'react-ga4';
 import {
   useForm,
@@ -28,13 +13,38 @@ import {
 } from '../../../utils/customHooks';
 import UserContext from '../../../store/context/userContext/UserContext';
 import { registerBook as URL } from '../../../config/routes';
-import { FormatsCheckBoxSelector, GenresSelector, Loading } from '../../../components';
+import genres from '../../../utils/constants/genres';
 import { BookForm, BookFormErrors } from '../../../interfaces/books';
 import SectionHeader from '../SectionHeader';
+import AccountField, { FieldLabel, FieldError } from '../components/AccountField';
+import AccountSelect from '../components/AccountSelect';
+import CoverUploader from '../components/CoverUploader';
+import SelectableChip from '../components/SelectableChip';
+import CharCounter from '../components/CharCounter';
+import SaveBar from '../components/SaveBar';
+import { fieldBase } from '../components/styles';
+
+const SYNOPSIS_MAX = 2000;
+const FORMATS = ['epub', 'papel', 'mobi', 'pdf', 'audiolibro'];
+const FORMAT_LABELS: Record<string, string> = {
+  epub: 'ePUB',
+  papel: 'papel',
+  mobi: 'mobi',
+  pdf: 'PDF',
+  audiolibro: 'audiolibro',
+};
+
+// Format a stored date (Date, ISO string or '') for an <input type="date">.
+const toDateInputValue = (value: unknown): string => {
+  if (!value) return '';
+  const date = new Date(value as string);
+  return Number.isNaN(date.getTime()) ? '' : date.toISOString().slice(0, 10);
+};
 
 const AddBookSection: React.FC = (): JSX.Element => {
   const { t } = useTranslation();
-  const { query: { book } } = useRouter();
+  const router = useRouter();
+  const { query: { book } } = router;
   const { user } = useContext(UserContext);
   const [state, fetchBook] = useFetchBook();
   const [registerBookResponse, registerBookRequest, loading] = useFetch();
@@ -63,7 +73,6 @@ const AddBookSection: React.FC = (): JSX.Element => {
     pages: '',
   };
   const [errors, validateRequiredFields] = useRequiredFieldsValidation(initErrors);
-  const [open, setOpen] = useState(false);
 
   const [coverURL, uploadCover, loadingCover] = useUploadImages(initForm.cover);
 
@@ -77,31 +86,17 @@ const AddBookSection: React.FC = (): JSX.Element => {
 
   useEffect(() => {
     const {
-      title,
-      synopsis,
-      cover,
-      editorial,
-      formats,
-      genre,
-      pages,
-      datePublished,
+      title, synopsis, cover, editorial, formats, genre, pages, datePublished,
     } = state;
     loadForm({
-      ...initForm,
-      title,
-      synopsis,
-      cover,
-      editorial,
-      formats,
-      genre,
-      pages,
-      datePublished,
+      ...initForm, title, synopsis, cover, editorial, formats, genre, pages, datePublished,
     });
   }, [state]);
 
+  // On a successful publish/update, take the user to "Mis libros" to see it.
   useEffect(() => {
-    if (registerBookResponse !== undefined) setOpen(true);
-  }, [registerBookResponse.message]);
+    if (registerBookResponse.success) router.push('/account?section=books');
+  }, [registerBookResponse.success]);
 
   const registerBook = async (): Promise<void> => {
     if (!book) {
@@ -120,226 +115,203 @@ const AddBookSection: React.FC = (): JSX.Element => {
     validateRequiredFields(bookForm, requiredFields, registerBook);
   };
 
+  const toggleFormat = (format: string): void => {
+    setBookForm('formats', bookForm.formats.includes(format)
+      ? bookForm.formats.filter((item: string) => item !== format)
+      : [...bookForm.formats, format]);
+  };
+
+  const genreOptions = genres
+    .map(({ name, code }) => ({ value: code, label: t(`genres.${name}`) }))
+    .sort((a, b) => a.label.localeCompare(b.label));
+
+  const feedback = registerBookResponse.message
+    ? { success: registerBookResponse.success, message: registerBookResponse.message }
+    : undefined;
+
   return (
     <>
-      <SectionHeader title={t('titles.addBook')} />
-      <Card>
-        <StyledFormContainer>
-          <StyledFirstColumnContainer>
-            <StyledInputFile
-              disabled={loadingCover}
-              accept="image/*"
-              id="raised-button-file"
-              multiple
-              type="file"
-              onChange={(e) => uploadCover(e, 'covers')}
-            />
-            <StyledLabel htmlFor="raised-button-file">
-              {loadingCover ? t('buttons.loading') : t('buttons.uploadCover')}
-            </StyledLabel>
-            <FormHelperText error>{errors.cover}</FormHelperText>
-            {
-              loadingCover
-                ? <Loading />
-                : bookForm.cover
-                && <StyledImageContainer src={bookForm.cover} alt="Cover" />
-            }
-          </StyledFirstColumnContainer>
-          <StyledSecondColumnContainer>
-            {['title', 'author', 'editorial'].map((text) => (
-              <TextField
-                label={t(`booksForm.${text}`)}
-                name={text}
-                fullWidth
-                onChange={({ target: { name, value } }) => setBookForm(name, value)}
-                variant={text === 'author' ? 'filled' : 'outlined'}
-                size="small"
-                required={text !== 'editorial'}
-                placeholder={text === 'editorial' ? 'Dejalo en blanco si eres autor independiente' : ''}
-                error={errors[text].length > 0}
-                helperText={errors[text]}
-                InputProps={{
-                  readOnly: (text === 'author'),
-                }}
-                value={text !== 'author' ? bookForm[text] : `${user.name} ${user.lastName || ''}`}
-              />
-            ))}
-            <TextField
-              id="standard-full-width"
-              label="Synopsis"
-              multiline
-              style={{ margin: 8 }}
-              name="synopsis"
-              helperText={errors.synopsis || `Caracteres restantes: ${(2000 - bookForm.synopsis.length)} `}
-              fullWidth
-              rows="4"
-              margin="normal"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              inputProps={{
-                maxLength: 2000,
-              }}
-              onChange={({ target: { name, value } }) => setBookForm(name, value)}
-              required
-              error={errors.synopsis.length > 0}
-              value={bookForm.synopsis}
-            />
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <Grid container justifyContent="space-around">
-                <DatePicker
-                  label="Fecha de publicación"
-                  format="MM/dd/yyyy"
-                  value={bookForm.datePublished ? new Date(bookForm.datePublished) : null}
-                  onChange={(date) => setBookForm('datePublished', date)}
-                  slotProps={{
-                    textField: {
-                      margin: 'normal',
-                      id: 'date-picker-dialog',
-                      name: 'datePublished',
-                      required: true,
-                    },
-                  }}
-                />
-              </Grid>
-              <FormHelperText error>{errors.datePublished}</FormHelperText>
-            </LocalizationProvider>
-            {
-              registerBookResponse.message
-              && (
-                <Collapse in={open}>
-                  <Alert
-                    action={(
-                      <IconButton
-                        aria-label="close"
-                        color="inherit"
-                        size="small"
-                        onClick={() => {
-                          setOpen(false);
-                        }}
-                      >
-                        <CloseIcon fontSize="inherit" />
-                      </IconButton>
-                    )}
-                    variant="filled"
-                    severity={registerBookResponse.success ? 'success' : 'error'}
-                  >
-                    {registerBookResponse.message}
-                  </Alert>
-                </Collapse>
-              )
-            }
-          </StyledSecondColumnContainer>
-          <StyledThirdColumnContainer>
-            <GenresSelector
-              genreSelected={bookForm.genre}
-              onChange={(
-                { target: { name, value } }: React.ChangeEvent<HTMLInputElement>,
-              ) => setBookForm(name, value)}
-              errors={errors.genre}
-            />
-            <FormHelperText error>{errors.genre}</FormHelperText>
-            <TextField
-              id="standard-number"
-              label="Cantidad de páginas"
-              type="number"
-              name="pages"
-              size="small"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              onChange={({ target: { name, value } }) => setBookForm(name, value)}
-              required
-              error={errors.pages.length > 0}
-              helperText={errors.pages}
-              value={bookForm.pages}
-            />
-            <FormatsCheckBoxSelector
-              formatsSelected={bookForm.formats}
-              errors={errors.formats}
-              options={['epub', 'papel', 'mobi', 'pdf', 'audiolibro']}
-              onChange={(
-                { target: { name, checked } }: React.ChangeEvent<HTMLInputElement>,
-              ) => setBookForm('formats',
-                checked
-                  ? [...bookForm.formats, name]
-                  : [...bookForm.formats.filter((format: string) => format !== name)])}
-              title="Formatos disponibles:"
-            />
-            <Button
-              disabled={loading}
-              variant="contained"
-              color="primary"
-              size="large"
-              onClick={submit}
-            >
-              {!book ? t('buttons.registerBook') : 'actualizar libro'}
-            </Button>
+      <SectionHeader
+        title="Añade un libro"
+        subtitle="Publica los datos del libro que quieres dar a reseñar."
+      />
 
-          </StyledThirdColumnContainer>
-        </StyledFormContainer>
-      </Card>
+      <Layout>
+        <CoverUploader
+          cover={bookForm.cover}
+          loading={loadingCover}
+          error={errors.cover}
+          onSelectFile={(e) => uploadCover(e, 'covers')}
+        />
+
+        <FormGrid>
+          <AccountField
+            className="full-width"
+            label={t('booksForm.title')}
+            name="title"
+            value={bookForm.title || ''}
+            onChange={({ target: { name, value } }) => setBookForm(name, value)}
+            required
+            error={errors.title}
+          />
+
+          <AccountField
+            className="full-width"
+            label={t('booksForm.author')}
+            name="author"
+            value={`${user.name} ${user.lastName || ''}`.trim()}
+            disabled
+            note="Se publica con tu nombre de perfil."
+          />
+
+          <SynopsisField className="full-width">
+            <FieldLabel htmlFor="synopsis">Sinopsis</FieldLabel>
+            <Textarea
+              id="synopsis"
+              name="synopsis"
+              value={bookForm.synopsis || ''}
+              maxLength={SYNOPSIS_MAX}
+              onChange={({ target: { name, value } }) => setBookForm(name, value)}
+            />
+            {errors.synopsis
+              ? (
+                <FieldError>
+                  <span aria-hidden="true">⚠</span>
+                  {errors.synopsis}
+                </FieldError>
+              )
+              : <CharCounter value={(bookForm.synopsis || '').length} max={SYNOPSIS_MAX} />}
+          </SynopsisField>
+
+          <AccountField
+            label={t('booksForm.editorial')}
+            name="editorial"
+            value={bookForm.editorial || ''}
+            onChange={({ target: { name, value } }) => setBookForm(name, value)}
+            note="Déjalo vacío si es independiente."
+          />
+
+          <AccountField
+            label="Fecha de publicación"
+            name="datePublished"
+            type="date"
+            value={toDateInputValue(bookForm.datePublished)}
+            onChange={({ target: { value } }) => setBookForm('datePublished', value ? new Date(value) : '')}
+            error={errors.datePublished}
+          />
+
+          <AccountSelect
+            label="Género literario"
+            name="genre"
+            value={bookForm.genre || ''}
+            options={genreOptions}
+            onChange={(value) => setBookForm('genre', value)}
+            error={errors.genre}
+          />
+
+          <AccountField
+            label="Nº de páginas"
+            name="pages"
+            type="number"
+            value={bookForm.pages || ''}
+            onChange={({ target: { name, value } }) => setBookForm(name, value)}
+            error={errors.pages}
+          />
+
+          <FormatsField className="full-width" role="group" aria-labelledby="addbook-formats-label">
+            <FieldLabel as="span" id="addbook-formats-label">Formatos disponibles</FieldLabel>
+            <Chips>
+              {FORMATS.map((format) => (
+                <SelectableChip
+                  key={format}
+                  label={FORMAT_LABELS[format] ?? format}
+                  selected={bookForm.formats.includes(format)}
+                  onToggle={() => toggleFormat(format)}
+                />
+              ))}
+            </Chips>
+            {errors.formats && (
+              <FieldError>
+                <span aria-hidden="true">⚠</span>
+                {errors.formats}
+              </FieldError>
+            )}
+          </FormatsField>
+        </FormGrid>
+      </Layout>
+
+      <SaveBar
+        onSave={submit}
+        loading={loading}
+        saveLabel={book ? 'Actualizar libro' : 'Publicar libro'}
+        feedback={feedback}
+      />
+      <Reminder>
+        Para que aparezca en las búsquedas, recuerda añadir ejemplares desde «Mis libros».
+      </Reminder>
     </>
   );
 };
 
-const StyledFormContainer = styledComponents(CardContent)`
-  @media (max-width: 375px) {
-    display: grid;
+const Layout = styled.div`
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 28px;
+  align-items: start;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+`;
+
+const FormGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 20px;
+
+  .full-width {
+    grid-column: 1 / -1;
+  }
+
+  @media (max-width: 480px) {
     grid-template-columns: 1fr;
   }
-  display: grid;
-  grid-template-columns: 0.70fr 2fr 1fr;
-  grid-gap: 2rem;
 `;
 
-const StyledFirstColumnContainer = styledComponents.div`
-  padding-top: 1rem;
-  display: grid;
-  grid-template-rows: 0.2fr 0.1fr 3fr;
-  justify-items: center;
-  grid-gap: 1rem;
+const SynopsisField = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
 
-const StyledSecondColumnContainer = styledComponents.div`
-  display: grid;
-  grid-template-rows: 1fr;
-  grid-gap: 1rem;
-  padding: 3% 3% 3% 0;
+const Textarea = styled.textarea`
+  ${fieldBase}
+  min-height: 120px;
+  padding: 12px 14px;
+  line-height: 1.6;
+  resize: vertical;
 `;
 
-const StyledThirdColumnContainer = styledComponents.div`
-  padding-top: 1rem;
-  display: grid;
-  grid-template-rows: 1fr;
-  grid-gap: 1rem;
+const FormatsField = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
 
-const StyledImageContainer = styledComponents.img`
-  width: 70%;
-  border:2px solid #fff;
-  box-shadow: 10px 10px 5px #ccc;
+const Chips = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 `;
 
-const StyledInputFile = styledComponents.input`
-  display: none;
-`;
+const Reminder = styled.p`
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 12px;
+  color: ${({ theme }) => theme.muted};
+  margin: 12px 0 0;
+  text-align: right;
 
-const StyledLabel = styledComponents.label`
-  color: ${(props) => props.theme.contrastText};
-  border-radius: 5px;
-  border:2px solid #fff;
-  box-shadow: 2px 2px 5px #ccc;
-  padding: 5%;
-  width: 70%;
-  align-self: flex-start;
-  text-align: center;
-  font-weight: 600;
-  background-color: ${(props) => props.theme.main};
-  &&:hover {
-    cursor: pointer;
-    background-color: ${(props) => props.theme.dark};
-    color: ${(props) => props.theme.main};
+  @media (max-width: 480px) {
+    text-align: left;
   }
 `;
 

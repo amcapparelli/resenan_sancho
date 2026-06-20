@@ -5,7 +5,6 @@ export { default as GenresSelector } from './GenresSelector';
 export { default as ErrorBoundary } from './ErrorBoundary';
 export { default as EmptyList } from './EmptyList';
 export { default as EmptyState } from './EmptyState';
-export { default as FormatsCheckBoxSelector } from './FormatsCheckBoxSelector';
 export { default as FormatsSelector } from './FormatsSelector';
 export { default as Filters } from './Filters';
 export { default as Header } from './Header';
