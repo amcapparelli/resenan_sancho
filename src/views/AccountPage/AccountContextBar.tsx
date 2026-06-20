@@ -18,7 +18,7 @@ const AccountContextBar: React.FC<AccountContextBarProps> = ({ userName }) => (
     <Link href="/">
       <BackLink>
         <BackArrow />
-        Volver a la web
+        Volver al buscador de libros y reseñadores
       </BackLink>
     </Link>
     {userName && <Greeting>{`Hola, ${userName}`}</Greeting>}

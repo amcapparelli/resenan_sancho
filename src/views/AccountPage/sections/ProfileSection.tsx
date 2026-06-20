@@ -1,37 +1,30 @@
 /* eslint-disable no-underscore-dangle */
 import React, { useContext, useState, useEffect } from 'react';
-import styledComponents from 'styled-components';
+import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import {
-  Avatar,
-  Button,
-  Card,
-  CardContent,
-  Collapse,
-  IconButton,
-  TextField,
-} from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import Alert from '@mui/material/Alert';
-import DeleteIcon from '@mui/icons-material/Delete';
 import UserContext from '../../../store/context/userContext/UserContext';
-import { UploadImagesInput, CountriesSelector, ModalDeleteAccount } from '../../../components';
 import { useForm, useUploadImages } from '../../../utils/customHooks';
 import { update as URL } from '../../../config/routes';
 import { Response } from '../../../interfaces/response';
 import SectionHeader from '../SectionHeader';
+import AccountField, { FieldNote } from '../components/AccountField';
+import CountrySelect from '../components/CountrySelect';
+import SaveBar from '../components/SaveBar';
+import DangerZone from '../components/DangerZone';
+import { secondaryButton } from '../components/styles';
+
+const getInitials = (name?: string, lastName?: string): string => {
+  const first = name?.trim()[0] ?? '';
+  const last = lastName?.trim()[0] ?? '';
+  return `${first}${last}`.toUpperCase() || '?';
+};
 
 const ProfileSection: React.FC = (): JSX.Element => {
   const { t } = useTranslation();
-  const [response, setResponse] = useState<Response>({
-    success: undefined,
-    message: undefined,
-  });
   const { user, setUserLogged } = useContext(UserContext);
   const [updateForm, setUpdateForm, loadForm] = useForm(user);
   const [avatarURL, uploadAvatar] = useUploadImages(updateForm.avatar);
-  const [open, setOpen] = useState(false);
-  const [openDeleteAccountModal, setDeleteAccountModal] = useState(false);
+  const [response, setResponse] = useState<Response>({ success: undefined, message: undefined });
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -57,161 +50,152 @@ const ProfileSection: React.FC = (): JSX.Element => {
         },
       });
       const resJSON = await res.json();
-      const {
-        message,
-        success,
-        user: userUpdated,
-      } = resJSON;
+      const { message, success, user: userUpdated } = resJSON;
       setResponse({ message, success });
       setUserLogged({ ...userUpdated, token: user.token });
-      setOpen(true);
     } catch (error) {
       setResponse(error);
-      setOpen(true);
     } finally {
       setLoading(false);
     }
   };
 
+  const feedback = response.message
+    ? { success: response.success, message: t(`responses.${response.message}`) }
+    : undefined;
+
   return (
     <>
-      <SectionHeader title={t('titles.updateProfile')} />
-      <StyledCard>
-        <StyledAvatarContainer>
-          <UploadImagesInput
-            text="Sube tu Avatar"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => uploadAvatar(e, 'avatars')}
+      <SectionHeader title="Tu perfil" subtitle="Estos datos identifican tu cuenta." />
+
+      <AvatarRow>
+        {updateForm.avatar
+          ? <AvatarImg src={updateForm.avatar} alt="Tu avatar" />
+          : (
+            <AvatarInitials role="img" aria-label={`Avatar de ${user.name ?? ''} ${user.lastName ?? ''}`.trim()}>
+              {getInitials(user.name, user.lastName)}
+            </AvatarInitials>
+          )}
+        <AvatarActions>
+          <HiddenFileInput
+            id="avatar-input"
+            type="file"
+            accept="image/png, image/jpeg"
+            onChange={(e) => uploadAvatar(e, 'avatars')}
           />
-          {
-            updateForm.avatar
-            && <Avatar alt="avatar" src={updateForm.avatar} sx={{ width: 56, height: 56, alignContent: 'center', justifySelf: 'center', justifyContent: 'center' }} />
-          }
-        </StyledAvatarContainer>
-        <StyledContentContainer>
-          <StyledForm>
-            {
-              ['name', 'lastName', 'email'].map((text) => (
-                <TextField
-                  id="outlined-basic"
-                  label={t(`form.${text}`)}
-                  name={text}
-                  onChange={({ target: { name, value } }) => setUpdateForm(name, value)}
-                  variant={text === 'email' ? 'filled' : 'outlined'}
-                  defaultValue={user[text]}
-                  InputProps={{
-                    readOnly: (text === 'email'),
-                  }}
-                />
-              ))
-            }
-            <CountriesSelector
-              onChange={(
-                { target: { name, value } }: React.ChangeEvent<HTMLInputElement>,
-              ) => setUpdateForm(name, value)}
-              countrySelected={updateForm.country || user.country}
-            />
-          </StyledForm>
-          <StyledButton
-            disabled={loading}
-            variant="contained"
-            color="primary"
-            size="large"
-            onClick={update}
-          >
-            {loading ? t('buttons.saving') : t('buttons.update')}
-          </StyledButton>
-          <StyledResponseContainer>
-            {
-              response.message
-              && (
-                <Collapse in={open}>
-                  <Alert
-                    action={(
-                      <IconButton
-                        aria-label="close"
-                        color="inherit"
-                        size="small"
-                        onClick={() => {
-                          setOpen(false);
-                        }}
-                      >
-                        <CloseIcon fontSize="inherit" />
-                      </IconButton>
-                    )}
-                    variant="filled"
-                    severity={response.success ? 'success' : 'error'}
-                  >
-                    {t(`responses.${response.message}`)}
-                  </Alert>
-                </Collapse>
-              )
-            }
-          </StyledResponseContainer>
-        </StyledContentContainer>
-        <IconButton
-          aria-label="delete"
-          size="small"
-          color="secondary"
-          onClick={() => setDeleteAccountModal(true)}
-        >
-          <DeleteIcon fontSize="small" color="secondary" />
-          Eliminar mi cuenta
-        </IconButton>
-        <ModalDeleteAccount
-          open={openDeleteAccountModal}
-          onClose={() => setDeleteAccountModal(false)}
+          <AvatarButton htmlFor="avatar-input">Cambiar avatar</AvatarButton>
+          <FieldNote>JPG o PNG, máximo 2 MB.</FieldNote>
+        </AvatarActions>
+      </AvatarRow>
+
+      <FormGrid>
+        <AccountField
+          label={t('form.name')}
+          name="name"
+          value={updateForm.name ?? ''}
+          onChange={(e) => setUpdateForm(e.target.name, e.target.value)}
+          required
         />
-      </StyledCard>
+        <AccountField
+          label={t('form.lastName')}
+          name="lastName"
+          value={updateForm.lastName ?? ''}
+          onChange={(e) => setUpdateForm(e.target.name, e.target.value)}
+          required
+        />
+        <AccountField
+          label={t('form.email')}
+          name="email"
+          value={updateForm.email ?? ''}
+          disabled
+          note="El email no se puede cambiar."
+        />
+        <CountrySelect
+          className="full-width"
+          label={t('components.countriesSelector.title')}
+          value={updateForm.country ?? ''}
+          onChange={(value) => setUpdateForm('country', value)}
+        />
+      </FormGrid>
+
+      <SaveBar onSave={update} loading={loading} feedback={feedback} />
+
+      <DangerZone userEmail={user.email} />
     </>
   );
 };
 
-const StyledCard = styledComponents(Card)`
-  display: grid;
-  grid-template-columns: 1fr 3fr;
-  @media (max-width: 375px) {
-    display: grid;
-    grid-template-columns: 1fr;
-  }
+const AvatarRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 24px;
 `;
 
-const StyledAvatarContainer = styledComponents.div`
-  display: grid;
-  grid-template-rows: 0.5fr 2fr;
-  grid-gap: 0.5rem;
+const AvatarImg = styled.img`
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 2px solid ${({ theme }) => theme.lightBorder};
+  object-fit: cover;
+  flex-shrink: 0;
+`;
+
+const AvatarInitials = styled.div`
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 2px solid ${({ theme }) => theme.lightBorder};
+  background: ${({ theme }) => theme.amber};
+  color: ${({ theme }) => theme.ink};
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
   justify-content: center;
-  padding-top: 1rem;
+  flex-shrink: 0;
 `;
 
-const StyledForm = styledComponents.form`
-  @media (max-width: 375px) {
-    display: grid;
-    grid-template-columns: 1fr;
+const AvatarActions = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+// Visually hidden but still focusable, so "Cambiar avatar" works with the
+// keyboard (Tab to the input, Enter/Space opens the file dialog). The visible
+// focus ring is rendered on the label via :focus-within.
+const HiddenFileInput = styled.input`
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+`;
+
+const AvatarButton = styled.label`
+  ${secondaryButton}
+  align-self: flex-start;
+
+  ${HiddenFileInput}:focus + & {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(199, 91, 34, 0.35);
   }
+`;
+
+const FormGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-gap: 1rem;
-  width: 90%;
-  justify-self: center;
-`;
+  gap: 16px 20px;
 
-const StyledButton = styledComponents(Button)`
-  @media (max-width: 375px) {
-    width: 50%;
+  .full-width {
+    grid-column: 1 / -1;
   }
-  width: 30%;
-  justify-self: center;
-`;
 
-const StyledContentContainer = styledComponents(CardContent)`
-  display: grid;
-  grid-template-rows: 1fr;
-  grid-gap: 1rem;
-`;
-
-const StyledResponseContainer = styledComponents.div`
-  width: 30%;
-  justify-self: center;
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 export default ProfileSection;

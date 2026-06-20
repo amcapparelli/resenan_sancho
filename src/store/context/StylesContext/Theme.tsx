@@ -14,6 +14,8 @@ enum Palette {
   lightBorder = '#d4c9b0',
   appBackground = '#FAF6EC',
   success = '#4a9b5f',
+  danger = '#DE4A10',
+  muted = '#9a8c7e',
 }
 
 const {
@@ -30,6 +32,8 @@ const {
   lightBorder,
   appBackground,
   success,
+  danger,
+  muted,
 } = Palette;
 
 export const StyledTheme = {
@@ -48,6 +52,8 @@ export const StyledTheme = {
   lightBorder,
   appBackground,
   success,
+  danger,
+  muted,
 };
 
 export const MuiTheme = createTheme({
