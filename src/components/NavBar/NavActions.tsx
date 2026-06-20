@@ -19,9 +19,9 @@ const NavActions = ({ isLoggedIn, userInitials = '', onLogout }: NavActionsProps
 
     {isLoggedIn ? (
       <>
-        <ProfileButton href="/myprofile" aria-label="Ir a mi perfil">
+        <ProfileButton href="/account" aria-label="Ir a mi perfil">
           <Avatar aria-hidden="true">{userInitials}</Avatar>
-          Mi perfil
+          Mi área personal
         </ProfileButton>
         {/* Logout is kept as a minimal text action to not compete visually with "Mi perfil" */}
         <LogoutButton type="button" onClick={onLogout} aria-label="Cerrar sesión">

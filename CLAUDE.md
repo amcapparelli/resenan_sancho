@@ -48,6 +48,39 @@ manteniendo la web viva. NO hacer un rewrite de golpe.
   antes de abrir la PR.
 - El bump va en la rama de la PR, nunca directo en master.
 
+## Workflow de agents (frontend)
+
+REGLA: toda tarea de UI (escribir, modificar o refactorizar componentes, hooks
+o páginas) sigue este pipeline. La sesión principal NO implementa UI directamente;
+orquesta a los subagents.
+
+1. **Implementación → `senior-frontend`.** Delega SIEMPRE la implementación en el
+   subagent `senior-frontend`. No escribas tú el componente "porque es rápido": al
+   hacerlo se saltan sus reglas (inglés en código y comentarios, auditoría previa de
+   componentes reutilizables, manejo de estados carga/error/vacío, limpieza de
+   huérfanos tras refactor). Si la tarea es trivial, igualmente pasa por él.
+
+2. **Revisión → `frontend-reviewer`.** Cuando `senior-frontend` termine, pasa el
+   diff a `frontend-reviewer` ANTES de dar la tarea por cerrada o de hacer commit.
+   Su salida es una revisión priorizada (bloqueante / recomendado / nit), no edita
+   código.
+
+3. **Corrección de hallazgos bloqueantes → de vuelta a `senior-frontend`.** Si la
+   revisión marca algo bloqueante, devuelve esos puntos a `senior-frontend` para que
+   los corrija, y vuelve a pasar por `frontend-reviewer`. Repite hasta que no queden
+   bloqueantes.
+
+4. **Cierre.** Solo se considera terminada una tarea de UI cuando ha pasado por
+   implementación + revisión sin bloqueantes pendientes.
+
+Notas:
+- Los subagents no pueden invocarse entre sí; esta orquestación la hace SIEMPRE la
+  sesión principal. Por eso el flujo vive aquí, en CLAUDE.md, y no en un agent.
+- Invocar un agent con `@nombre` directamente puede saltarse este flujo: trátalo como
+  excepción consciente, no como la vía por defecto.
+- Para tareas de backend, el agente de implementación es `senior-backend` (sin revisor
+  dedicado por ahora).
+
 ### Estado actual
 - [x] Fase A0: corregir erratas de la home ("encotrar", "liteararios")
 - [x] Fase A1: definir sistema de diseño
@@ -57,5 +90,7 @@ manteniendo la web viva. NO hacer un rewrite de golpe.
 - [x] Fase A6: rediseñar la sección de libros
 - [x] Fase A7: rediseñar la sección de reseñadores literarios
 - [x] Fase A8: rediseñar la sección de detalle de un libro.
+- [x] Fase A9: rediseñar el área personal (perfil, espacios literarios, mis
+  libros, añade libro y ayuda) como página única `/account`.
 
 - (actualiza esta lista según avances)

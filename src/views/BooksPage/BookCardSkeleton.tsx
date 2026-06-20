@@ -1,27 +1,6 @@
 import React from 'react';
-import styled, { keyframes, css } from 'styled-components';
-
-const shimmerAnimation = keyframes`
-  from { background-position: -200% 0; }
-  to   { background-position:  200% 0; }
-`;
-
-// The shimmer gradient — reduced-motion users get a static fallback
-const shimmer = css`
-  background: linear-gradient(
-    90deg,
-    #ede3cb 25%,
-    #f5edda 50%,
-    #ede3cb 75%
-  );
-  background-size: 200% 100%;
-  animation: ${shimmerAnimation} 1.5s infinite;
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-    background: #ede3cb;
-  }
-`;
+import styled from 'styled-components';
+import { shimmer } from '../../utils/shimmer';
 
 const SkeletonBlock = styled.div`
   ${shimmer}

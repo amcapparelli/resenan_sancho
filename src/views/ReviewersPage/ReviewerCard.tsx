@@ -2,47 +2,13 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { Reviewer } from '../../interfaces/reviewer';
-
-// ─── Channel icon SVGs ─────────────────────────────────────────────────────
-
-const BlogIcon: React.FC = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="12" height="12" aria-hidden="true">
-    <circle cx="12" cy="12" r="10" />
-    <line x1="2" y1="12" x2="22" y2="12" />
-    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-  </svg>
-);
-
-const YoutubeIcon: React.FC = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="12" height="12" aria-hidden="true">
-    <circle cx="12" cy="12" r="10" />
-    <polygon points="10,8 16,12 10,16" />
-  </svg>
-);
-
-const InstagramIcon: React.FC = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="12" height="12" aria-hidden="true">
-    <rect x="2" y="2" width="20" height="20" rx="5" />
-    <circle cx="12" cy="12" r="4" />
-    <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" />
-  </svg>
-);
-
-const GoodreadsIcon: React.FC = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="12" height="12" aria-hidden="true">
-    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-  </svg>
-);
-
-const AmazonIcon: React.FC = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="12" height="12" aria-hidden="true">
-    <rect x="5" y="2" width="14" height="20" rx="2" />
-    <line x1="9" y1="7" x2="15" y2="7" />
-    <line x1="9" y1="11" x2="15" y2="11" />
-    <line x1="9" y1="15" x2="12" y2="15" />
-  </svg>
-);
+import {
+  BlogIcon,
+  YoutubeIcon,
+  InstagramIcon,
+  GoodreadsIcon,
+  AmazonIcon,
+} from '../../utils/channelIcons';
 
 // ─── Channel config ────────────────────────────────────────────────────────
 

@@ -15,5 +15,10 @@ declare module 'styled-components' {
     brown: string;
     white: string;
     lightBorder: string;
+    appBackground: string;
+    success: string;
+    danger: string;
+    muted: string;
+    terracottaSoft: string;
   }
 }
