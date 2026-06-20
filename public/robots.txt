@@ -1,0 +1,18 @@
+User-agent: *
+Allow: /
+
+# Private account area and its legacy redirect routes
+Disallow: /account
+Disallow: /mybooks
+Disallow: /myprofile
+Disallow: /myspaces
+Disallow: /addBook
+Disallow: /help
+
+# Auth flows
+Disallow: /login
+Disallow: /register
+Disallow: /forgot
+Disallow: /reset
+
+Sitemap: https://www.resenansancho.com/sitemap.xml
