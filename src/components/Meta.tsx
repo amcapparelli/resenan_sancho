@@ -27,11 +27,10 @@ const Meta = ({ children }: MyProps): JSX.Element => {
         <link rel="icon" href="/static/favicon.png" />
         <link rel="apple-touch-icon" href="/static/favicon.png" />
         <link rel="manifest" href="/site.webmanifest" />
-        <link href="https://fonts.googleapis.com/css?family=Rambla&display=swap" rel="stylesheet" />
-        {/* Fuentes del rediseño: Fraunces (titulares) + Source Sans 3 (cuerpo) */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;1,400&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet" />
+        {/*
+          Google Fonts stylesheets live in `_document` instead of here: Next 15
+          warns against adding `rel="stylesheet"` via next/head. See _document.tsx.
+        */}
       </Head>
       {children}
     </>
