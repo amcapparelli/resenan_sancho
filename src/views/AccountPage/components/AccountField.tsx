@@ -13,6 +13,10 @@ interface AccountFieldProps {
   note?: string;
   error?: string;
   className?: string;
+  // Defaults to `name`; pass explicitly when several fields share a name
+  // attribute (e.g. repeated "url"/"name" inputs across channel rows).
+  id?: string;
+  placeholder?: string;
 }
 
 const AccountField: React.FC<AccountFieldProps> = ({
@@ -26,12 +30,15 @@ const AccountField: React.FC<AccountFieldProps> = ({
   note,
   error,
   className,
+  id,
+  placeholder,
 }) => (
   <FieldWrapper className={className}>
-    <FieldLabel htmlFor={name}>{label}</FieldLabel>
+    <FieldLabel htmlFor={id ?? name}>{label}</FieldLabel>
     <Input
-      id={name}
+      id={id ?? name}
       name={name}
+      placeholder={placeholder}
       type={type}
       value={value}
       onChange={onChange}

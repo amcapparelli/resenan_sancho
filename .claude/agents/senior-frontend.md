@@ -2,11 +2,12 @@
 name: senior-frontend
 description: >
   Desarrollador senior frontend especializado en React, TypeScript y Next.js.
-  Úsalo de forma proactiva para escribir, revisar o refactorizar componentes de
+  Úsalo de forma proactiva para implementar nuevas features, coregir bugs, 
+  escribir código, revisar o refactorizar componentes de
   interfaz, resolver problemas de rendimiento (renders innecesarios, memoización,
   carga de datos), organizar el código en componentes reutilizables y mantener
   un código limpio y legible apto para trabajo en equipo. Especialmente indicado
-  para tareas de UI en proyectos Next.js (Pages Router y App Router) y para
+  para tareas de UI en proyectos React y Next.js y para
   migraciones incrementales entre versiones de Next.
 tools: Read, Grep, Glob, Edit, Write, Bash
 model: inherit

@@ -1,30 +1,51 @@
 /* eslint-disable no-underscore-dangle */
 import React, { useState, useContext, useEffect } from 'react';
-import styledComponents from 'styled-components';
+import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import {
-  Card,
-  CardContent,
-  Button,
-  Collapse,
-  IconButton,
-  FormControlLabel,
-  FormHelperText,
-  Switch,
-  TextField,
-  Typography,
-} from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import Alert from '@mui/material/Alert';
 import ReactGA from 'react-ga4';
-import { MyMediasForm, FormatsCheckBoxSelector } from '../../../components';
 import { useForm, useRequiredFieldsValidation, useFetchReviewer } from '../../../utils/customHooks';
 import UserContext from '../../../store/context/userContext/UserContext';
 import genres from '../../../utils/constants/genres';
 import { registerBlog as URL } from '../../../config/routes';
 import { AvailableMedias } from '../../../interfaces/mediaForm';
 import { Response } from '../../../interfaces/response';
+import {
+  BlogIcon,
+  YoutubeIcon,
+  InstagramIcon,
+  GoodreadsIcon,
+  AmazonIcon,
+} from '../../../utils/channelIcons';
 import SectionHeader from '../SectionHeader';
+import SaveBar from '../components/SaveBar';
+import SelectableChip from '../components/SelectableChip';
+import CharCounter from '../components/CharCounter';
+import ChannelRow from '../components/ChannelRow';
+import { fieldBase } from '../components/styles';
+
+// Keep the previously enforced cap (the old input used maxLength 1000) to avoid
+// a save regression, even though the design spec mentions 2000.
+const DESCRIPTION_MAX = 1000;
+const FORMATS = ['epub', 'papel', 'mobi', 'pdf', 'audiolibro'];
+
+// Display-only labels; the stored values (the keys) are sent to the backend
+// unchanged.
+const FORMAT_LABELS: Record<string, string> = {
+  epub: 'ePUB',
+  papel: 'papel',
+  mobi: 'mobi',
+  pdf: 'PDF',
+  audiolibro: 'audiolibro',
+};
+
+// Display order/labels for channels; each maps to a data key in mediaForm.
+const CHANNELS: Array<{ key: string; label: string; Icon: React.FC<{ size?: number }> }> = [
+  { key: 'blog', label: 'Blog', Icon: BlogIcon },
+  { key: 'booktube', label: 'Booktube', Icon: YoutubeIcon },
+  { key: 'bookstagram', label: 'Instagram', Icon: InstagramIcon },
+  { key: 'amazon', label: 'Amazon', Icon: AmazonIcon },
+  { key: 'goodreads', label: 'Goodreads', Icon: GoodreadsIcon },
+];
 
 const defaultMediaValues = {
   blog: { selected: false, url: '', name: '' },
@@ -77,11 +98,7 @@ const SpacesSection: React.FC = (): JSX.Element => {
   }, [reviewerResponse.author]);
 
   const [succeeded, setSucceeded] = useState<boolean>(false);
-  const [response, setResponse] = useState<Response>({
-    success: undefined,
-    message: undefined,
-  });
-  const [open, setOpen] = useState<boolean>(false);
+  const [response, setResponse] = useState<Response>({ success: undefined, message: undefined });
   const initErrors = {
     genres: '',
     description: '',
@@ -118,17 +135,12 @@ const SpacesSection: React.FC = (): JSX.Element => {
         },
       });
       const resJSON = await res.json();
-      const {
-        message,
-        success,
-        reviewer,
-      } = resJSON;
+      const { message, success, reviewer } = resJSON;
       if (resJSON.error) {
         setResponse({
           message: resJSON.error.errors[Object.keys(resJSON.error.errors)[0]].message,
           success: false,
         });
-        setOpen(true);
         return;
       }
       setResponse({ message, success });
@@ -136,10 +148,8 @@ const SpacesSection: React.FC = (): JSX.Element => {
         setUserLogged({ ...user, reviewerInfo: reviewer });
         setSucceeded(true);
       }
-      setOpen(true);
     } catch (error) {
       setResponse(error);
-      setOpen(true);
     } finally {
       setLoading(false);
     }
@@ -148,10 +158,9 @@ const SpacesSection: React.FC = (): JSX.Element => {
   const submit = () => {
     const requiredMediaFields: Array<string> = medias.flatMap((media) => [`${media}URL`, `${media}Name`]);
     const requiredFields = ['genres', 'medias', 'description', 'formats', ...requiredMediaFields];
-    // Function to build an object for validation
+    // Build the object to validate based on which channels are selected.
     const fieldToValidate = () => {
       let mediasSelected = {};
-      // Check each media card if selected to get its inputs and send them to validation hook.
       medias.forEach((media) => {
         if (mediaForm[media].selected) {
           mediasSelected = {
@@ -161,7 +170,6 @@ const SpacesSection: React.FC = (): JSX.Element => {
           };
         }
       });
-      // If no media is selected send empty array to validation hook.
       if (Object.entries(mediasSelected).length === 0) {
         return { genres: mediaForm.genres, medias: [] as string[] };
       }
@@ -175,182 +183,147 @@ const SpacesSection: React.FC = (): JSX.Element => {
     validateRequiredFields(fieldToValidate(), requiredFields, registerMedias);
   };
 
+  const toggleInArray = (field: 'genres' | 'formats', value: string): void => {
+    const current: string[] = mediaForm[field];
+    setMediaForm(field, current.includes(value)
+      ? current.filter((item) => item !== value)
+      : [...current, value]);
+  };
+
+  const hasValidationErrors = Object.values(errors).some((error: string) => error.length > 0);
+  const feedback = response.message
+    ? { success: response.success, message: response.message }
+    : undefined;
+
   return (
     <>
-      <SectionHeader title={t('titles.mySpaces')} />
-      <Typography variant="h3" align="center">{t('titles.whereDoYouReview')}</Typography>
-      <FormHelperText error>{errors.medias && 'debes seleccionar al menos uno'}</FormHelperText>
-      <StyledListContainer>
-        {medias.map(
-          (media) => (
-            <MyMediasForm
-              errors={{ url: errors[`${media}URL`], name: errors[`${media}Name`] }}
-              url={mediaForm[media].url}
-              name={mediaForm[media].name}
-              selected={mediaForm[media].selected}
-              media={media}
-              onSelect={() => setMediaForm(media,
-                { ...mediaForm[media], selected: !mediaForm[media].selected })}
-              onChange={(
-                { target: { name, value } }: React.ChangeEvent<HTMLInputElement>,
-              ) => setMediaForm(media, { ...mediaForm[media], [name]: value })}
+      <SectionHeader
+        title="¿Dónde publicas tus reseñas literarias?"
+        subtitle="Añade tus canales para aparecer en el listado de reseñadores."
+      />
+
+      {errors.medias && <BlockError>Debes seleccionar al menos un canal.</BlockError>}
+      <div>
+        {CHANNELS.map(({ key, label, Icon }) => (
+          <ChannelRow
+            key={key}
+            channelKey={key}
+            label={label}
+            Icon={Icon}
+            selected={mediaForm[key].selected}
+            url={mediaForm[key].url}
+            name={mediaForm[key].name}
+            errors={{ url: errors[`${key}URL`], name: errors[`${key}Name`] }}
+            onToggle={() => setMediaForm(key, { ...mediaForm[key], selected: !mediaForm[key].selected })}
+            onChange={({ target: { name, value } }) => setMediaForm(key, { ...mediaForm[key], [name]: value })}
+          />
+        ))}
+      </div>
+
+      <Divider />
+
+      <Block
+        role="group"
+        aria-labelledby="genres-label"
+        aria-describedby={errors.genres ? 'genres-error' : undefined}
+      >
+        <BlockLabel id="genres-label">Géneros que te interesan</BlockLabel>
+        <BlockHelp>Marca todos los que apliquen.</BlockHelp>
+        {errors.genres && <BlockError id="genres-error">Selecciona al menos un género.</BlockError>}
+        <Chips>
+          {genres.map(({ name, code }) => (
+            <SelectableChip
+              key={code}
+              label={t(`genres.${name}`)}
+              selected={mediaForm.genres.includes(name)}
+              onToggle={() => toggleInArray('genres', name)}
             />
-          ),
-        )}
-      </StyledListContainer>
-      <StyledSection>
-        <Typography variant="h3" align="center">{t('titles.whichGenres')}</Typography>
-        <FormHelperText error>{errors.genres}</FormHelperText>
-        <Card>
-          <StyledGenresContainer>
-            {genres.map(
-              ({ name, code }) => (
-                <FormControlLabel
-                  control={(
-                    <Switch
-                      checked={mediaForm.genres.includes(name)}
-                      onChange={({ target: { checked } }) => setMediaForm('genres',
-                        checked
-                          ? [...mediaForm.genres, name]
-                          : [...mediaForm.genres.filter((genre: string) => genre !== name)])}
-                      name={code}
-                      color="primary"
-                    />
-                  )}
-                  label={t(`genres.${name}`)}
-                />
-              ),
-            )}
-          </StyledGenresContainer>
-        </Card>
-      </StyledSection>
-      <StyledSection>
-        <Typography variant="h3" align="center">{t('titles.describeYourself')}</Typography>
-        <FormHelperText>
-          {t('helpers.describeYourself')}
-        </FormHelperText>
-        <Card>
-          <CardContent>
-            <TextField
-              id="standard-full-width"
-              multiline
-              style={{ margin: 8 }}
-              name="description"
-              helperText={errors.description || `Caracteres restantes: ${(2000 - mediaForm.description.length)} `}
-              fullWidth
-              rows="4"
-              margin="normal"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              inputProps={{
-                maxLength: 1000,
-              }}
-              value={mediaForm.description}
-              onChange={({ target: { name, value } }) => setMediaForm(name, value)}
-              required
-              error={errors.description.length > 0}
+          ))}
+        </Chips>
+      </Block>
+
+      <Divider />
+
+      <Block>
+        <BlockLabel as="label" htmlFor="reviewer-description">
+          Cómo te gusta escribir tus reseñas
+        </BlockLabel>
+        <BlockHelp>{t('helpers.describeYourself')}</BlockHelp>
+        <Textarea
+          id="reviewer-description"
+          name="description"
+          value={mediaForm.description}
+          maxLength={DESCRIPTION_MAX}
+          onChange={({ target: { name, value } }) => setMediaForm(name, value)}
+        />
+        <CharCounter value={mediaForm.description.length} max={DESCRIPTION_MAX} />
+      </Block>
+
+      <Divider />
+
+      <Block role="group" aria-labelledby="formats-label">
+        <BlockLabel id="formats-label">Formatos que sueles leer</BlockLabel>
+        <Chips>
+          {FORMATS.map((format) => (
+            <SelectableChip
+              key={format}
+              label={FORMAT_LABELS[format] ?? format}
+              selected={mediaForm.formats.includes(format)}
+              onToggle={() => toggleInArray('formats', format)}
             />
-          </CardContent>
-        </Card>
-      </StyledSection>
-      <StyledSection>
-        <Typography variant="h3" align="center">{t('titles.chooseFormats')}</Typography>
-        <Card>
-          <CardContent>
-            <StyledCenteredContainer>
-              <FormatsCheckBoxSelector
-                errors={errors.formats}
-                options={['epub', 'papel', 'mobi', 'pdf', 'audiolibro']}
-                formatsSelected={mediaForm.formats}
-                onChange={(
-                  { target: { name, checked } }: React.ChangeEvent<HTMLInputElement>,
-                ) => setMediaForm('formats',
-                  checked
-                    ? [...mediaForm.formats, name]
-                    : [...mediaForm.formats.filter((format: string) => format !== name)])}
-              />
-            </StyledCenteredContainer>
-          </CardContent>
-        </Card>
-      </StyledSection>
-      <StyledCenteredContainer>
-        <Button
-          disabled={loading}
-          variant="contained"
-          color="primary"
-          size="large"
-          onClick={submit}
-        >
-          {t('buttons.save')}
-        </Button>
-        <FormHelperText error>
-          {Object.values(errors).some((error: string) => error.length > 0) && 'Revisa el formulario, tienes errores'}
-        </FormHelperText>
-      </StyledCenteredContainer>
-      {
-        response.message
-        && (
-          <Collapse in={open}>
-            <Alert
-              action={(
-                <IconButton
-                  aria-label="close"
-                  color="inherit"
-                  size="small"
-                  onClick={() => {
-                    setOpen(false);
-                  }}
-                >
-                  <CloseIcon fontSize="inherit" />
-                </IconButton>
-              )}
-              variant="filled"
-              severity={response.success ? 'success' : 'error'}
-            >
-              {response.message}
-            </Alert>
-          </Collapse>
-        )
-      }
+          ))}
+        </Chips>
+      </Block>
+
+      <SaveBar onSave={submit} loading={loading} saveLabel="Guardar" feedback={feedback} />
+      {hasValidationErrors && <BlockError>Revisa el formulario, tienes errores.</BlockError>}
     </>
   );
 };
 
-const StyledListContainer = styledComponents.ul`
-  @media (max-width: 375px) {
-    display: grid;
-    grid-template-columns: 1fr;
-  }
-  margin-left: 0;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-gap: 1%;
+const Divider = styled.div`
+  border-top: 0.5px solid #e8dfc8;
+  margin: 24px 0;
 `;
 
-const StyledSection = styledComponents.section`
-  @media (max-width: 375px) {
-    margin-top: 7rem;
-  }
-  margin-top: 1.5rem;
+const Block = styled.section``;
+
+const BlockLabel = styled.p`
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: ${({ theme }) => theme.brown};
+  margin: 0 0 4px;
 `;
 
-const StyledCenteredContainer = styledComponents.div`
-  @media (max-width: 375px) {
-    margin-left: 25%;
-  }
-  margin-top: 1rem;
-  margin-left: 45%;
+const BlockHelp = styled.p`
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 12px;
+  color: ${({ theme }) => theme.muted};
+  margin: 0 0 12px;
 `;
 
-const StyledGenresContainer = styledComponents(CardContent)`
-  @media (max-width: 375px) {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-  }
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  grid-gap: 1%;
+const BlockError = styled.p`
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 12px;
+  color: ${({ theme }) => theme.danger};
+  margin: 0 0 12px;
+`;
+
+const Chips = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+`;
+
+const Textarea = styled.textarea`
+  ${fieldBase}
+  min-height: 120px;
+  padding: 12px 14px;
+  line-height: 1.6;
+  resize: vertical;
 `;
 
 export default SpacesSection;
