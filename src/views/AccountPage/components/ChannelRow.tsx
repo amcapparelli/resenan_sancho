@@ -48,7 +48,7 @@ const ChannelRow: React.FC<ChannelRowProps> = ({
           value={name || ''}
           onChange={onChange}
           error={errors.name}
-          placeholder="@lucia.entreparrafos"
+          placeholder=""
         />
         <AccountField
           label="URL"

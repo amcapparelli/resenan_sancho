@@ -19,5 +19,6 @@ declare module 'styled-components' {
     success: string;
     danger: string;
     muted: string;
+    terracottaSoft: string;
   }
 }

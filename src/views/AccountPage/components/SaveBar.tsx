@@ -80,7 +80,7 @@ const Banner = styled.div<{ $success: boolean }>`
   border-radius: 8px;
   font-family: 'Source Sans 3', sans-serif;
   font-size: 13px;
-  background: ${({ $success, theme }) => ($success ? theme.cream : '#fdf3ee')};
+  background: ${({ $success, theme }) => ($success ? theme.cream : theme.terracottaSoft)};
   border: 1px solid ${({ $success, theme }) => ($success ? theme.success : theme.terracotta)};
   color: ${({ theme }) => theme.ink};
 `;
