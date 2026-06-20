@@ -5,27 +5,19 @@ import React, {
   useState,
 } from 'react';
 import { useRouter } from 'next/router';
-import styledComponents from 'styled-components';
+import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import {
-  Button,
-  Card,
-  CardContent,
-  FormControlLabel,
-  Switch,
-} from '@mui/material';
-import Alert from '@mui/material/Alert';
 import UserContext from '../../../store/context/userContext/UserContext';
-import {
-  MyBooksListItem,
-  ModalPromotions,
-  Loading,
-} from '../../../components';
+import { ModalPromotions } from '../../../components';
 import { useUsersBooksListFetch, useFetch } from '../../../utils/customHooks';
 import { suscribeAuthor as URL } from '../../../config/routes';
 import { Book } from '../../../interfaces/books';
 import SectionHeader from '../SectionHeader';
 import BooksEmptyState from '../components/BooksEmptyState';
+import BookManageRow from '../components/BookManageRow';
+import MyBooksSkeleton from '../components/MyBooksSkeleton';
+import Toggle from '../components/Toggle';
+import { secondaryButton } from '../components/styles';
 
 const MyBooksSection: React.FC = (): JSX.Element => {
   const { t } = useTranslation();
@@ -60,104 +52,133 @@ const MyBooksSection: React.FC = (): JSX.Element => {
     });
   };
 
+  const subscribeUnchanged = (user.emailAuthorListStatus === 'subscribed' && suscribe)
+    || (user.emailAuthorListStatus !== 'subscribed' && !suscribe);
+
+  const hasBooks = state.books && state.books.length > 0;
+
   return (
     <>
-      <SectionHeader title={t('titles.mybooks')} />
-      <div>
-        {
-          loading && <Loading />
-        }
-        {
-          !loading && state.books && state.books.length > 0
-          && (
-            <StyledCard>
-              <CardContent>
-                <FormControlLabel
-                  control={(
-                    <Switch
-                      checked={suscribe}
-                      onChange={() => setSuscribe(!suscribe)}
-                      name="suscribe"
-                      color="primary"
-                    />
-                  )}
-                  label="Quiero recibir consejos vía email para promocionar mis libros"
-                />
-                <Button
-                  disabled={
-                    (user.emailAuthorListStatus === 'subscribed' && suscribe)
-                    || (user.emailAuthorListStatus !== 'subscribed' && !suscribe)
-                  }
-                  variant="contained"
-                  color="secondary"
-                  size="small"
-                  onClick={handleSuscribe}
-                >
-                  Guardar Cambio
-                </Button>
-                {
-                  suscribeUserResponse.message
-                  && (
-                    <Alert variant="filled" severity={suscribeUserResponse.success ? 'success' : 'error'}>
-                      {suscribeUserResponse.message}
-                    </Alert>
-                  )
-                }
-              </CardContent>
-            </StyledCard>
-          )
-        }
-        {
-          state.books && state.books.length > 0
-            ? (
-              <StyledList>
-                {state.books.map(
-                  // eslint-disable-next-line no-underscore-dangle
-                  (book) => (
-                    <li key={book._id}>
-                      <MyBooksListItem
-                        onClickEdit={() => router.push(`/account?section=addBook&book=${book._id}`)}
-                        onClickPromote={() => {
-                          setShowModalPromotions(true);
-                          setBookSelected(book);
-                        }}
-                        book={book}
-                      />
-                    </li>
-                  ),
-                )}
-              </StyledList>
-            )
-            : !loading && <BooksEmptyState />
-        }
-        {
-          response.message
-          && (
-            <Alert variant="filled" severity={response.success ? 'success' : 'error'}>
-              {response.message}
-            </Alert>
-          )
-        }
-        <ModalPromotions
-          bookSelected={bookSelected}
-          show={showModalPromotions}
-          onClose={() => setShowModalPromotions(false)}
-        />
-      </div>
+      <SectionHeader
+        title="Tus libros"
+        subtitle="Gestiona tus libros y sus ejemplares."
+        action={(
+          <AddButton type="button" onClick={() => router.push('/account?section=addBook')}>
+            + Añadir libro
+          </AddButton>
+        )}
+      />
+
+      {hasBooks && (
+        <SubscribeBar>
+          <Toggle
+            checked={suscribe}
+            onChange={setSuscribe}
+            label="Recibir consejos por email para promocionar mis libros"
+          />
+          <SubscribeText>
+            Quiero recibir consejos vía email para promocionar mis libros
+          </SubscribeText>
+          <SaveSubscribeButton type="button" onClick={handleSuscribe} disabled={subscribeUnchanged}>
+            Guardar
+          </SaveSubscribeButton>
+          {suscribeUserResponse.message && (
+            <SubscribeFeedback $success={!!suscribeUserResponse.success} role="status">
+              {suscribeUserResponse.success ? 'Preferencia guardada' : 'No se pudo guardar'}
+            </SubscribeFeedback>
+          )}
+        </SubscribeBar>
+      )}
+
+      {response.message && !loading && (
+        <ErrorBanner role="alert">
+          <span aria-hidden="true">⚠</span>
+          {response.message}
+        </ErrorBanner>
+      )}
+
+      {/* eslint-disable-next-line no-nested-ternary */}
+      {loading
+        ? <MyBooksSkeleton />
+        : hasBooks
+          ? state.books.map((book) => (
+            <BookManageRow
+              key={book._id}
+              title={book.title}
+              coverUrl={book.cover}
+              genre={book.genre}
+              formats={book.formats}
+              availableCopies={book.copies}
+              onPromote={() => {
+                setShowModalPromotions(true);
+                setBookSelected(book);
+              }}
+              onEdit={() => router.push(`/account?section=addBook&book=${book._id}`)}
+            />
+          ))
+          : <BooksEmptyState />}
+
+      <ModalPromotions
+        bookSelected={bookSelected}
+        show={showModalPromotions}
+        onClose={() => setShowModalPromotions(false)}
+      />
     </>
   );
 };
 
-const StyledCard = styledComponents(Card)`
-  width: 50%;
-  margin-left: 25%;
+const AddButton = styled.button`
+  ${secondaryButton}
+  font-size: 13px;
+  padding: 8px 16px;
+  min-height: 40px;
 `;
 
-const StyledList = styledComponents.ul`
-  list-style-type: none;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-gap: 1rem;
+const SubscribeBar = styled.div`
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  border: 1px solid ${({ theme }) => theme.lightBorder};
+  border-radius: 10px;
+  background: ${({ theme }) => theme.cream};
+`;
+
+const SubscribeText = styled.span`
+  flex: 1;
+  min-width: 180px;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 13px;
+  color: ${({ theme }) => theme.ink};
+`;
+
+const SaveSubscribeButton = styled.button`
+  ${secondaryButton}
+  font-size: 13px;
+  padding: 8px 16px;
+  min-height: 40px;
+`;
+
+const SubscribeFeedback = styled.span<{ $success: boolean }>`
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 12px;
+  color: ${({ $success, theme }) => ($success ? theme.success : theme.terracotta)};
+`;
+
+const ErrorBanner = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: #fdf3ee;
+  border: 1px solid ${({ theme }) => theme.terracotta};
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 13px;
+  color: ${({ theme }) => theme.ink};
 `;
 
 export default MyBooksSection;
