@@ -25,6 +25,7 @@ const DangerZone: React.FC<DangerZoneProps> = ({ userEmail }) => {
   const [open, setOpen] = useState(false);
   const [confirmEmail, setConfirmEmail] = useState('');
   const [deleting, setDeleting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -32,6 +33,7 @@ const DangerZone: React.FC<DangerZoneProps> = ({ userEmail }) => {
   const close = (): void => {
     setOpen(false);
     setConfirmEmail('');
+    setError(null);
     triggerRef.current?.focus();
   };
 
@@ -70,6 +72,7 @@ const DangerZone: React.FC<DangerZoneProps> = ({ userEmail }) => {
   const handleDelete = async (): Promise<void> => {
     try {
       setDeleting(true);
+      setError(null);
       const res = await fetch(URL, {
         method: 'delete',
         mode: 'cors',
@@ -83,7 +86,11 @@ const DangerZone: React.FC<DangerZoneProps> = ({ userEmail }) => {
       if (resJSON.success) {
         resetUser();
         router.push('/register');
+      } else {
+        setError('No se pudo eliminar la cuenta. Inténtalo de nuevo.');
       }
+    } catch {
+      setError('No se pudo eliminar la cuenta. Inténtalo de nuevo.');
     } finally {
       setDeleting(false);
     }
@@ -103,13 +110,12 @@ const DangerZone: React.FC<DangerZoneProps> = ({ userEmail }) => {
       </Zone>
 
       {open && (
-        <Overlay onMouseDown={close}>
+        <Overlay onClick={(e) => { if (e.target === e.currentTarget) close(); }}>
           <Dialog
             ref={dialogRef}
             role="dialog"
             aria-modal="true"
             aria-labelledby="delete-account-title"
-            onMouseDown={(e) => e.stopPropagation()}
           >
             <DialogTitle id="delete-account-title">¿Eliminar tu cuenta?</DialogTitle>
             <DialogText>{DELETE_DESCRIPTION}</DialogText>
@@ -120,6 +126,12 @@ const DangerZone: React.FC<DangerZoneProps> = ({ userEmail }) => {
               value={confirmEmail}
               onChange={(e) => setConfirmEmail(e.target.value)}
             />
+            {error && (
+              <DialogError role="alert">
+                <span aria-hidden="true">⚠</span>
+                {error}
+              </DialogError>
+            )}
             <DialogActions>
               <CancelButton type="button" onClick={close}>Cancelar</CancelButton>
               <ConfirmButton
@@ -199,6 +211,20 @@ const DialogText = styled.p`
   color: ${({ theme }) => theme.brown};
   line-height: 1.5;
   margin: 0 0 16px;
+`;
+
+const DialogError = styled.p`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 16px 0 0;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: #fdf3ee;
+  border: 1px solid ${({ theme }) => theme.terracotta};
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 13px;
+  color: ${({ theme }) => theme.ink};
 `;
 
 const DialogActions = styled.div`

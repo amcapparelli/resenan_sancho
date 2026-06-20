@@ -71,7 +71,11 @@ const ProfileSection: React.FC = (): JSX.Element => {
       <AvatarRow>
         {updateForm.avatar
           ? <AvatarImg src={updateForm.avatar} alt="Tu avatar" />
-          : <AvatarInitials aria-hidden="true">{getInitials(user.name, user.lastName)}</AvatarInitials>}
+          : (
+            <AvatarInitials role="img" aria-label={`Avatar de ${user.name ?? ''} ${user.lastName ?? ''}`.trim()}>
+              {getInitials(user.name, user.lastName)}
+            </AvatarInitials>
+          )}
         <AvatarActions>
           <HiddenFileInput
             id="avatar-input"
@@ -156,16 +160,28 @@ const AvatarInitials = styled.div`
 const AvatarActions = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0;
 `;
 
+// Visually hidden but still focusable, so "Cambiar avatar" works with the
+// keyboard (Tab to the input, Enter/Space opens the file dialog). The visible
+// focus ring is rendered on the label via :focus-within.
 const HiddenFileInput = styled.input`
-  display: none;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 `;
 
 const AvatarButton = styled.label`
   ${secondaryButton}
   align-self: flex-start;
+
+  ${HiddenFileInput}:focus + & {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(199, 91, 34, 0.35);
+  }
 `;
 
 const FormGrid = styled.div`

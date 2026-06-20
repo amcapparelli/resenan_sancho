@@ -102,7 +102,7 @@ export const fieldBase = css`
 
   &:disabled {
     background: #f4eedd;
-    color: #9a8c7e;
+    color: ${({ theme }) => theme.muted};
     cursor: not-allowed;
     border-color: #e8dfc8;
   }

@@ -28,7 +28,7 @@ const SaveBar: React.FC<SaveBarProps> = ({
 }) => (
   <Wrapper>
     {feedback?.message && (
-      <Banner $success={!!feedback.success} role="status">
+      <Banner $success={!!feedback.success} role={feedback.success ? 'status' : 'alert'}>
         {feedback.success
           ? <CheckIcon />
           : <span aria-hidden="true">⚠</span>}

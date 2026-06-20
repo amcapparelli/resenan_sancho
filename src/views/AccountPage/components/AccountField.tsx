@@ -67,7 +67,7 @@ export const FieldLabel = styled.label`
 export const FieldNote = styled.p`
   font-family: 'Source Sans 3', sans-serif;
   font-size: 12px;
-  color: #9a8c7e;
+  color: ${({ theme }) => theme.muted};
   margin: 6px 0 0;
 `;
 
@@ -77,13 +77,13 @@ export const FieldError = styled.p`
   gap: 4px;
   font-family: 'Source Sans 3', sans-serif;
   font-size: 12px;
-  color: #DE4A10;
+  color: ${({ theme }) => theme.danger};
   margin: 6px 0 0;
 `;
 
 const Input = styled.input<{ $hasError: boolean }>`
   ${fieldBase}
-  ${({ $hasError }) => $hasError && 'border-color: #DE4A10;'}
+  ${({ $hasError, theme }) => $hasError && `border-color: ${theme.danger};`}
 `;
 
 export default AccountField;

@@ -17,5 +17,7 @@ declare module 'styled-components' {
     lightBorder: string;
     appBackground: string;
     success: string;
+    danger: string;
+    muted: string;
   }
 }
