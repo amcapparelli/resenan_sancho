@@ -72,7 +72,7 @@ es mayoritariamente móvil.
 ┌──────────────────────────────────────────────────────────────┐
 │  NAVBAR (ya implementado — no tocar)                         │
 ├──────────────────────────────────────────────────────────────┤
-│  ← Volver a la web   ·   Hola, {Nombre}                      │  ← barra de contexto
+│  ← Volver al buscador de libros y reseñadores   ·   Hola, {Nombre}                      │  ← barra de contexto
 ├───────────────┬──────────────────────────────────────────────┤
 │  SIDEBAR      │  ÁREA DE TRABAJO (panel blanco sobre crema)  │
 │               │                                              │
@@ -122,7 +122,7 @@ ocupa el 100% del ancho debajo.
 
 ## Sección 0 — Barra de contexto (común a todo el área)
 
-Resuelve el "enlace para volver a la web pública" que pediste, y orienta.
+Resuelve el "enlace para Volver al buscador de libros y reseñadores pública" que pediste, y orienta.
 
 ```
 Fondo: blanco #FFFFFF
@@ -132,7 +132,7 @@ display: flex; align-items: center; justify-content: space-between
 ```
 
 Izquierda — enlace de salida:
-- `← Volver a la web` — enlace real `<a href="/">`
+- `← Volver al buscador de libros y reseñadores` — enlace real `<a href="/">`
 - Source Sans 3, 13px, color marrón `#6B4A16`
 - `display: inline-flex; align-items: center; gap: 5px`
 - Hover: color teja `#C75B22`
@@ -837,7 +837,7 @@ dejarlos como isla:
 ```
 AccountPage/
   index.tsx                ← layout maestro: barra contexto + nav + sección activa
-  AccountContextBar.tsx    ← "← Volver a la web" + saludo
+  AccountContextBar.tsx    ← "← Volver al buscador de libros y reseñadores" + saludo
   AccountNav.tsx           ← sidebar (desktop) / tabs (móvil), recibe sección activa
   SectionHeader.tsx        ← título + subtítulo + separador (reutilizable)
   sections/
