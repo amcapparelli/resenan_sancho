@@ -86,7 +86,7 @@ const AvailabilityRow = styled.div`
 
 const GreenDot = styled.span`
   font-size: 10px;
-  color: #4a9b5f;
+  color: ${({ theme }) => theme.success};
   line-height: 1;
 `;
 

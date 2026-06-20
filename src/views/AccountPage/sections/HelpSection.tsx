@@ -1,0 +1,56 @@
+import React from 'react';
+import styledComponents from 'styled-components';
+import { useTranslation } from 'react-i18next';
+import {
+  Card,
+  CardContent,
+  Typography,
+} from '@mui/material';
+import SectionHeader from '../SectionHeader';
+
+const HelpSection: React.FC = (): JSX.Element => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <SectionHeader title={t('titles.help')} />
+      <Card>
+        <CardContent>
+          <StyledContainer>
+            <Typography variant="h5">Mi libro no aparece en el listado de libros disponibles</Typography>
+            <Typography variant="body1">
+              Para que un libro aparezca en el listado lo primero que debes hacer es darlo
+              de alta con la opción del menú AÑADE LIBRO. Luego, en la opción MIS LIBROS,
+              puedes administrar tus ejemplares. Para que un libro aparezca en el listado debe
+              tener ejemplares disponibles. Para agregar ejemplares disponibles de tu libro,
+              puedes hacerlo con la opción PROMOCIONAR.
+            </Typography>
+          </StyledContainer>
+          <StyledContainer>
+            <Typography variant="h5">Mi perfil de reseñador aparece muy atrás en los resultados</Typography>
+            <Typography variant="body1">
+              ¡No te preocupes, hay solución! Si te has registrado hace un tiempo como reseñador
+              literario es posible que aparezcas atrás en los resultados de búsqueda. Si quieres
+              aparecer en los primeros lugares, escríbenos a alejandro@resenansancho.com y te
+              subimos.
+            </Typography>
+          </StyledContainer>
+          <StyledContainer>
+            <Typography variant="h5">
+              ¿Tienes una duda, algún comentario o algo no funciona cómo esperabas?
+            </Typography>
+            <Typography variant="body1">
+              No dudes en escribir a alejandro@resenansancho.com
+            </Typography>
+          </StyledContainer>
+        </CardContent>
+      </Card>
+    </>
+  );
+};
+
+const StyledContainer = styledComponents.div`
+  margin-bottom: 5%;
+  width: 90%;
+`;
+
+export default HelpSection;
