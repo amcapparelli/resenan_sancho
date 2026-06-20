@@ -90,5 +90,7 @@ Notas:
 - [x] Fase A6: rediseñar la sección de libros
 - [x] Fase A7: rediseñar la sección de reseñadores literarios
 - [x] Fase A8: rediseñar la sección de detalle de un libro.
+- [x] Fase A9: rediseñar el área personal (perfil, espacios literarios, mis
+  libros, añade libro y ayuda) como página única `/account`.
 
 - (actualiza esta lista según avances)
