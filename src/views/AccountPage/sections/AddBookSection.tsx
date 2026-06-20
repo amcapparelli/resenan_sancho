@@ -35,8 +35,15 @@ const FORMAT_LABELS: Record<string, string> = {
 };
 
 // Format a stored date (Date, ISO string or '') for an <input type="date">.
+// A backend ISO string is read literally (first 10 chars) to avoid timezone
+// shifts; for Date objects we read the UTC date, matching how onChange builds
+// them (`new Date('YYYY-MM-DD')` === UTC midnight).
 const toDateInputValue = (value: unknown): string => {
   if (!value) return '';
+  if (typeof value === 'string') {
+    const match = value.match(/^\d{4}-\d{2}-\d{2}/);
+    if (match) return match[0];
+  }
   const date = new Date(value as string);
   return Number.isNaN(date.getTime()) ? '' : date.toISOString().slice(0, 10);
 };
@@ -57,6 +64,7 @@ const AddBookSection: React.FC = (): JSX.Element => {
     author: user._id,
     synopsis: '',
     genre: '',
+    editorial: '',
     pages: '',
   };
   const [bookForm, setBookForm, loadForm] = useForm(initForm);
@@ -93,9 +101,10 @@ const AddBookSection: React.FC = (): JSX.Element => {
     });
   }, [state]);
 
-  // On a successful publish/update, take the user to "Mis libros" to see it.
+  // After publishing a new book, take the user to "Mis libros" to see it.
+  // On edit we stay so the success banner is visible.
   useEffect(() => {
-    if (registerBookResponse.success) router.push('/account?section=books');
+    if (registerBookResponse.success && !book) router.push('/account?section=books');
   }, [registerBookResponse.success]);
 
   const registerBook = async (): Promise<void> => {
