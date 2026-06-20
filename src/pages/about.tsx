@@ -6,9 +6,15 @@ import {
 } from '@mui/material';
 import styledComponents from 'styled-components';
 import { PublicZoneLayout } from '../components/Layouts';
+import { Seo } from '../components';
 
 const about = () => (
   <PublicZoneLayout showFooter>
+    <Seo
+      title="Sobre nosotros | Reseñan Sancho"
+      description="Conoce Reseñan Sancho: la herramienta que conecta a escritores independientes y editoriales con reseñadores que publican reseñas en blogs, YouTube y Goodreads."
+      path="/about"
+    />
     <Card>
       <CardContent>
         <Typography variant="h2" align="center">¿Qué es Reseñan Sancho?</Typography>

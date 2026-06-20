@@ -14,6 +14,9 @@ import createEmotionCache from '../utils/createEmotionCache';
 
 interface MyDocumentInitialProps extends DocumentInitialProps {
   emotionStyleTags: JSX.Element[];
+  // Active request locale, resolved from Next i18n so <Html lang> is accurate
+  // (e.g. lang="en" under /en) instead of a hardcoded value.
+  locale: string;
 }
 
 class MyDocument extends Document<MyDocumentInitialProps> {
@@ -45,6 +48,7 @@ class MyDocument extends Document<MyDocumentInitialProps> {
 
       return {
         ...initialProps,
+        locale: ctx.locale ?? ctx.defaultLocale ?? 'es',
         emotionStyleTags,
         styles: (
           <>
@@ -60,7 +64,7 @@ class MyDocument extends Document<MyDocumentInitialProps> {
 
   render() {
     return (
-      <Html lang="es" dir="ltr">
+      <Html lang={this.props.locale} dir="ltr">
         <Head>
           {this.props.emotionStyleTags}
         </Head>

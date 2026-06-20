@@ -4,9 +4,15 @@ import {
   CardContent,
 } from '@mui/material';
 import { PublicZoneLayout } from '../components/Layouts';
+import { Seo } from '../components';
 
 const legal = () => (
   <PublicZoneLayout showFooter>
+    <Seo
+      title="Aviso legal | Reseñan Sancho"
+      description="Aviso legal y política de privacidad de Reseñan Sancho: información sobre el prestador, responsabilidad, tratamiento de datos y derechos del usuario."
+      path="/legal"
+    />
     <Card>
       <CardContent>
         <h2>Aviso legal y Política de privacidad</h2>

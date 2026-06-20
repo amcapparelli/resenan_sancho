@@ -5,6 +5,7 @@ import Alert from '@mui/material/Alert';
 import { useForm } from '../utils/customHooks';
 import { forgotPass } from '../config/routes';
 import { Response } from '../interfaces/response';
+import { Seo } from '../components';
 
 const reset = () => {
   const [resetForm, setResetForm] = useForm({});
@@ -32,7 +33,9 @@ const reset = () => {
     }
   };
   return (
-    <StyledForm>
+    <>
+      <Seo noindex title="Recuperar contraseña | Reseñan Sancho" description="Recupera el acceso a tu cuenta de Reseñan Sancho." path="/forgot" />
+      <StyledForm>
       <TextField
         id="standard-password-input"
         label="email"
@@ -57,7 +60,8 @@ const reset = () => {
           </Alert>
         )
       }
-    </StyledForm>
+      </StyledForm>
+    </>
   );
 };
 

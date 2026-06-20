@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import styledComponents from 'styled-components';
 import Alert from '@mui/material/Alert';
 import { Button, TextField } from '@mui/material';
-import { StyledLink } from '../components';
+import { Seo, StyledLink } from '../components';
 import { login as loginURL } from '../config/routes';
 import UserContext from '../store/context/userContext/UserContext';
 import { useForm, useFetch } from '../utils/customHooks';
@@ -32,10 +32,12 @@ const Login: NextPage = (): JSX.Element => {
   };
 
   return (
-    <StyledForm>
-      <Link href="/">
-        <StyledLogo src="/static/logo-web.webp" alt="logo reseñan sancho" />
-      </Link>
+    <>
+      <Seo noindex title="Iniciar sesión | Reseñan Sancho" description="Accede a tu cuenta de Reseñan Sancho." path="/login" />
+      <StyledForm>
+        <Link href="/">
+          <StyledLogo src="/static/logo-web.webp" alt="logo reseñan sancho" />
+        </Link>
       {['email', 'password'].map((text) => (
         <TextField
           label={t(`form.${text}`)}
@@ -70,7 +72,8 @@ const Login: NextPage = (): JSX.Element => {
           </Alert>
         )
       }
-    </StyledForm>
+      </StyledForm>
+    </>
   );
 };
 

@@ -11,7 +11,7 @@ import Alert from '@mui/material/Alert';
 import ReactGA from "react-ga4";
 import { register as registerURL } from '../config/routes';
 import { useForm, useRequiredFieldsValidation, useFetch } from '../utils/customHooks';
-import { PasswordFields, StyledLink } from '../components';
+import { PasswordFields, Seo, StyledLink } from '../components';
 
 const fields = ['name', 'lastName', 'email'];
 
@@ -76,10 +76,12 @@ const Register: React.FC = (): JSX.Element => {
   };
 
   return (
-    <StyledForm>
-      <Link href="/">
-        <StyledLogo src="/static/logo-web.webp" alt="logo reseñan sancho" />
-      </Link>
+    <>
+      <Seo noindex title="Crea tu cuenta | Reseñan Sancho" description="Regístrate en Reseñan Sancho." path="/register" />
+      <StyledForm>
+        <Link href="/">
+          <StyledLogo src="/static/logo-web.webp" alt="logo reseñan sancho" />
+        </Link>
       {fields.map((text) => (
         <TextField
           error={errors[text].length > 0}
@@ -123,7 +125,8 @@ const Register: React.FC = (): JSX.Element => {
           </Alert>
         )
       }
-    </StyledForm>
+      </StyledForm>
+    </>
   );
 };
 
