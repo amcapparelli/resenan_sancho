@@ -16,7 +16,7 @@ import BooksEmptyState from '../components/BooksEmptyState';
 import BookManageRow from '../components/BookManageRow';
 import MyBooksSkeleton from '../components/MyBooksSkeleton';
 import Toggle from '../components/Toggle';
-import { secondaryButton } from '../components/styles';
+import { primaryButton, secondaryButton } from '../components/styles';
 
 const MyBooksSection: React.FC = (): JSX.Element => {
   const router = useRouter();
@@ -79,7 +79,7 @@ const MyBooksSection: React.FC = (): JSX.Element => {
             Quiero recibir consejos vía email para promocionar mis libros
           </SubscribeText>
           <SaveSubscribeButton type="button" onClick={handleSuscribe} disabled={subscribeUnchanged}>
-            Guardar
+            Guardar selección
           </SaveSubscribeButton>
           {suscribeUserResponse.message && (
             <SubscribeFeedback $success={!!suscribeUserResponse.success} role="status">
@@ -153,11 +153,20 @@ const SubscribeText = styled.span`
   color: ${({ theme }) => theme.ink};
 `;
 
+// Enabled = solid terracotta CTA (a pending change to save); disabled = flat,
+// muted outline. The strong contrast makes the actionable state obvious.
 const SaveSubscribeButton = styled.button`
-  ${secondaryButton}
+  ${primaryButton}
   font-size: 13px;
   padding: 8px 16px;
   min-height: 40px;
+
+  &:disabled {
+    opacity: 1;
+    background: transparent;
+    color: ${({ theme }) => theme.muted};
+    border: 1px solid ${({ theme }) => theme.lightBorder};
+  }
 `;
 
 const SubscribeFeedback = styled.span<{ $success: boolean }>`
