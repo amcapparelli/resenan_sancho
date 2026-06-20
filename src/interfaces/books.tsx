@@ -24,6 +24,8 @@ export interface BookForm {
   author: string,
   synopsis: string,
   genre: string,
+  editorial?: string,
+  pages?: string,
 }
 
 export interface BookFormErrors {
