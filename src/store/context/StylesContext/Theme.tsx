@@ -16,6 +16,7 @@ enum Palette {
   success = '#4a9b5f',
   danger = '#DE4A10',
   muted = '#9a8c7e',
+  terracottaSoft = '#fdf3ee',
 }
 
 const {
@@ -34,6 +35,7 @@ const {
   success,
   danger,
   muted,
+  terracottaSoft,
 } = Palette;
 
 export const StyledTheme = {
@@ -54,6 +56,7 @@ export const StyledTheme = {
   success,
   danger,
   muted,
+  terracottaSoft,
 };
 
 export const MuiTheme = createTheme({

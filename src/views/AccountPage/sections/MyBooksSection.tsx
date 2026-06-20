@@ -6,7 +6,6 @@ import React, {
 } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
 import UserContext from '../../../store/context/userContext/UserContext';
 import { ModalPromotions } from '../../../components';
 import { useUsersBooksListFetch, useFetch } from '../../../utils/customHooks';
@@ -20,7 +19,6 @@ import Toggle from '../components/Toggle';
 import { secondaryButton } from '../components/styles';
 
 const MyBooksSection: React.FC = (): JSX.Element => {
-  const { t } = useTranslation();
   const router = useRouter();
   const { user, setUserLogged } = useContext(UserContext);
   const [state, listRequest, loading, response] = useUsersBooksListFetch();
@@ -52,8 +50,8 @@ const MyBooksSection: React.FC = (): JSX.Element => {
     });
   };
 
-  const subscribeUnchanged = (user.emailAuthorListStatus === 'subscribed' && suscribe)
-    || (user.emailAuthorListStatus !== 'subscribed' && !suscribe);
+  const currentlySubscribed = user.emailAuthorListStatus === 'subscribed';
+  const subscribeUnchanged = currentlySubscribed === suscribe;
 
   const hasBooks = state.books && state.books.length > 0;
 
@@ -75,8 +73,9 @@ const MyBooksSection: React.FC = (): JSX.Element => {
             checked={suscribe}
             onChange={setSuscribe}
             label="Recibir consejos por email para promocionar mis libros"
+            labelledBy="subscribe-label"
           />
-          <SubscribeText>
+          <SubscribeText id="subscribe-label">
             Quiero recibir consejos vía email para promocionar mis libros
           </SubscribeText>
           <SaveSubscribeButton type="button" onClick={handleSuscribe} disabled={subscribeUnchanged}>
@@ -174,7 +173,7 @@ const ErrorBanner = styled.div`
   margin-bottom: 16px;
   padding: 10px 14px;
   border-radius: 8px;
-  background: #fdf3ee;
+  background: ${({ theme }) => theme.terracottaSoft};
   border: 1px solid ${({ theme }) => theme.terracotta};
   font-family: 'Source Sans 3', sans-serif;
   font-size: 13px;

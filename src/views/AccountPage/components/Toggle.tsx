@@ -6,6 +6,9 @@ interface ToggleProps {
   onChange: (next: boolean) => void;
   label: string;
   ariaControls?: string;
+  // When the switch already has a visible text label, pass its id here so the
+  // accessible name comes from that single source instead of duplicating copy.
+  labelledBy?: string;
 }
 
 const Toggle: React.FC<ToggleProps> = ({
@@ -13,13 +16,15 @@ const Toggle: React.FC<ToggleProps> = ({
   onChange,
   label,
   ariaControls,
+  labelledBy,
 }) => (
   <Track $checked={checked}>
     <HiddenCheckbox
       type="checkbox"
       role="switch"
       checked={checked}
-      aria-label={label}
+      aria-label={labelledBy ? undefined : label}
+      aria-labelledby={labelledBy}
       aria-checked={checked}
       aria-expanded={ariaControls ? checked : undefined}
       aria-controls={ariaControls}

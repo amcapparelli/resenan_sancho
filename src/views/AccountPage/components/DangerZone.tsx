@@ -153,7 +153,7 @@ const Zone = styled.div`
   margin-top: 32px;
   border: 1px solid #e7b9a3;
   border-radius: 10px;
-  background: #fdf3ee;
+  background: ${({ theme }) => theme.terracottaSoft};
   padding: 18px 20px;
 `;
 
@@ -220,7 +220,7 @@ const DialogError = styled.p`
   margin: 16px 0 0;
   padding: 10px 14px;
   border-radius: 8px;
-  background: #fdf3ee;
+  background: ${({ theme }) => theme.terracottaSoft};
   border: 1px solid ${({ theme }) => theme.terracotta};
   font-family: 'Source Sans 3', sans-serif;
   font-size: 13px;

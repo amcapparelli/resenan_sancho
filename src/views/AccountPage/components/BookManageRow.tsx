@@ -32,7 +32,8 @@ const BookManageRow: React.FC<BookManageRowProps> = ({
 }) => {
   const { t } = useTranslation();
   const genreName = genres.find((g) => g.code === genre)?.name;
-  const genreLabel = genreName ? t(`genres.${genreName}`) : genre;
+  // Hide the genre when the code is unknown, mirroring BookCard's behaviour.
+  const genreLabel = genreName ? t(`genres.${genreName}`) : '';
   const promoting = availableCopies >= 1;
 
   const meta = [genreLabel, formats.join(', ')].filter(Boolean).join(' · ');
@@ -58,7 +59,13 @@ const BookManageRow: React.FC<BookManageRowProps> = ({
       </Main>
       <Actions>
         {!promoting && <Hint>Actívalo</Hint>}
-        <PromoteButton type="button" onClick={onPromote}>Promocionar</PromoteButton>
+        <PromoteButton
+          type="button"
+          onClick={onPromote}
+          aria-label={promoting ? undefined : 'Promocionar — este libro no tiene ejemplares disponibles'}
+        >
+          Promocionar
+        </PromoteButton>
         <EditButton type="button" onClick={onEdit}>Editar</EditButton>
       </Actions>
     </Row>
