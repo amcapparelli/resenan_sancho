@@ -23,8 +23,20 @@ import CharCounter from '../components/CharCounter';
 import ChannelRow from '../components/ChannelRow';
 import { fieldBase } from '../components/styles';
 
-const DESCRIPTION_MAX = 2000;
+// Keep the previously enforced cap (the old input used maxLength 1000) to avoid
+// a save regression, even though the design spec mentions 2000.
+const DESCRIPTION_MAX = 1000;
 const FORMATS = ['epub', 'papel', 'mobi', 'pdf', 'audiolibro'];
+
+// Display-only labels; the stored values (the keys) are sent to the backend
+// unchanged.
+const FORMAT_LABELS: Record<string, string> = {
+  epub: 'ePUB',
+  papel: 'papel',
+  mobi: 'mobi',
+  pdf: 'PDF',
+  audiolibro: 'audiolibro',
+};
 
 // Display order/labels for channels; each maps to a data key in mediaForm.
 const CHANNELS: Array<{ key: string; label: string; Icon: React.FC<{ size?: number }> }> = [
@@ -210,10 +222,14 @@ const SpacesSection: React.FC = (): JSX.Element => {
 
       <Divider />
 
-      <Block>
-        <BlockLabel>Géneros que te interesan</BlockLabel>
+      <Block
+        role="group"
+        aria-labelledby="genres-label"
+        aria-describedby={errors.genres ? 'genres-error' : undefined}
+      >
+        <BlockLabel id="genres-label">Géneros que te interesan</BlockLabel>
         <BlockHelp>Marca todos los que apliquen.</BlockHelp>
-        {errors.genres && <BlockError>{errors.genres}</BlockError>}
+        {errors.genres && <BlockError id="genres-error">Selecciona al menos un género.</BlockError>}
         <Chips>
           {genres.map(({ name, code }) => (
             <SelectableChip
@@ -245,13 +261,13 @@ const SpacesSection: React.FC = (): JSX.Element => {
 
       <Divider />
 
-      <Block>
-        <BlockLabel>Formatos que sueles leer</BlockLabel>
+      <Block role="group" aria-labelledby="formats-label">
+        <BlockLabel id="formats-label">Formatos que sueles leer</BlockLabel>
         <Chips>
           {FORMATS.map((format) => (
             <SelectableChip
               key={format}
-              label={format}
+              label={FORMAT_LABELS[format] ?? format}
               selected={mediaForm.formats.includes(format)}
               onToggle={() => toggleInArray('formats', format)}
             />
@@ -270,7 +286,7 @@ const Divider = styled.div`
   margin: 24px 0;
 `;
 
-const Block = styled.div``;
+const Block = styled.section``;
 
 const BlockLabel = styled.p`
   font-family: 'Source Sans 3', sans-serif;
