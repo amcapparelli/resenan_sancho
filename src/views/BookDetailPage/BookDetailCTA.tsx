@@ -84,9 +84,12 @@ const AvailabilityRow = styled.div`
   gap: 6px;
 `;
 
-const GreenDot = styled.span`
+// Dot color reflects availability: success (green) when in stock, muted (grey)
+// when unavailable. We avoid the previous always-green "GreenDot" so the empty
+// state isn't visually misleading.
+const AvailabilityDot = styled.span<{ $available: boolean }>`
   font-size: 10px;
-  color: ${({ theme }) => theme.success};
+  color: ${({ theme, $available }) => ($available ? theme.success : theme.muted)};
   line-height: 1;
 `;
 
@@ -122,6 +125,21 @@ const RequestButton = styled.button`
     transform: scale(0.98);
   }
 
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+    background: ${({ theme }) => theme.amber};
+  }
+
+  /* No hover/active feedback while disabled */
+  &:disabled:hover {
+    background: ${({ theme }) => theme.amber};
+  }
+
+  &:disabled:active {
+    transform: none;
+  }
+
   ${reducedMotion}
 `;
 
@@ -133,16 +151,27 @@ const BookDetailCTA: React.FC<BookDetailCTAProps> = ({
   onRequest,
 }) => {
   const router = useRouter();
+  const isAvailable = copies > 0;
   return (
     <Section aria-label="Pedir ejemplar">
       {isLoggedIn ? (
         <>
           <AvailabilityRow>
-            <GreenDot aria-hidden="true">●</GreenDot>
-            <AvailabilityText>{copies} ejemplares disponibles</AvailabilityText>
+            <AvailabilityDot $available={isAvailable} aria-hidden="true">
+              ●
+            </AvailabilityDot>
+            <AvailabilityText>
+              {isAvailable
+                ? `${copies} ${copies === 1 ? 'ejemplar disponible' : 'ejemplares disponibles'}`
+                : 'No disponible por ahora'}
+            </AvailabilityText>
           </AvailabilityRow>
 
-          <RequestButton onClick={onRequest}>
+          <RequestButton
+            onClick={onRequest}
+            disabled={!isAvailable}
+            aria-label={isAvailable ? undefined : 'No disponible por ahora'}
+          >
             Pedir un ejemplar →
           </RequestButton>
         </>
