@@ -1,38 +1,19 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
 
 import { useFetchBook } from '../../utils/customHooks';
 import UserContext from '../../store/context/userContext/UserContext';
 import { ModalContact } from '../../components';
+import { Book } from '../../interfaces/books';
 import BookDetailHero from './BookDetailHero';
 import BookDetailSynopsis from './BookDetailSynopsis';
-import BookDetailSkeleton from './BookDetailSkeleton';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 interface BookDetailPageProps {
-  id: string;
+  book: Book;
 }
-
-// ─── Error state icon ─────────────────────────────────────────────────────────
-
-const ErrorBookIcon: React.FC = () => (
-  <svg
-    width="48"
-    height="48"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.5"
-    aria-hidden="true"
-  >
-    <path d="M6 2h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" />
-    <line x1="8" y1="6" x2="16" y2="6" />
-    <line x1="8" y1="10" x2="16" y2="10" />
-    <line x1="8" y1="14" x2="13" y2="14" />
-  </svg>
-);
 
 // ─── Styled ──────────────────────────────────────────────────────────────────
 
@@ -68,101 +49,33 @@ const BreadcrumbLink = styled.a`
   }
 `;
 
-// ─── Error state ──────────────────────────────────────────────────────────────
-
-const ErrorContainer = styled.div`
-  padding: 80px 28px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-`;
-
-const ErrorIconWrapper = styled.div`
-  color: ${({ theme }) => theme.terracotta};
-  opacity: 0.4;
-`;
-
-const ErrorTitle = styled.h1`
-  font-family: 'Fraunces', serif;
-  font-size: 24px;
-  font-weight: 600;
-  color: ${({ theme }) => theme.ink};
-  margin: 0;
-`;
-
-const ErrorSubtitle = styled.p`
-  font-family: 'Source Sans 3', sans-serif;
-  font-size: 15px;
-  color: ${({ theme }) => theme.brown};
-  margin: 0;
-`;
-
-const ErrorButton = styled.a`
-  background: ${({ theme }) => theme.terracotta};
-  color: ${({ theme }) => theme.white};
-  font-family: 'Source Sans 3', sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  border-radius: 8px;
-  padding: 12px 22px;
-  min-height: 44px;
-  display: inline-flex;
-  align-items: center;
-  text-decoration: none;
-  transition: background 0.15s ease;
-
-  &:hover {
-    background: #a84a1b;
-  }
-`;
-
 // ─── Component ───────────────────────────────────────────────────────────────
 
-const BookDetailPage: React.FC<BookDetailPageProps> = ({ id }) => {
+const BookDetailPage: React.FC<BookDetailPageProps> = ({ book }) => {
   const { isLogged } = useContext(UserContext);
-  const [state, fetchBook, loading] = useFetchBook();
+  // The book is provided by SSR for the first paint. useFetchBook only drives
+  // the client-side refetch after an order, so its reducer state stays empty
+  // until then; we fall back to the SSR `book` while that is the case.
+  const [refetchedBook, fetchBook] = useFetchBook();
+  const currentBook: Book = refetchedBook._id ? refetchedBook : book;
 
   const [openModalContact, setOpenModalContact] = useState(false);
-  // Tracks how many copies have been ordered so we can refetch
-  // after a successful order and show the updated copy count.
+  // Tracks how many copies have been ordered so we can refetch after a
+  // successful order and show the updated copy count.
   const [copiesDecrease, setCopiesDecrease] = useState<number>(0);
+  // Skip the mount run: SSR already provided the book, so we only refetch once
+  // the user actually orders a copy (copiesDecrease turns truthy).
+  const didMount = useRef(false);
 
   useEffect(() => {
-    fetchBook(id);
-    // copiesDecrease is intentionally included: when the user orders
-    // a copy the modal sets it to 1, triggering a fresh fetch to reflect
-    // the decremented count from the API.
-  }, [id, copiesDecrease]);
-
-  if (loading) {
-    return (
-      <Wrapper>
-        <BookDetailSkeleton />
-      </Wrapper>
-    );
-  }
-
-  if (!state._id) {
-    return (
-      <Wrapper>
-        <ErrorContainer>
-          <ErrorIconWrapper>
-            <ErrorBookIcon />
-          </ErrorIconWrapper>
-          <ErrorTitle>Este libro no está disponible</ErrorTitle>
-          <ErrorSubtitle>
-            Es posible que se haya eliminado o que el enlace no sea correcto.
-          </ErrorSubtitle>
-          {/* Next.js 9 requires a child <a> inside Link */}
-          <Link href="/books" passHref>
-            <ErrorButton>← Explorar libros</ErrorButton>
-          </Link>
-        </ErrorContainer>
-      </Wrapper>
-    );
-  }
+    if (!didMount.current) {
+      didMount.current = true;
+      return;
+    }
+    fetchBook(book._id);
+    // Refetch must fire only on a new order, not when fetchBook/book identity changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [copiesDecrease]);
 
   return (
     <Wrapper>
@@ -174,12 +87,12 @@ const BookDetailPage: React.FC<BookDetailPageProps> = ({ id }) => {
       </BreadcrumbBar>
 
       <BookDetailHero
-        book={state}
+        book={currentBook}
         isLoggedIn={isLogged}
         onRequest={() => setOpenModalContact(true)}
       />
 
-      <BookDetailSynopsis synopsis={state.synopsis} />
+      <BookDetailSynopsis synopsis={currentBook.synopsis} />
 
       <ModalContact
         open={openModalContact}
@@ -187,8 +100,8 @@ const BookDetailPage: React.FC<BookDetailPageProps> = ({ id }) => {
           setCopiesDecrease(copiesOrdered);
           setOpenModalContact(false);
         }}
-        book={state._id}
-        bookTitle={state.title}
+        book={currentBook._id}
+        bookTitle={currentBook.title}
       />
     </Wrapper>
   );

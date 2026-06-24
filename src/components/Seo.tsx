@@ -36,7 +36,13 @@ const Seo = ({
   const { locale, defaultLocale } = useRouter();
 
   const canonical = buildAbsoluteUrl(path, locale, defaultLocale);
-  const absoluteOgImage = ogImage.startsWith('http') ? ogImage : `${SITE_URL}${ogImage}`;
+  // Callers may pass an empty string (e.g. a book without a cover), which the
+  // default param does not catch. Treat any falsy value as absent so we never
+  // emit the bare origin as the social image.
+  const effectiveOgImage = ogImage || DEFAULT_OG_IMAGE;
+  const absoluteOgImage = effectiveOgImage.startsWith('http')
+    ? effectiveOgImage
+    : `${SITE_URL}${effectiveOgImage}`;
   // Decision: the English locale is kept out of the index for now (no hreflang
   // strategy yet), so any /en page is forced to noindex regardless of the prop.
   const shouldNoindex = noindex || locale === 'en';
