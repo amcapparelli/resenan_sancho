@@ -16,9 +16,9 @@ const BooksEmptyState: React.FC = (): JSX.Element => (
     </IconHolder>
     <Title>Aún no has publicado ningún libro</Title>
     <Text>Publica tu primer libro para empezar a buscar reseñas.</Text>
-    <Link href="/account?section=addBook" passHref>
-      <PrimaryButton>+ Añadir mi primer libro</PrimaryButton>
-    </Link>
+    <PrimaryButton href="/account?section=addBook">
+      + Añadir mi primer libro
+    </PrimaryButton>
   </Wrapper>
 );
 
@@ -51,7 +51,7 @@ const Text = styled.p`
   margin: 0 0 20px;
 `;
 
-const PrimaryButton = styled.a`
+const PrimaryButton = styled(Link)`
   display: inline-flex;
   align-items: center;
   justify-content: center;
