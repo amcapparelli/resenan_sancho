@@ -163,9 +163,9 @@ const MetaDot = styled.span`
   color: ${({ theme }) => theme.lightBorder};
 `;
 
-// CTAButton is an anchor styled to look like a button.
-// We use <a> via next/link so the browser handles prefetching.
-const CTAButton = styled.a`
+// CTAButton is a next/link styled to look like a button. Styling Link directly
+// yields a single <a> (with prefetching) instead of nesting <a> inside <a>.
+const CTAButton = styled(Link)`
   background: ${({ theme }) => theme.amber};
   color: ${({ theme }) => theme.ink};
   font-family: 'Source Sans 3', sans-serif;
@@ -263,12 +263,12 @@ const BookCard: React.FC<BookCardProps> = ({ book }) => {
 
         <Divider />
 
-        {/* passHref forwards the href to the styled <a> child (CTAButton) */}
-        <Link href={`/books/${book._id}`} passHref>
-          <CTAButton aria-label={`Pedir ejemplar de ${book.title}`}>
-            Pedir ejemplar gratuito →
-          </CTAButton>
-        </Link>
+        <CTAButton
+          href={`/books/${book._id}`}
+          aria-label={`Pedir ejemplar de ${book.title}`}
+        >
+          Pedir ejemplar gratuito →
+        </CTAButton>
       </CardBody>
     </Card>
   );

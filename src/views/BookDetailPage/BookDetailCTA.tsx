@@ -47,8 +47,9 @@ const UnauthRow = styled.div`
   flex-wrap: wrap;
 `;
 
-// Used as an anchor so next/link can pass the href down
-const PrimaryButtonAnchor = styled.a`
+// styled(Link) renders a single semantic <a> with these styles, avoiding the
+// legacy <Link><a/></Link> nesting that produced invalid HTML in Next 13+.
+const PrimaryButtonAnchor = styled(Link)`
   background: ${({ theme }) => theme.terracotta};
   color: ${({ theme }) => theme.white};
   font-family: 'Source Sans 3', sans-serif;
@@ -70,7 +71,7 @@ const PrimaryButtonAnchor = styled.a`
   }
 `;
 
-const LoginLink = styled.a`
+const LoginLink = styled(Link)`
   font-family: 'Source Sans 3', sans-serif;
   font-size: 13px;
   color: ${({ theme }) => theme.terracotta};
@@ -182,14 +183,13 @@ const BookDetailCTA: React.FC<BookDetailCTAProps> = ({
           </UnauthText>
 
           <UnauthRow>
-            {/* Next.js 9 requires a child <a> inside Link */}
-            <Link href="/register" passHref>
-              <PrimaryButtonAnchor>Crear cuenta gratis →</PrimaryButtonAnchor>
-            </Link>
+            <PrimaryButtonAnchor href="/register">
+              Crear cuenta gratis →
+            </PrimaryButtonAnchor>
 
-            <Link href={{ pathname: '/login', query: { previous: router.asPath } }} passHref>
-              <LoginLink>Inicia sesión</LoginLink>
-            </Link>
+            <LoginLink href={{ pathname: '/login', query: { previous: router.asPath } }}>
+              Inicia sesión
+            </LoginLink>
           </UnauthRow>
         </>
       )}

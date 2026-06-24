@@ -34,7 +34,7 @@ const BreadcrumbBar = styled.nav`
   }
 `;
 
-const BreadcrumbLink = styled.a`
+const BreadcrumbLink = styled(Link)`
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -81,9 +81,7 @@ const BookDetailPage: React.FC<BookDetailPageProps> = ({ book }) => {
     <Wrapper>
       {/* Breadcrumb */}
       <BreadcrumbBar aria-label="Migas de pan">
-        <Link href="/books" passHref>
-          <BreadcrumbLink>← Volver a libros</BreadcrumbLink>
-        </Link>
+        <BreadcrumbLink href="/books">← Volver a libros</BreadcrumbLink>
       </BreadcrumbBar>
 
       <BookDetailHero

@@ -127,3 +127,38 @@ describe('BookDetailCTA — unauthenticated user', () => {
     ).toBeInTheDocument();
   });
 });
+
+// ─── Nested-anchor regression (invalid-HTML bug) ─────────────────────────────
+// Bug: the old Next 9 pattern `<Link passHref><styled.a /></Link>` caused Link
+// to render its own <a> wrapping the child <a>, producing invalid HTML in Next 15.
+// Fix: PrimaryButtonAnchor and LoginLink are now `styled(Link)` rendered directly
+// (no wrapper Link, no passHref), so each produces exactly one <a>.
+
+describe('BookDetailCTA — nested-anchor regression', () => {
+  it('does not nest an <a> inside another <a> in the unauthenticated branch', () => {
+    // REGRESSION: before the fix, <Link passHref><PrimaryButtonAnchor> produced
+    // <a href="/register"><a ...>Crear cuenta gratis</a></a> — invalid HTML.
+    const { container } = renderCTA({ isLoggedIn: false, copies: 5, onRequest: jest.fn() });
+
+    expect(container.querySelectorAll('a a')).toHaveLength(0);
+  });
+
+  it('renders the register link as a standalone <a> with href="/register"', () => {
+    // REGRESSION: styled(Link) must produce a single navigable anchor, not a nested one.
+    renderCTA({ isLoggedIn: false, copies: 5, onRequest: jest.fn() });
+
+    const registerLink = screen.getByRole('link', { name: /crear cuenta gratis/i });
+    expect(registerLink.tagName).toBe('A');
+    expect(registerLink).toHaveAttribute('href', '/register');
+  });
+
+  it('renders the login link as a standalone <a> with an href containing "/login"', () => {
+    // REGRESSION: styled(Link) for LoginLink must resolve to a single <a>
+    // whose href encodes the current path as a "previous" query param.
+    renderCTA({ isLoggedIn: false, copies: 5, onRequest: jest.fn() });
+
+    const loginLink = screen.getByRole('link', { name: /inicia sesión/i });
+    expect(loginLink.tagName).toBe('A');
+    expect(loginLink.getAttribute('href')).toMatch(/^\/login/);
+  });
+});
