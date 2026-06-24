@@ -263,8 +263,8 @@ const BookCard: React.FC<BookCardProps> = ({ book }) => {
 
         <Divider />
 
-        {/* next/link in Next.js 9 requires a child <a> tag */}
-        <Link href={`/books?book=${book._id}`} passHref>
+        {/* passHref forwards the href to the styled <a> child (CTAButton) */}
+        <Link href={`/books/${book._id}`} passHref>
           <CTAButton aria-label={`Pedir ejemplar de ${book.title}`}>
             Pedir ejemplar gratuito →
           </CTAButton>

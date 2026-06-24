@@ -1,37 +1,35 @@
 import React from 'react';
-import { useRouter } from 'next/router';
+import { GetServerSideProps } from 'next';
 import BooksPage from '../views/BooksPage';
-import BookDetailPage from '../views/BookDetailPage';
 import { PublicZoneLayout } from '../components/Layouts';
 import { Seo } from '../components';
 
-const Books: React.FC = (): JSX.Element => {
-  const { query: { book } } = useRouter();
-  return (
-    <>
-      {book ? (
-        // TODO: derive title/description/JSON-LD from real book data once the
-        // detail page is server-rendered (phase S3). For now a generic fallback.
-        <Seo
-          title="Ficha de libro | Reseñan Sancho"
-          description="Descubre los detalles de este libro disponible para reseñar en Reseñan Sancho: género, formato y cómo contactar con el autor."
-          path="/books"
-        />
-      ) : (
-        <Seo
-          title="Libros para reseñar | Reseñan Sancho"
-          description="Encuentra libros gratis para reseñar en tu blog, booktube o bookstagram. Filtra por género y formato y elige tu próxima lectura en Reseñan Sancho."
-          path="/books"
-        />
-      )}
-      <PublicZoneLayout>
-        {
-          book ? <BookDetailPage id={book as string} /> : <BooksPage />
-        }
-      </PublicZoneLayout>
-    </>
-  );
-};
+const Books: React.FC = (): JSX.Element => (
+  <>
+    <Seo
+      title="Libros para reseñar | Reseñan Sancho"
+      description="Encuentra libros gratis para reseñar en tu blog, booktube o bookstagram. Filtra por género y formato y elige tu próxima lectura en Reseñan Sancho."
+      path="/books"
+    />
+    <PublicZoneLayout>
+      <BooksPage />
+    </PublicZoneLayout>
+  </>
+);
 
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+  // Permanently redirect the legacy /books?book=<id> detail URL to the
+  // dedicated server-rendered /books/<id> route (phase S3).
+  if (query.book) {
+    return {
+      redirect: {
+        destination: `/books/${query.book}`,
+        permanent: true,
+      },
+    };
+  }
+
+  return { props: {} };
+};
 
 export default Books;
