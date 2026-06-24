@@ -9,9 +9,7 @@ const createJestConfig = nextJest({
 const customConfig = {
   testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
-  // Only run co-located tests under src/. The legacy tests/ directory predates the
-  // Next 9 -> 15 / styled-components migration and depends on removed packages
-  // (@material-ui/core, react-test-renderer); it does not run and is excluded here.
+  // Tests are co-located with the code under src/.
   roots: ['<rootDir>/src'],
 };
 
