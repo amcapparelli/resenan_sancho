@@ -36,7 +36,7 @@ const scrollIntoViewMock = Element.prototype.scrollIntoView as jest.Mock;
 // the real-world ordering (ref already populated when the effect fires).
 function TestComponent({ page }: { page: number }) {
   const ref = useScrollToTopOnPageChange<HTMLDivElement>(page);
-  return <div ref={ref}>results for page {page}</div>;
+  return <div ref={ref}>{`results for page ${page}`}</div>;
 }
 
 describe('useScrollToTopOnPageChange', () => {
@@ -99,12 +99,27 @@ describe('useScrollToTopOnPageChange', () => {
     });
   });
 
+  it('scrolls twice when paginating backwards (1 -> 2 -> 1)', () => {
+    // REGRESSION: guards against deleting `previousPage.current = page;` in
+    // the hook. Without that assignment, `previousPage` stays stuck at 1
+    // after the first transition, so going back to page 1 would be treated
+    // as "unchanged" (1 === 1) and skip the second scroll. All six prior
+    // cases in this file stay green even with that line deleted; this is
+    // the only scenario (real users paginating backwards) that catches it.
+    const { rerender } = render(<TestComponent page={1} />);
+
+    rerender(<TestComponent page={2} />);
+    rerender(<TestComponent page={1} />);
+
+    expect(scrollIntoViewMock).toHaveBeenCalledTimes(2);
+  });
+
   it('does not throw and does not scroll when the ref was never attached', () => {
     // The container ref may be null if the consumer never attaches it to an
     // element (or it has not mounted yet); the hook must no-op safely.
     function UnattachedRefComponent({ page }: { page: number }) {
       useScrollToTopOnPageChange<HTMLDivElement>(page);
-      return <div>results for page {page}</div>;
+      return <div>{`results for page ${page}`}</div>;
     }
 
     const { rerender } = render(<UnattachedRefComponent page={1} />);
