@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import useReviewersListFetch from '../../utils/customHooks/useReviewersListFetch';
-import useFilters from '../../utils/customHooks/useFilters';
-import { useScrollToTopOnPageChange } from '../../utils/customHooks';
+import {
+  useReviewersListFetch,
+  useFilters,
+  useScrollToTopOnPageChange,
+} from '../../utils/customHooks';
 import genresList from '../../utils/constants/genres';
 import formatsList from '../../utils/constants/formats';
 import EmptyState from '../../components/EmptyState';
