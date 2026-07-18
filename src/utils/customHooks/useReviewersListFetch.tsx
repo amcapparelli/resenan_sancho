@@ -1,6 +1,7 @@
 import { useReducer, useState } from 'react';
 import { reviewersListLoad } from '../../store/reducers';
 import { reviewers as URL } from '../../config/routes';
+import { buildQueryString, QueryParams } from '../buildQueryString';
 
 interface State {
   reviewers: Array<any>;
@@ -13,9 +14,7 @@ const initialState: State = {
   totalPages: 0,
 };
 
-interface Filters {
-  [key: string]: string | number,
-}
+type Filters = QueryParams;
 
 const useReviewersListFetch = (): [State, Function, boolean] => {
   const [state, dispatch] = useReducer(reviewersListLoad, initialState);
@@ -27,10 +26,7 @@ const useReviewersListFetch = (): [State, Function, boolean] => {
         'Content-Type': 'application/json',
       },
     };
-    const queryString = Object.entries(filters)
-      .filter(([, value]) => value !== '' && value !== null && value !== undefined)
-      .map(([key, value]) => `${key}=${value}`)
-      .join('&');
+    const queryString = buildQueryString(filters);
     try {
       setLoading(true);
       const response = await fetch(`${URL}?${queryString}`, options);

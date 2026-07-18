@@ -2,6 +2,7 @@ import { useReducer, useState } from 'react';
 import { booksListLoad } from '../../store/reducers';
 import { Book } from '../../interfaces/books';
 import { books as URL } from '../../config/routes';
+import { buildQueryString, QueryParams } from '../buildQueryString';
 
 interface State {
   books: Array<Book>,
@@ -14,9 +15,7 @@ const initialState: State = {
   totalPages: 0,
 };
 
-interface Filters {
-  [key: string]: string,
-}
+type Filters = QueryParams;
 
 const useBooksListFetch = (): [State, Function, boolean] => {
   const [state, dispatch] = useReducer(booksListLoad, initialState);
@@ -28,7 +27,7 @@ const useBooksListFetch = (): [State, Function, boolean] => {
         'Content-Type': 'application/json',
       },
     };
-    const queryString = Object.keys(filters).map((key) => `${key}=${filters[key]}`).join('&');
+    const queryString = buildQueryString(filters);
     try {
       setLoading(true);
       const response = await fetch(`${URL}?${queryString}`, options);

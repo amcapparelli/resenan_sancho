@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import {
   useReviewersListFetch,
-  useFilters,
+  useListFilters,
   useScrollToTopOnPageChange,
 } from '../../utils/customHooks';
 import genresList from '../../utils/constants/genres';
@@ -78,25 +78,24 @@ const FORMATS: string[] = formatsList as unknown as string[];
 // ─── Component ─────────────────────────────────────────────────────────────
 
 const ReviewersPage: React.FC = () => {
-  const [filters, setFilterValue] = useFilters({ page: 1 });
+  const {
+    draftFilters,
+    setDraftFilter,
+    appliedFilters,
+    applyFilters,
+    goToPage,
+  } = useListFilters();
   const [state, listRequest, loading] = useReviewersListFetch();
-  const [searchText, setSearchText] = useState('');
-  const currentPage = Number(filters.page) || 1;
+  const currentPage = appliedFilters.page;
   const resultsSectionRef = useScrollToTopOnPageChange<HTMLDivElement>(currentPage);
 
-  // Fetch on mount and whenever the page changes; genre/format/search changes
-  // are applied only when the user presses "Filtrar" (see handleFilter).
+  // The applied filters are the only trigger for a request: pressing "Filtrar"
+  // or changing page produces a new object here and this effect fetches once.
+  // `listRequest` is intentionally out of the deps — the hook returns a new
+  // function on every render, so including it would fetch in a loop.
   useEffect(() => {
-    listRequest(filters);
-  }, [filters.page]);
-
-  const handleFilter = () => {
-    listRequest({ ...filters, page: 1, searchText: searchText });
-  };
-
-  const handlePageChange = (page: number) => {
-    setFilterValue('page', page);
-  };
+    listRequest({ ...appliedFilters.values, page: appliedFilters.page });
+  }, [appliedFilters]);
 
   const isEmpty = !loading && state.reviewers.length === 0;
 
@@ -112,13 +111,13 @@ const ReviewersPage: React.FC = () => {
         <SearchFilters
           genres={genresList}
           formats={FORMATS}
-          searchText={searchText}
-          selectedGenre={filters.genre ?? ''}
-          selectedFormat={filters.format ?? ''}
-          onSearchTextChange={setSearchText}
-          onGenreChange={(value) => setFilterValue('genre', value)}
-          onFormatChange={(value) => setFilterValue('format', value)}
-          onFilter={handleFilter}
+          searchText={draftFilters.searchText ?? ''}
+          selectedGenre={draftFilters.genre ?? ''}
+          selectedFormat={draftFilters.format ?? ''}
+          onSearchTextChange={(value) => setDraftFilter('searchText', value)}
+          onGenreChange={(value) => setDraftFilter('genre', value)}
+          onFormatChange={(value) => setDraftFilter('format', value)}
+          onFilter={applyFilters}
         />
 
         <ResultsMeta total={state.totalElements ?? 0} label="reseñadores encontrados" />
@@ -146,7 +145,7 @@ const ReviewersPage: React.FC = () => {
           <Pagination
             currentPage={currentPage}
             totalPages={state.totalPages}
-            onChange={handlePageChange}
+            onChange={goToPage}
           />
         )}
       </ResultsSection>
