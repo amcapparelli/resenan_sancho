@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import useReviewersListFetch from '../../utils/customHooks/useReviewersListFetch';
 import useFilters from '../../utils/customHooks/useFilters';
+import { useScrollToTopOnPageChange } from '../../utils/customHooks';
 import genresList from '../../utils/constants/genres';
 import formatsList from '../../utils/constants/formats';
 import EmptyState from '../../components/EmptyState';
@@ -17,6 +18,21 @@ import Pagination from '../BooksPage/Pagination';
 const Wrapper = styled.div`
   background: ${({ theme }) => theme.white};
   min-height: 100vh;
+`;
+
+/**
+ * Scroll anchor for pagination. It starts at the filter bar so a page change
+ * lands with the filters at the top of the viewport and the results right
+ * below, leaving the hero scrolled away above.
+ *
+ * The ref can't go on SearchFilters itself: its bar is `position: sticky`, so
+ * once the user has scrolled past the hero it is already pinned at the top of
+ * the viewport and scrollIntoView would be a no-op. This wrapper is a plain
+ * block, so its box still reports the filters' natural position.
+ */
+const ResultsSection = styled.div`
+  /* Breathing room above the filters when scrolled into view on page change */
+  scroll-margin-top: 16px;
 `;
 
 const Grid = styled.div`
@@ -63,6 +79,8 @@ const ReviewersPage: React.FC = () => {
   const [filters, setFilterValue] = useFilters({ page: 1 });
   const [state, listRequest, loading] = useReviewersListFetch();
   const [searchText, setSearchText] = useState('');
+  const currentPage = Number(filters.page) || 1;
+  const resultsSectionRef = useScrollToTopOnPageChange<HTMLDivElement>(currentPage);
 
   // Fetch on mount and whenever the page changes; genre/format/search changes
   // are applied only when the user presses "Filtrar" (see handleFilter).
@@ -88,46 +106,48 @@ const ReviewersPage: React.FC = () => {
         titleAccent="lector."
         subtitle="Booktubers, bookstagrammers y blogueros literarios listos para reseñar tu libro."
       />
-      <SearchFilters
-        genres={genresList}
-        formats={FORMATS}
-        searchText={searchText}
-        selectedGenre={filters.genre ?? ''}
-        selectedFormat={filters.format ?? ''}
-        onSearchTextChange={setSearchText}
-        onGenreChange={(value) => setFilterValue('genre', value)}
-        onFormatChange={(value) => setFilterValue('format', value)}
-        onFilter={handleFilter}
-      />
-
-      <ResultsMeta total={state.totalElements ?? 0} label="reseñadores encontrados" />
-
-      <Grid>
-        {loading
-          ? Array.from({ length: 6 }).map((_, i) => (
-            // Index is stable here — the skeleton count never reorders
-            // eslint-disable-next-line react/no-array-index-key
-            <ReviewerCardSkeleton key={i} />
-          ))
-          : state.reviewers.map((reviewer) => (
-            <ReviewerCard key={reviewer._id} reviewer={reviewer} />
-          ))}
-      </Grid>
-
-      {isEmpty && (
-        <EmptyState
-          subtitle="Prueba con otros filtros o explora todos los reseñadores."
-          icon={<EmptyPersonIcon />}
+      <ResultsSection ref={resultsSectionRef}>
+        <SearchFilters
+          genres={genresList}
+          formats={FORMATS}
+          searchText={searchText}
+          selectedGenre={filters.genre ?? ''}
+          selectedFormat={filters.format ?? ''}
+          onSearchTextChange={setSearchText}
+          onGenreChange={(value) => setFilterValue('genre', value)}
+          onFormatChange={(value) => setFilterValue('format', value)}
+          onFilter={handleFilter}
         />
-      )}
 
-      {!loading && state.totalPages > 1 && (
-        <Pagination
-          currentPage={Number(filters.page) || 1}
-          totalPages={state.totalPages}
-          onChange={handlePageChange}
-        />
-      )}
+        <ResultsMeta total={state.totalElements ?? 0} label="reseñadores encontrados" />
+
+        <Grid>
+          {loading
+            ? Array.from({ length: 6 }).map((_, i) => (
+              // Index is stable here — the skeleton count never reorders
+              // eslint-disable-next-line react/no-array-index-key
+              <ReviewerCardSkeleton key={i} />
+            ))
+            : state.reviewers.map((reviewer) => (
+              <ReviewerCard key={reviewer._id} reviewer={reviewer} />
+            ))}
+        </Grid>
+
+        {isEmpty && (
+          <EmptyState
+            subtitle="Prueba con otros filtros o explora todos los reseñadores."
+            icon={<EmptyPersonIcon />}
+          />
+        )}
+
+        {!loading && state.totalPages > 1 && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={state.totalPages}
+            onChange={handlePageChange}
+          />
+        )}
+      </ResultsSection>
     </Wrapper>
   );
 };

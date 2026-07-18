@@ -9,3 +9,4 @@ export { default as useBlogsListFetch } from './useBlogsListFetch';
 export { default as useReviewersListFetch } from './useReviewersListFetch';
 export { default as useBooksListFetch } from './useBooksListFetch';
 export { default as useUsersBooksListFetch } from './useUsersBooksListFetch';
+export { default as useScrollToTopOnPageChange } from './useScrollToTopOnPageChange';
