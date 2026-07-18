@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import {
   useBooksListFetch,
-  useFilters,
+  useListFilters,
   useScrollToTopOnPageChange,
 } from '../../utils/customHooks';
 import genresList from '../../utils/constants/genres';
@@ -80,27 +80,24 @@ const FORMATS: string[] = formatsList as unknown as string[];
 // ─── Component ─────────────────────────────────────────────────────────────
 
 const BooksPage: React.FC = () => {
-  // useFilters returns [filters, setFilterValue, loadFilters]
-  const [filters, setFilterValue] = useFilters({ page: 1 });
+  const {
+    draftFilters,
+    setDraftFilter,
+    appliedFilters,
+    applyFilters,
+    goToPage,
+  } = useListFilters();
   const [state, listRequest, loading] = useBooksListFetch();
-  const currentPage = Number(filters.page) || 1;
+  const currentPage = appliedFilters.page;
   const resultsSectionRef = useScrollToTopOnPageChange<HTMLDivElement>(currentPage);
 
-  // Fetch whenever the page number changes; genre/format changes are
-  // applied only when the user presses "Filtrar" (see handleFilter below).
+  // The applied filters are the only trigger for a request: pressing "Filtrar"
+  // or changing page produces a new object here and this effect fetches once.
+  // `listRequest` is intentionally out of the deps — the hook returns a new
+  // function on every render, so including it would fetch in a loop.
   useEffect(() => {
-    listRequest(filters);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters.page]);
-
-  const handleFilter = () => {
-    // Reset to page 1 and fire the request with current filters
-    listRequest({ ...filters, page: 1 });
-  };
-
-  const handlePageChange = (page: number) => {
-    setFilterValue('page', page);
-  };
+    listRequest({ ...appliedFilters.values, page: appliedFilters.page });
+  }, [appliedFilters]);
 
   const isEmpty = !loading && state.books.length === 0;
 
@@ -116,11 +113,11 @@ const BooksPage: React.FC = () => {
         <SearchFilters
           genres={genresList}
           formats={FORMATS}
-          selectedGenre={filters.genre ?? ''}
-          selectedFormat={filters.format ?? ''}
-          onGenreChange={(value) => setFilterValue('genre', value)}
-          onFormatChange={(value) => setFilterValue('format', value)}
-          onFilter={handleFilter}
+          selectedGenre={draftFilters.genre ?? ''}
+          selectedFormat={draftFilters.format ?? ''}
+          onGenreChange={(value) => setDraftFilter('genre', value)}
+          onFormatChange={(value) => setDraftFilter('format', value)}
+          onFilter={applyFilters}
         />
 
         <ResultsMeta total={state.totalElements ?? 0} label="libros disponibles" />
@@ -148,7 +145,7 @@ const BooksPage: React.FC = () => {
           <Pagination
             currentPage={currentPage}
             totalPages={state.totalPages}
-            onChange={handlePageChange}
+            onChange={goToPage}
           />
         )}
       </ResultsSection>
