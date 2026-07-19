@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import styled, { css } from 'styled-components';
 import { useRouter } from 'next/router';
+import formatAvailableCopies from '../../utils/formatAvailableCopies';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -163,7 +164,7 @@ const BookDetailCTA: React.FC<BookDetailCTAProps> = ({
             </AvailabilityDot>
             <AvailabilityText>
               {isAvailable
-                ? `${copies} ${copies === 1 ? 'ejemplar disponible' : 'ejemplares disponibles'}`
+                ? formatAvailableCopies(copies)
                 : 'No disponible por ahora'}
             </AvailabilityText>
           </AvailabilityRow>

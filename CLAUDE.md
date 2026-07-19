@@ -54,24 +54,36 @@ REGLA: toda tarea de UI (escribir, modificar o refactorizar componentes, hooks
 o páginas) sigue este pipeline. La sesión principal NO implementa UI directamente;
 orquesta a los subagents.
 
-1. **Implementación → `senior-frontend`.** Delega SIEMPRE la implementación en el
+1. **Copy → `copywriter-es` (solo si la tarea introduce o cambia texto visible).**
+   ANTES de implementar, si la tarea añade o modifica texto de cara al usuario
+   (titulares, CTAs, labels y errores de formulario, estados vacíos, microcopy de
+   modales, emails, `title`/`meta description`), pásala primero por `copywriter-es`.
+   Su salida es el texto definitivo en español, con keywords y metadatos, listo para
+   que `senior-frontend` lo pegue. Va antes y no después para no implementar dos
+   veces el mismo componente. Si la tarea no toca texto visible (refactor, bugfix de
+   lógica, estilos), sáltate este paso.
+
+2. **Implementación → `senior-frontend`.** Delega SIEMPRE la implementación en el
    subagent `senior-frontend`. No escribas tú el componente "porque es rápido": al
    hacerlo se saltan sus reglas (inglés en código y comentarios, auditoría previa de
    componentes reutilizables, manejo de estados carga/error/vacío, limpieza de
    huérfanos tras refactor). Si la tarea es trivial, igualmente pasa por él.
+   Cuando el paso 1 haya corrido, pásale el copy aprobado literalmente: no debe
+   improvisar textos ni "mejorarlos" por su cuenta.
 
-2. **Revisión → `frontend-reviewer`.** Cuando `senior-frontend` termine, pasa el
+3. **Revisión → `frontend-reviewer`.** Cuando `senior-frontend` termine, pasa el
    diff a `frontend-reviewer` ANTES de dar la tarea por cerrada o de hacer commit.
    Su salida es una revisión priorizada (bloqueante / recomendado / nit), no edita
    código.
 
-3. **Corrección de hallazgos bloqueantes → de vuelta a `senior-frontend`.** Si la
+4. **Corrección de hallazgos bloqueantes → de vuelta a `senior-frontend`.** Si la
    revisión marca algo bloqueante, devuelve esos puntos a `senior-frontend` para que
    los corrija, y vuelve a pasar por `frontend-reviewer`. Repite hasta que no queden
    bloqueantes.
 
-4. **Cierre.** Solo se considera terminada una tarea de UI cuando ha pasado por
-   implementación + revisión sin bloqueantes pendientes.
+5. **Cierre.** Solo se considera terminada una tarea de UI cuando ha pasado por
+   implementación + revisión sin bloqueantes pendientes, y —si tocaba texto— con el
+   copy aprobado en el paso 1.
 
 Notas:
 - Los subagents no pueden invocarse entre sí; esta orquestación la hace SIEMPRE la
@@ -80,6 +92,12 @@ Notas:
   excepción consciente, no como la vía por defecto.
 - Para tareas de backend, el agente de implementación es `senior-backend` (sin revisor
   dedicado por ahora).
+- `copywriter-es` no edita código (solo lectura): entrega el texto y lo aplica
+  `senior-frontend`. Si el copy solo cambia una errata ya en producción, no hace falta
+  el pipeline completo: basta con `senior-frontend`.
+- Para una auditoría de SEO técnico sobre código ya existente (metadatos, JSON-LD,
+  SSR, sitemap) el agente es `seo-auditor`; `copywriter-es` cubre el SEO de contenido
+  (keywords, intención de búsqueda, redacción de title/description).
 
 ### Estado actual
 - [x] Fase A0: corregir erratas de la home ("encotrar", "liteararios")

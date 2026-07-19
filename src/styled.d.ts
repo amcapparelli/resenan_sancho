@@ -17,6 +17,7 @@ declare module 'styled-components' {
     lightBorder: string;
     appBackground: string;
     success: string;
+    successDark: string;
     danger: string;
     muted: string;
     terracottaSoft: string;

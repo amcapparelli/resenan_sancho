@@ -16,7 +16,6 @@ export { default as PageHeader } from './PageHeader';
 export { default as ResultsMeta } from './ResultsMeta';
 export { default as ModalContact } from './ModalContact';
 export { default as ModalDialog } from './ModalDialog';
-export { default as ModalPromotions } from './ModalPromotions';
 export { default as PasswordFields } from './PasswordFields';
 export { default as PaymentCheckout } from './PaymentCheckout';
 export { default as ReviewerListItem } from './ReviewerListItem';

@@ -17,11 +17,16 @@ import PaymentIcon from '@mui/icons-material/Payment';
 import ReactGA from "react-ga4";
 import UserContext from '../store/context/userContext/UserContext';
 import { paymentCheckout } from '../config/routes';
+import formatPriceCents from '../utils/formatPriceCents';
 
 interface MyProps {
   open: boolean,
   onClose: Function
-  amount: number
+  /**
+   * Amount in cents, the unit the payments API expects. It used to be euros as
+   * a float, which made the button render "Pagar 250€" for a 25 € service.
+   */
+  amountCents: number
   image: string
   description: string
   chosenPromo: number
@@ -30,7 +35,7 @@ interface MyProps {
 }
 
 const PaymentCheckout: React.FC<MyProps> = ({
-  amount,
+  amountCents,
   bookId,
   open,
   onClose,
@@ -73,7 +78,7 @@ const PaymentCheckout: React.FC<MyProps> = ({
           credentials: 'include',
           body: JSON.stringify({
             id: paymentMethod.id,
-            amount: amount * 100,
+            amount: amountCents,
             chosenPromo,
             bookId,
             author: user._id,
@@ -87,7 +92,8 @@ const PaymentCheckout: React.FC<MyProps> = ({
         setResponse(resJSON);
         ReactGA.event({
           category: 'payment',
-          action: `New Payment: ${amount}, book: ${bookTitle}`,
+          // Kept in euros so the metric stays comparable with past events.
+          action: `New Payment: ${amountCents / 100}, book: ${bookTitle}`,
         });
       } catch (err) {
         setResponse(err);
@@ -166,7 +172,7 @@ const PaymentCheckout: React.FC<MyProps> = ({
               startIcon={<PaymentIcon />}
               type="submit"
             >
-              {`Pagar ${amount}0€`}
+              {`Pagar ${formatPriceCents(amountCents)}`}
             </StyledButton>
           </StyledForm>
           {

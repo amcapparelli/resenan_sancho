@@ -7,7 +7,6 @@ import React, {
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import UserContext from '../../../store/context/userContext/UserContext';
-import { ModalPromotions } from '../../../components';
 import { useUsersBooksListFetch, useFetch } from '../../../utils/customHooks';
 import { suscribeAuthor as URL } from '../../../config/routes';
 import { Book } from '../../../interfaces/books';
@@ -16,13 +15,15 @@ import BooksEmptyState from '../components/BooksEmptyState';
 import BookManageRow from '../components/BookManageRow';
 import MyBooksSkeleton from '../components/MyBooksSkeleton';
 import Toggle from '../components/Toggle';
+import PromoteServicesModal from '../components/PromoteServicesModal';
+import promotionServices from '../components/PromoteServicesModal/catalog';
 import { primaryButton, secondaryButton } from '../components/styles';
 
 const MyBooksSection: React.FC = (): JSX.Element => {
   const router = useRouter();
   const { user, setUserLogged } = useContext(UserContext);
   const [state, listRequest, loading, response] = useUsersBooksListFetch();
-  const [showModalPromotions, setShowModalPromotions] = useState(false);
+  const [showPromoteModal, setShowPromoteModal] = useState(false);
   const [bookSelected, setBookSelected] = useState<Book>();
   const [suscribe, setSuscribe] = useState<boolean>(
     !!(user.emailAuthorListStatus && user.emailAuthorListStatus === 'subscribed'),
@@ -30,8 +31,8 @@ const MyBooksSection: React.FC = (): JSX.Element => {
   const [suscribeUserResponse, suscribeUserRequest] = useFetch();
 
   useEffect(() => {
-    if (!showModalPromotions && user._id !== undefined) listRequest(user._id);
-  }, [showModalPromotions, user._id]);
+    if (!showPromoteModal && user._id !== undefined) listRequest(user._id);
+  }, [showPromoteModal, user._id]);
 
   useEffect(() => {
     if (suscribeUserResponse.success) {
@@ -109,7 +110,7 @@ const MyBooksSection: React.FC = (): JSX.Element => {
               formats={book.formats}
               availableCopies={book.copies}
               onPromote={() => {
-                setShowModalPromotions(true);
+                setShowPromoteModal(true);
                 setBookSelected(book);
               }}
               onEdit={() => router.push(`/account?section=addBook&book=${book._id}`)}
@@ -117,11 +118,18 @@ const MyBooksSection: React.FC = (): JSX.Element => {
           ))
           : <BooksEmptyState />}
 
-      <ModalPromotions
-        bookSelected={bookSelected}
-        show={showModalPromotions}
-        onClose={() => setShowModalPromotions(false)}
-      />
+      {bookSelected && (
+        <PromoteServicesModal
+          // A fresh instance per book: the modal keeps claim/checkout state and
+          // it must never leak from one book to the next.
+          key={bookSelected._id}
+          open={showPromoteModal}
+          book={bookSelected}
+          // Local catalogue until the backend exposes one; the modal only sees props.
+          services={promotionServices}
+          onClose={() => setShowPromoteModal(false)}
+        />
+      )}
     </>
   );
 };
