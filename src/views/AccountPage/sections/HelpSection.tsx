@@ -1,8 +1,7 @@
 import React, { useId, useState } from 'react';
 import styled from 'styled-components';
 import SectionHeader from '../SectionHeader';
-
-const SUPPORT_EMAIL = 'alejandro@resenansancho.com';
+import SUPPORT_EMAIL from '../../../utils/constants/support';
 
 const Chevron: React.FC = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="18" height="18" aria-hidden="true">

@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import genres from '../../../utils/constants/genres';
+import formatAvailableCopies from '../../../utils/formatAvailableCopies';
 import { primaryButton, secondaryButton } from './styles';
 
 interface BookManageRowProps {
@@ -51,7 +52,7 @@ const BookManageRow: React.FC<BookManageRowProps> = ({
             <Dot $ok={promoting} aria-hidden="true">●</Dot>
             <StatusText>
               {promoting
-                ? `${availableCopies} ejemplares disponibles`
+                ? formatAvailableCopies(availableCopies)
                 : 'No lo estás promocionando'}
             </StatusText>
           </Status>
