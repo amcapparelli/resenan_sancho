@@ -22,6 +22,8 @@ export interface PromotionService {
    * it yet. It is per offer, not per book.
    */
   enabled: boolean;
+  /* Availability: if false the service won't show */
+  available: boolean;
   /** Free services get a softer visual treatment and skip the payment flow. */
   free?: boolean;
   /** Can only be claimed once per book (checked against `freePromoAvailable`). */

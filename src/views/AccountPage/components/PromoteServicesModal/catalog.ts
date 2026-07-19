@@ -18,6 +18,7 @@ const promotionServices: PromotionService[] = [
     copies: 2,
     priceCents: 0,
     enabled: true,
+    available: true,
     free: true,
     oneTimePerBook: true,
     name: '2 ejemplares gratis',
@@ -37,6 +38,7 @@ const promotionServices: PromotionService[] = [
     copies: 5,
     priceCents: 990,
     enabled: true,
+    available: true,
     name: 'Añade 5 ejemplares',
     benefit: 'Recarga ejemplares y sigue recibiendo solicitudes.',
     bullets: [
@@ -52,10 +54,11 @@ const promotionServices: PromotionService[] = [
     key: 'featuredWeek',
     id: 4,
     copies: 0,
-    priceCents: 2500,
+    priceCents: 2490,
     // Launches switched off: the feature (badge, ranking, weekly expiry) does
     // not exist yet, so nobody can buy it.
     enabled: false,
+    available: false,
     name: 'Libro destacado de la semana',
     benefit: 'Lo leemos y, si lo recomendamos, sube arriba del todo una semana.',
     bullets: [
@@ -75,6 +78,7 @@ const promotionServices: PromotionService[] = [
     copies: 25,
     priceCents: 6990,
     enabled: true,
+    available: true,
     requiresPaperFormat: true,
     name: 'Acelera tu libro',
     benefit: 'Recomendamos tu libro por email a reseñadores de tu género.',

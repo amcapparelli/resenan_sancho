@@ -15,12 +15,26 @@ interface ServiceGridProps {
   onSelect: (service: PromotionService) => void;
 }
 
+/** Widest row the spec allows on desktop; beyond this the cards get too narrow. */
+const MAX_COLUMNS = 4;
+
+/**
+ * Columns to lay out on desktop. Clamped to `MAX_COLUMNS` so a growing catalogue
+ * wraps into a second row instead of overflowing, and floored at 1 so an empty
+ * array cannot emit `repeat(0, 1fr)`, which is invalid CSS.
+ */
+export const getGridColumnCount = (serviceCount: number, maxColumns = MAX_COLUMNS): number => (
+  Math.min(Math.max(serviceCount, 1), maxColumns)
+);
+
 /**
  * Row of comparable services. It knows nothing about the modal that usually
  * wraps it, so it can be dropped into a standalone page as is.
  *
- * Unavailable services are rendered too, disabled and with an explanation: the
- * comparison is only fair if the four columns are always there.
+ * Services that cannot be hired are still rendered, disabled and with an
+ * explanation: the comparison is only fair if every offer is on screen. Services
+ * filtered out upstream (`available: false`) never reach this component, so the
+ * row sizes itself to however many it receives instead of assuming four.
  */
 const ServiceGrid: React.FC<ServiceGridProps> = ({
   services,
@@ -30,7 +44,7 @@ const ServiceGrid: React.FC<ServiceGridProps> = ({
   ctasDisabled = false,
   onSelect,
 }) => (
-  <Grid>
+  <Grid $columns={getGridColumnCount(services.length)}>
     {services.map((service) => (
       <CardItem key={service.key}>
         <ServiceCard
@@ -46,7 +60,9 @@ const ServiceGrid: React.FC<ServiceGridProps> = ({
   </Grid>
 );
 
-const Grid = styled.ul`
+/* `$columns` only ever takes the values 1 to MAX_COLUMNS, so styled-components
+   caches a handful of classes, not one per render. */
+const Grid = styled.ul<{ $columns: number }>`
   list-style: none;
   margin: 0;
   padding: 0;
@@ -55,16 +71,17 @@ const Grid = styled.ul`
   grid-template-columns: 1fr;
 
   @media (min-width: 560px) {
-    grid-template-columns: repeat(2, 1fr);
+    /* Two columns at most here, but never more than there are cards: a lone
+       card would otherwise sit at half width with a gap beside it. */
+    grid-template-columns: repeat(${({ $columns }) => Math.min($columns, 2)}, 1fr);
   }
 
   @media (min-width: 900px) {
-    /* Always four columns: services are never hidden, only disabled.
-       This hardcodes the current catalogue size. When the backend starts
-       serving the catalogue, a count other than 4 will leave a gap (fewer) or
-       overflow the row (more); the layout has to be revisited then, not made
-       dynamic now — see the growth note in the spec. */
-    grid-template-columns: repeat(4, 1fr);
+    /* One column per service, capped at four (what fits comfortably on
+       desktop). A shorter catalogue closes the row instead of leaving a hole;
+       a longer one wraps. The row template stays at seven tracks whatever the
+       column count, because it describes a card's bands, not the row's width. */
+    grid-template-columns: repeat(${({ $columns }) => $columns}, 1fr);
     /* icon · badge · title · price · content (flexible) · cta · disclosure */
     grid-template-rows: auto auto auto auto 1fr auto auto;
   }

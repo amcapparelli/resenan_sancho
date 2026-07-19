@@ -4,6 +4,7 @@ import React, {
   useContext,
   useEffect,
   useId,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -22,6 +23,7 @@ import { PaymentCheckout } from '../../../../components';
 import { primaryButton } from '../styles';
 import ModalHeader from './ModalHeader';
 import ServiceGrid from './ServiceGrid';
+import { getVisibleServices } from './availability';
 import getStripe, { resetStripe } from './stripeLoader';
 import { BookIcon, LockIcon } from './icons';
 import { PromotionService } from './types';
@@ -156,7 +158,12 @@ const PromoteServicesModal: React.FC<PromoteServicesModalProps> = ({
     hasPaperFormat: book.formats.includes(AvailableFormats.papel),
   };
 
-  const hasServices = services.length > 0;
+  // Filtered here and not inside ServiceGrid: the empty-catalogue state below is
+  // the modal's own, so it has to react to a catalogue that is empty *after*
+  // filtering, not only to an empty `services` prop.
+  const visibleServices = useMemo(() => getVisibleServices(services), [services]);
+
+  const hasServices = visibleServices.length > 0;
 
   return (
     <StyledDialog
@@ -177,8 +184,7 @@ const PromoteServicesModal: React.FC<PromoteServicesModalProps> = ({
       <Body>
         {hasServices ? (
           <>
-            <BodyTitle>Elige cómo impulsarlo</BodyTitle>
-            <BodySubtitle>Cada servicio se aplica solo a este libro.</BodySubtitle>
+            <BodyTitle>Elige cómo quieres promocionar este libro.</BodyTitle>
 
             {failedService && (
               <ErrorBanner role="alert">
@@ -205,7 +211,7 @@ const PromoteServicesModal: React.FC<PromoteServicesModalProps> = ({
             </FeedbackRegion>
 
             <ServiceGrid
-              services={services}
+              services={visibleServices}
               bookTitle={book.title}
               eligibility={eligibility}
               busyServiceKey={openingService ? openingService.key : null}
@@ -296,6 +302,7 @@ const Body = styled.div`
 
 const BodyTitle = styled.h3`
   margin: 0;
+  margin-bottom: 16px;
   font-family: 'Fraunces', serif;
   font-weight: 600;
   font-size: 18px;

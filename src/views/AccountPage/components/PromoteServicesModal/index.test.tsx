@@ -1,7 +1,9 @@
 /* eslint-disable no-underscore-dangle */
 /**
  * Behaviour that must not regress in the promote modal:
- *  - every service is rendered, available or not (fair comparison);
+ *  - every *available* service is rendered, hireable or not (fair comparison);
+ *  - `available` and `enabled` stay two different things: the first hides the
+ *    service, the second only disables it;
  *  - an unavailable service exposes its explanation as text, never as a
  *    disabled button whose accessible name is still the CTA;
  *  - prices are formatted from `priceCents`, never written in the copy;
@@ -23,6 +25,7 @@ import { PaymentCheckout } from '../../../../components';
 import getStripe from './stripeLoader';
 import PromoteServicesModal from '.';
 import promotionServices from './catalog';
+import { PromotionService } from './types';
 
 // The payment component is the boundary under test: we assert what it receives,
 // not what Stripe does with it.
@@ -66,17 +69,27 @@ const userContextValue = {
   setUserLogged: jest.fn(),
 } as unknown as React.ContextType<typeof UserContext>;
 
-const renderModal = (bookOverrides: Partial<Book> = {}) => render(
+/** What the user can actually see: the modal drops `available: false` services. */
+const visibleCatalogue = promotionServices.filter((service) => service.available);
+
+const renderModalWith = (
+  services: PromotionService[],
+  bookOverrides: Partial<Book> = {},
+) => render(
   <ThemeProvider theme={StyledTheme}>
     <UserContext.Provider value={userContextValue}>
       <PromoteServicesModal
         open
         book={{ ...book, ...bookOverrides }}
-        services={promotionServices}
+        services={services}
         onClose={jest.fn()}
       />
     </UserContext.Provider>
   </ThemeProvider>,
+);
+
+const renderModal = (bookOverrides: Partial<Book> = {}) => (
+  renderModalWith(promotionServices, bookOverrides)
 );
 
 const cardFor = (name: string) => screen.getByRole('heading', { name }).closest('article');
@@ -86,9 +99,9 @@ beforeEach(() => {
 });
 
 describe('PromoteServicesModal', () => {
-  it('renders every service in the catalogue, available or not', () => {
+  it('renders every available service in the catalogue, hireable or not', () => {
     renderModal();
-    expect(screen.getAllByRole('article')).toHaveLength(promotionServices.length);
+    expect(screen.getAllByRole('article')).toHaveLength(visibleCatalogue.length);
   });
 
   it('uses the singular form when the book has a single copy', () => {
@@ -98,7 +111,7 @@ describe('PromoteServicesModal', () => {
 
   // Driven by the catalogue rather than by one literal: a hardcoded price in
   // PriceTag would satisfy a single expectation but not every service at once.
-  it.each(promotionServices.filter((service) => !service.free))(
+  it.each(visibleCatalogue.filter((service) => !service.free))(
     'derives the price of "$name" from its priceCents',
     ({ name, priceCents }) => {
       renderModal();
@@ -128,11 +141,66 @@ describe('PromoteServicesModal', () => {
     // The status badge takes over the marketing one: only one badge band fits.
     expect(card.queryByText('Máxima difusión')).not.toBeInTheDocument();
   });
+});
 
-  it('keeps globally disabled services visible but not purchasable', () => {
-    renderModal();
-    const card = within(cardFor('Libro destacado de la semana'));
+/**
+ * `available` and `enabled` are two different switches and the day someone
+ * collapses them into one, these tests are what stops it:
+ *  - `available: false` → the service does not exist for the reader;
+ *  - `enabled: false`   → it exists, on screen, disabled and explained.
+ */
+describe('PromoteServicesModal — available is not enabled', () => {
+  const baseService = promotionServices.find((service) => service.key === 'copies5');
+
+  const serviceWith = (overrides: Partial<PromotionService>): PromotionService => ({
+    ...baseService,
+    ...overrides,
+  });
+
+  const hiddenService = serviceWith({
+    key: 'featuredWeek',
+    available: false,
+    name: 'Servicio retirado',
+    ctaLabel: 'Contratar retirado',
+  });
+
+  it('does not render a service marked as unavailable', () => {
+    renderModalWith([promotionServices[0], hiddenService]);
+
+    expect(screen.queryByRole('heading', { name: 'Servicio retirado' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /^Contratar retirado/ })).not.toBeInTheDocument();
+    // The disclosure has its own accessible name, so it would survive a filter
+    // that only hid the card body.
+    expect(
+      screen.queryByRole('button', { name: 'Cómo funciona: Servicio retirado' }),
+    ).not.toBeInTheDocument();
+    expect(screen.getAllByRole('article')).toHaveLength(1);
+  });
+
+  it('renders an available but globally disabled service, without a CTA', () => {
+    const disabledService = serviceWith({
+      key: 'featuredWeek',
+      available: true,
+      enabled: false,
+      name: 'Servicio en preparación',
+      ctaLabel: 'Contratar preparación',
+    });
+
+    renderModalWith([disabledService]);
+
+    const card = within(cardFor('Servicio en preparación'));
     expect(card.getByText(/Todavía no está disponible/)).toBeInTheDocument();
+    expect(card.getByText('Próximamente')).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: /^Contratar preparación/ }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('falls back to the empty catalogue state when every service is unavailable', () => {
+    renderModalWith(promotionServices.map((service) => ({ ...service, available: false })));
+
+    expect(screen.getByRole('heading', { name: /no hay servicios disponibles/i })).toBeInTheDocument();
+    expect(screen.queryAllByRole('article')).toHaveLength(0);
   });
 });
 

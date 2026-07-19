@@ -14,9 +14,26 @@ const DISABLED_GLOBALLY: ServiceUnavailability = {
 
 const REQUIRES_PAPER_FORMAT: ServiceUnavailability = {
   reason: 'requiresPaperFormat',
-  badgeLabel: 'Necesita papel',
+  badgeLabel: 'Requiere ejemplares impresos',
   message: 'Tu libro no está en papel. Añade ese formato y podrás contratarlo.',
 };
+
+/**
+ * Drops the services that must not exist for the reader at all.
+ *
+ * `available` is not `enabled`, and collapsing the two would be a visible bug:
+ *  - `enabled: false` → shown, disabled, with its status badge and explanation
+ *    ("Próximamente"). The offer exists, it just cannot be bought yet.
+ *  - `available: false` → not rendered anywhere. There is nothing to announce.
+ *
+ * It lives next to `getServiceUnavailability` because it is the same kind of
+ * rule — one that travels with the service data — and it is applied to whatever
+ * array reaches the modal, so it keeps working once the backend serves the
+ * catalogue instead of `catalog.ts`.
+ */
+export const getVisibleServices = (services: PromotionService[]): PromotionService[] => (
+  services.filter((service) => service.available)
+);
 
 /**
  * Returns why a service cannot be hired for this book, or `null` when it can.
