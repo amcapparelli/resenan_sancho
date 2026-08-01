@@ -1,8 +1,11 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styledComponents from 'styled-components';
-import { Avatar, Card, CardContent, CardHeader, Chip, Link, Typography } from '@mui/material';
+import {
+  Avatar, Card, CardContent, CardHeader, Chip, Link, Typography,
+} from '@mui/material';
 import { Reviewer } from '../interfaces/reviewer';
+import { getCountryName } from '../utils/constants/countries';
 
 interface Props {
   reviewer: Reviewer
@@ -34,7 +37,7 @@ const ReviewerListItem: React.FC<Props> = ({ reviewer }: Props): JSX.Element => 
           <Avatar alt="avatar" src={avatar || '/static/default-avatar.png'} />
         }
         title={<Typography variant="h4">{`${name} ${lastName || ''}`}</Typography>}
-        subheader={country}
+        subheader={getCountryName(country) ?? country}
       />
       <CardContent>
         <Typography variant="body1" align="left">{description}</Typography>

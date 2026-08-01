@@ -32,30 +32,40 @@ const AccountField: React.FC<AccountFieldProps> = ({
   className,
   id,
   placeholder,
-}) => (
-  <FieldWrapper className={className}>
-    <FieldLabel htmlFor={id ?? name}>{label}</FieldLabel>
-    <Input
-      id={id ?? name}
-      name={name}
-      placeholder={placeholder}
-      type={type}
-      value={value}
-      onChange={onChange}
-      disabled={disabled}
-      required={required}
-      $hasError={!!error}
-      aria-invalid={!!error}
-    />
-    {note && <FieldNote>{note}</FieldNote>}
-    {error && (
-      <FieldError>
-        <span aria-hidden="true">⚠</span>
-        {error}
-      </FieldError>
-    )}
-  </FieldWrapper>
-);
+}) => {
+  // Derived from the field id, not from `name`: sibling rows can repeat `name`
+  // (see the `id` prop above), and duplicated ids would point every field's
+  // aria-describedby at the same node.
+  const fieldId = id ?? name;
+  const noteId = note ? `${fieldId}-note` : undefined;
+  const errorId = error ? `${fieldId}-error` : undefined;
+
+  return (
+    <FieldWrapper className={className}>
+      <FieldLabel htmlFor={fieldId}>{label}</FieldLabel>
+      <Input
+        id={fieldId}
+        name={name}
+        placeholder={placeholder}
+        type={type}
+        value={value}
+        onChange={onChange}
+        disabled={disabled}
+        required={required}
+        $hasError={!!error}
+        aria-invalid={!!error}
+        aria-describedby={[noteId, errorId].filter(Boolean).join(' ') || undefined}
+      />
+      {note && <FieldNote id={noteId}>{note}</FieldNote>}
+      {error && (
+        <FieldError id={errorId}>
+          <span aria-hidden="true">⚠</span>
+          {error}
+        </FieldError>
+      )}
+    </FieldWrapper>
+  );
+};
 
 export const FieldWrapper = styled.div`
   display: flex;

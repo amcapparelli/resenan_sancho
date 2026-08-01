@@ -94,7 +94,10 @@
   },
   "components": {
     "countriesSelector": {
-      "title": "Country"
+      "title": "Country",
+      "placeholder": "Choose your country",
+      "note": "We only use it to email you about book launches in your country.",
+      "emptyNote": "We're missing your country. Without it we can't tell you about new book launch events."
     },
     "genresSelector": {
       "title": "Literary Genre"
