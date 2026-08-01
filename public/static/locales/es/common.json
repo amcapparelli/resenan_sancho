@@ -5,7 +5,7 @@
     "myProfile": "Mi perfil"
   },
   "booksForm": {
-    "title": "Titulo",
+    "title": "Título",
     "author": "Autor",
     "editorial": "Editorial"
   },
@@ -22,7 +22,7 @@
     "seeBooks": "Ver libros disponibles",
     "signUp": "Darme de alta",
     "addBook": "Añadir Libro",
-    "addLiterarySpaces": "Añadir mi especio literario"
+    "addLiterarySpaces": "Añadir mi espacio literario"
   },
   "form": {
     "name": "Nombre",
@@ -94,7 +94,10 @@
   },
   "components": {
     "countriesSelector": {
-      "title": "País"
+      "title": "País",
+      "placeholder": "Elige tu país",
+      "note": "Solo lo usamos para avisarte por email de lanzamientos de libros en tu país.",
+      "emptyNote": "Nos falta tu país. Sin él no podemos avisarte de nuevos eventos de presentación de libros."
     },
     "genresSelector": {
       "title": "Género Literario"

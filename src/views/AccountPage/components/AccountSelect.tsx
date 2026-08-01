@@ -5,6 +5,7 @@ import { fieldBase } from './styles';
 import {
   FieldWrapper,
   FieldLabel,
+  FieldNote,
   FieldError,
 } from './AccountField';
 
@@ -20,6 +21,7 @@ interface AccountSelectProps {
   options: Option[];
   onChange: (value: string) => void;
   placeholder?: string;
+  note?: string;
   error?: string;
   className?: string;
 }
@@ -31,32 +33,43 @@ const AccountSelect: React.FC<AccountSelectProps> = ({
   options,
   onChange,
   placeholder = '—',
+  note,
   error,
   className,
-}) => (
-  <FieldWrapper className={className}>
-    <FieldLabel htmlFor={name}>{label}</FieldLabel>
-    <Select
-      id={name}
-      name={name}
-      value={value || ''}
-      onChange={(e) => onChange(e.target.value)}
-      $hasError={!!error}
-      aria-invalid={!!error}
-    >
-      <option value="">{placeholder}</option>
-      {options.map((option) => (
-        <option key={option.value} value={option.value}>{option.label}</option>
-      ))}
-    </Select>
-    {error && (
-      <FieldError>
-        <span aria-hidden="true">⚠</span>
-        {error}
-      </FieldError>
-    )}
-  </FieldWrapper>
-);
+}) => {
+  // Without these, a screen reader announces "invalid" (or nothing at all for a
+  // plain note) with no clue about why — and for the country field the note
+  // carries the actual instruction.
+  const noteId = note ? `${name}-note` : undefined;
+  const errorId = error ? `${name}-error` : undefined;
+
+  return (
+    <FieldWrapper className={className}>
+      <FieldLabel htmlFor={name}>{label}</FieldLabel>
+      <Select
+        id={name}
+        name={name}
+        value={value || ''}
+        onChange={(e) => onChange(e.target.value)}
+        $hasError={!!error}
+        aria-invalid={!!error}
+        aria-describedby={[noteId, errorId].filter(Boolean).join(' ') || undefined}
+      >
+        <option value="">{placeholder}</option>
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>{option.label}</option>
+        ))}
+      </Select>
+      {note && <FieldNote id={noteId}>{note}</FieldNote>}
+      {error && (
+        <FieldError id={errorId}>
+          <span aria-hidden="true">⚠</span>
+          {error}
+        </FieldError>
+      )}
+    </FieldWrapper>
+  );
+};
 
 const Select = styled.select<{ $hasError: boolean }>`
   ${fieldBase}

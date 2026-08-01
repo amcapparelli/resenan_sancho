@@ -6,6 +6,8 @@ import UserContext from '../../../store/context/userContext/UserContext';
 import { useForm, useUploadImages } from '../../../utils/customHooks';
 import { update as URL } from '../../../config/routes';
 import { Response } from '../../../interfaces/response';
+import { UserLogged } from '../../../interfaces/user';
+import { getCountryName } from '../../../utils/constants/countries';
 import SectionHeader from '../SectionHeader';
 import AccountField, { FieldNote } from '../components/AccountField';
 import CountrySelect from '../components/CountrySelect';
@@ -19,16 +21,30 @@ const getInitials = (name?: string, lastName?: string): string => {
   return `${first}${last}`.toUpperCase() || '?';
 };
 
+// A country that maps to no known ISO code was never migrated ("Spain"). Drop
+// it so the form state matches what the select shows: otherwise saving any
+// other field would POST the legacy value, which the API now rejects
+// (`match: /^[A-Z]{2}$/`), losing the rest of the edit with it.
+// `undefined` and not `''`: JSON.stringify omits the key, so the API leaves the
+// stored field untouched instead of receiving an explicit blank.
+const withNormalisedCountry = (user: UserLogged): UserLogged => ({
+  ...user,
+  country: getCountryName(user.country) ? user.country : undefined,
+});
+
 const ProfileSection: React.FC = (): JSX.Element => {
   const { t } = useTranslation();
   const { user, setUserLogged } = useContext(UserContext);
-  const [updateForm, setUpdateForm, loadForm] = useForm(user);
+  // Normalised here as well as on load: `useForm`'s setter closes over the form
+  // of its render, so the avatar effect below would write the raw initial state
+  // (legacy country included) back on top of the normalised one.
+  const [updateForm, setUpdateForm, loadForm] = useForm(withNormalisedCountry(user));
   const [avatarURL, uploadAvatar] = useUploadImages(updateForm.avatar);
   const [response, setResponse] = useState<Response>({ success: undefined, message: undefined });
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    loadForm({ ...user });
+    loadForm(withNormalisedCountry(user));
   }, [user._id]);
 
   useEffect(() => {
