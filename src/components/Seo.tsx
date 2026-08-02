@@ -15,6 +15,11 @@ interface SeoProps {
   // the canonical and og:url.
   path: string;
   noindex?: boolean;
+  // When noindex is set, `follow` keeps crawlers following outbound links
+  // ("noindex,follow") instead of the default "noindex,nofollow". Used by the
+  // listing facets that should not be indexed but must still pass link equity.
+  // Ignored when the page is indexable.
+  follow?: boolean;
   ogImage?: string;
 }
 
@@ -31,6 +36,7 @@ const Seo = ({
   description,
   path,
   noindex = false,
+  follow = false,
   ogImage = DEFAULT_OG_IMAGE,
 }: SeoProps): JSX.Element => {
   const { locale, defaultLocale } = useRouter();
@@ -46,6 +52,10 @@ const Seo = ({
   // Decision: the English locale is kept out of the index for now (no hreflang
   // strategy yet), so any /en page is forced to noindex regardless of the prop.
   const shouldNoindex = noindex || locale === 'en';
+  // The /en forced-noindex path keeps the original "nofollow" (no follow
+  // opt-in there); only an explicit `follow` from an indexable-locale caller
+  // upgrades the directive to "noindex,follow".
+  const robotsContent = follow && locale !== 'en' ? 'noindex,follow' : 'noindex,nofollow';
   const ogLocale = locale === 'en' ? 'en_US' : 'es_ES';
 
   return (
@@ -53,7 +63,7 @@ const Seo = ({
       <title>{title}</title>
       <meta name="description" content={description} />
       <link rel="canonical" href={canonical} />
-      {shouldNoindex && <meta name="robots" content="noindex,nofollow" />}
+      {shouldNoindex && <meta name="robots" content={robotsContent} />}
 
       {/* Open Graph */}
       <meta property="og:title" content={title} />

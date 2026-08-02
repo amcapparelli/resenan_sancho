@@ -38,6 +38,21 @@ jest.mock('react-i18next', () => ({
   }),
 }));
 
+// next/router: the view syncs applied facets into the URL via
+// `router.push(..., { shallow: true })`. Without a mounted router `useRouter`
+// throws "NextRouter was not mounted", so supply a router shape with a `push`
+// spy — same precedent as BookDetailCTA/MyBooksSection. The spy is hoisted
+// (jest allows out-of-scope refs prefixed with `mock`) so tests can assert the
+// URL-sync contract; it's reset per test in `beforeEach`.
+const mockRouterPush = jest.fn();
+jest.mock('next/router', () => ({
+  useRouter: () => ({
+    pathname: '/books',
+    query: {},
+    push: mockRouterPush,
+  }),
+}));
+
 // ─── Fetch mock helpers ─────────────────────────────────────────────────────
 
 /** Shape returned by the real /books endpoint. Empty `books` keeps card
@@ -111,9 +126,24 @@ describe('BooksPage — fetch/filter contract', () => {
     await waitFor(() => expect(fetchSpy).toHaveBeenCalledTimes(1));
 
     await user.selectOptions(screen.getByLabelText(/género literario/i), 'ADV');
+
+    // Applying resets the URL-sync spy count to isolate the push caused by the
+    // click from the mount push, so the "once per applied change" contract is
+    // asserted cleanly.
+    mockRouterPush.mockClear();
     await user.click(screen.getByRole('button', { name: /filtrar libros/i }));
 
     await waitFor(() => expect(fetchSpy).toHaveBeenCalledTimes(2));
+
+    // URL-sync contract: applying facets shallow-routes exactly once with the
+    // public query — genre CODE (ADV) mapped to its SLUG (aventura), page 1
+    // dropped from the URL.
+    expect(mockRouterPush).toHaveBeenCalledTimes(1);
+    expect(mockRouterPush).toHaveBeenCalledWith(
+      { pathname: '/books', query: { genre: 'aventura' } },
+      undefined,
+      { shallow: true },
+    );
   });
 
   it('resets to page 1 when filtering from a later page, and highlights page 1 again', async () => {
