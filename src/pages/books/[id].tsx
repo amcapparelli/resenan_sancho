@@ -12,17 +12,11 @@ import {
   buildBookJsonLd,
   buildBreadcrumbJsonLd,
 } from '../../utils/seo/bookSeo';
+import { serializeJsonLd } from '../../utils/seo/jsonLd';
 
 interface BookDetailRouteProps {
   book: Book;
 }
-
-// JSON.stringify escapes quotes and newlines but not the literal "</script>"
-// sequence, so user-provided fields (e.g. a synopsis) could close the inline
-// script tag early. Escaping every "<" as its unicode form neutralizes the
-// breakout while keeping the JSON valid.
-const serializeJsonLd = (data: unknown): string =>
-  JSON.stringify(data).replace(/</g, '\\u003c');
 
 const BookDetailRoute: React.FC<BookDetailRouteProps> = ({ book }) => {
   const title = buildBookTitle(book);
