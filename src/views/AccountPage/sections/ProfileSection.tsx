@@ -35,10 +35,10 @@ const withNormalisedCountry = (user: UserLogged): UserLogged => ({
 const ProfileSection: React.FC = (): JSX.Element => {
   const { t } = useTranslation();
   const { user, setUserLogged } = useContext(UserContext);
-  // Normalised here as well as on load: `useForm`'s setter closes over the form
-  // of its render, so the avatar effect below would write the raw initial state
-  // (legacy country included) back on top of the normalised one.
-  const [updateForm, setUpdateForm, loadForm] = useForm(withNormalisedCountry(user));
+  // Normalisation lives in the load effect below, which also runs on mount:
+  // it is the only path that survives a user change. Until it flushes, the raw
+  // legacy country is harmless — `CountrySelect` falls back to the placeholder.
+  const [updateForm, setUpdateForm, loadForm] = useForm(user);
   const [avatarURL, uploadAvatar] = useUploadImages(updateForm.avatar);
   const [response, setResponse] = useState<Response>({ success: undefined, message: undefined });
   const [loading, setLoading] = useState(false);
