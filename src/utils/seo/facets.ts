@@ -19,6 +19,13 @@ interface GenreFacet {
   slug: string;
   /** Internal API/DB genre code, e.g. "ROM". */
   code: string;
+  /**
+   * Long enum name from `AvailableGenres` (the i18n key), e.g. "romantic".
+   * Books store the genre as a single `code`, but a Reviewer's `genres` array
+   * holds these long names instead, so the reviewers sitemap needs to translate
+   * name → slug (see `genreNameToSlug`).
+   */
+  name: string;
   /** Display labels for titles/copy. UI text is es-default, en-secondary. */
   label: { es: string; en: string };
 }
@@ -31,23 +38,23 @@ interface FormatFacet {
 
 // Approved slug ↔ code map (see S4 spec). Order is the canonical display order.
 export const GENRE_FACETS: readonly GenreFacet[] = [
-  { slug: 'aventura', code: 'ADV', label: { es: 'aventura', en: 'adventure' } },
-  { slug: 'biografia', code: 'BIO', label: { es: 'biografía', en: 'biography' } },
-  { slug: 'ciencia-ficcion', code: 'CIF', label: { es: 'ciencia ficción', en: 'science fiction' } },
-  { slug: 'crimen', code: 'CRI', label: { es: 'novela negra', en: 'crime' } },
-  { slug: 'erotica', code: 'ERO', label: { es: 'erótica', en: 'erotica' } },
-  { slug: 'fantasia', code: 'FAN', label: { es: 'fantasía', en: 'fantasy' } },
-  { slug: 'infantil', code: 'FCH', label: { es: 'infantil', en: 'children\'s' } },
-  { slug: 'juvenil', code: 'JUV', label: { es: 'juvenil', en: 'young adult' } },
-  { slug: 'novela-historica', code: 'HIF', label: { es: 'novela histórica', en: 'historical fiction' } },
-  { slug: 'humor', code: 'HUM', label: { es: 'humor', en: 'humor' } },
-  { slug: 'poesia', code: 'POE', label: { es: 'poesía', en: 'poetry' } },
-  { slug: 'policiaca', code: 'POL', label: { es: 'policíaca', en: 'crime fiction' } },
-  { slug: 'drama-psicologico', code: 'PSD', label: { es: 'drama psicológico', en: 'psychological drama' } },
-  { slug: 'romantica', code: 'ROM', label: { es: 'romántica', en: 'romance' } },
-  { slug: 'suspense', code: 'SUS', label: { es: 'suspense', en: 'suspense' } },
-  { slug: 'terror', code: 'TER', label: { es: 'terror', en: 'horror' } },
-  { slug: 'thriller', code: 'THR', label: { es: 'thriller', en: 'thriller' } },
+  { slug: 'aventura', code: 'ADV', name: 'adventure', label: { es: 'aventura', en: 'adventure' } },
+  { slug: 'biografia', code: 'BIO', name: 'biography', label: { es: 'biografía', en: 'biography' } },
+  { slug: 'ciencia-ficcion', code: 'CIF', name: 'cienceFiction', label: { es: 'ciencia ficción', en: 'science fiction' } },
+  { slug: 'crimen', code: 'CRI', name: 'crime', label: { es: 'novela negra', en: 'crime' } },
+  { slug: 'erotica', code: 'ERO', name: 'erotica', label: { es: 'erótica', en: 'erotica' } },
+  { slug: 'fantasia', code: 'FAN', name: 'fantasy', label: { es: 'fantasía', en: 'fantasy' } },
+  { slug: 'infantil', code: 'FCH', name: 'forChildren', label: { es: 'infantil', en: 'children\'s' } },
+  { slug: 'juvenil', code: 'JUV', name: 'juvenile', label: { es: 'juvenil', en: 'young adult' } },
+  { slug: 'novela-historica', code: 'HIF', name: 'historicalFiction', label: { es: 'novela histórica', en: 'historical fiction' } },
+  { slug: 'humor', code: 'HUM', name: 'humor', label: { es: 'humor', en: 'humor' } },
+  { slug: 'poesia', code: 'POE', name: 'poetry', label: { es: 'poesía', en: 'poetry' } },
+  { slug: 'policiaca', code: 'POL', name: 'policial', label: { es: 'policíaca', en: 'crime fiction' } },
+  { slug: 'drama-psicologico', code: 'PSD', name: 'psychologicalDrama', label: { es: 'drama psicológico', en: 'psychological drama' } },
+  { slug: 'romantica', code: 'ROM', name: 'romantic', label: { es: 'romántica', en: 'romance' } },
+  { slug: 'suspense', code: 'SUS', name: 'suspense', label: { es: 'suspense', en: 'suspense' } },
+  { slug: 'terror', code: 'TER', name: 'terror', label: { es: 'terror', en: 'horror' } },
+  { slug: 'thriller', code: 'THR', name: 'thriller', label: { es: 'thriller', en: 'thriller' } },
 ];
 
 // Formats double as their own slug AND their DB value, so there is no mapping to
@@ -65,6 +72,7 @@ export const FORMAT_FACETS: readonly FormatFacet[] = [
 // which iterates over every book.
 const genreBySlug = new Map(GENRE_FACETS.map((g) => [g.slug, g]));
 const genreByCode = new Map(GENRE_FACETS.map((g) => [g.code, g]));
+const genreByName = new Map(GENRE_FACETS.map((g) => [g.name, g]));
 const formatByValue = new Map(FORMAT_FACETS.map((f) => [f.value, f]));
 
 // ─── Genre helpers ───────────────────────────────────────────────────────────
@@ -78,6 +86,15 @@ export const genreSlugToCode = (slug: string): string | undefined =>
 /** Maps an internal API/DB code back to its public slug, or undefined if unknown. */
 export const genreCodeToSlug = (code: string): string | undefined =>
   genreByCode.get(code)?.slug;
+
+/**
+ * Maps a long genre enum name (an `AvailableGenres` value, e.g. "romantic") to
+ * its public slug, or undefined if unknown. Needed by the reviewers sitemap:
+ * a Reviewer's `genres` array stores these long names rather than the DB codes
+ * that books use.
+ */
+export const genreNameToSlug = (name: string): string | undefined =>
+  genreByName.get(name)?.slug;
 
 export const getGenreLabel = (slug: string, locale: Locale = 'es'): string | undefined =>
   genreBySlug.get(slug)?.label[locale];

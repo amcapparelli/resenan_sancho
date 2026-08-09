@@ -1,7 +1,8 @@
 import { GetServerSideProps } from 'next';
 import { SITE_URL } from '../utils/constants/seo';
 import { getBooks } from '../utils/seo/getBooks';
-import { genreCodeToSlug, FORMAT_FACETS } from '../utils/seo/facets';
+import { getReviewers } from '../utils/seo/getReviewers';
+import { genreCodeToSlug, genreNameToSlug, FORMAT_FACETS } from '../utils/seo/facets';
 
 // Public, indexable static routes. Private/auth routes are intentionally
 // excluded (also blocked in robots.txt).
@@ -20,13 +21,19 @@ interface DynamicUrls {
   bookIds: string[];
   genreSlugs: string[];
   formatValues: string[];
+  /**
+   * Genre slugs that have at least one reviewer. Genre-only is the sole
+   * indexable reviewer facet (format reviewer URLs are noindex), and reviewers
+   * have no detail pages, so this is the only reviewer-derived URL set.
+   */
+  reviewerGenreSlugs: string[];
 }
 
 /**
  * Collects every public book id plus the set of genre/format facets that have
- * at least one result, in a single pass. Only NON-EMPTY facets are emitted so
- * the sitemap never advertises a landing URL that would render zero results
- * (those are noindex anyway).
+ * at least one result, then the reviewer genre facets. Only NON-EMPTY facets
+ * are emitted so the sitemap never advertises a landing URL that would render
+ * zero results (those are noindex anyway).
  */
 const collectDynamicUrls = async (): Promise<DynamicUrls> => {
   const first = await getBooks({ page: 1, size: SITEMAP_PAGE_SIZE });
@@ -66,7 +73,40 @@ const collectDynamicUrls = async (): Promise<DynamicUrls> => {
     .map((f) => f.value)
     .filter((value) => formatValues.has(value));
 
-  return { bookIds, genreSlugs, formatValues: orderedFormats };
+  const reviewerGenreSlugs = await collectReviewerGenreSlugs();
+
+  return { bookIds, genreSlugs, formatValues: orderedFormats, reviewerGenreSlugs };
+};
+
+/**
+ * Collects the set of genre slugs that have at least one reviewer. Unlike books
+ * (which store a single genre `code`), a reviewer's `genres` array holds the
+ * long enum names, so each name is mapped via `genreNameToSlug`. No format URLs
+ * (format reviewer facets are noindex) and no per-reviewer URLs (no detail
+ * pages) are emitted.
+ */
+const collectReviewerGenreSlugs = async (): Promise<string[]> => {
+  const first = await getReviewers({ page: 1, size: SITEMAP_PAGE_SIZE });
+
+  const reviewers = [...first.reviewers];
+  const lastPage = Math.min(first.totalPages ?? 1, MAX_SITEMAP_PAGES);
+  for (let page = 2; page <= lastPage; page += 1) {
+    // Sequential on purpose: the sitemap is generated rarely and we prefer not
+    // to hammer the API with parallel requests.
+    // eslint-disable-next-line no-await-in-loop
+    const next = await getReviewers({ page, size: SITEMAP_PAGE_SIZE });
+    reviewers.push(...next.reviewers);
+  }
+
+  const genreNames = new Set<string>();
+  reviewers.forEach((reviewer) => {
+    (reviewer.genres ?? []).forEach((name) => genreNames.add(name));
+  });
+
+  // Map long genre names → public slugs, dropping any name not in the map.
+  return Array.from(genreNames)
+    .map((name) => genreNameToSlug(name))
+    .filter((slug): slug is string => Boolean(slug));
 };
 
 // Escape the five XML entities. Today every facet URL has a single param and
@@ -91,8 +131,17 @@ const buildSitemap = (dynamic: DynamicUrls): string => {
   // Page-1 facet URLs only, no `page` param (matches the canonical listing URL).
   const genreUrls = dynamic.genreSlugs.map((slug) => toUrl(`/books?genre=${slug}`));
   const formatUrls = dynamic.formatValues.map((value) => toUrl(`/books?format=${value}`));
+  // Genre-only reviewer facets (the sole indexable reviewer URL set).
+  const reviewerGenreUrls = dynamic.reviewerGenreSlugs
+    .map((slug) => toUrl(`/reviewers?genre=${slug}`));
 
-  const urls = [...staticUrls, ...bookUrls, ...genreUrls, ...formatUrls].join('\n');
+  const urls = [
+    ...staticUrls,
+    ...bookUrls,
+    ...genreUrls,
+    ...formatUrls,
+    ...reviewerGenreUrls,
+  ].join('\n');
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -110,11 +159,15 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   // books), so this catch only guards unexpected throws in the
   // collection/serialisation. first.books stays [] on failure, so pagination and
   // the facet collection degrade to just the static routes.
-  let dynamic: DynamicUrls = { bookIds: [], genreSlugs: [], formatValues: [] };
+  let dynamic: DynamicUrls = {
+    bookIds: [], genreSlugs: [], formatValues: [], reviewerGenreSlugs: [],
+  };
   try {
     dynamic = await collectDynamicUrls();
   } catch {
-    dynamic = { bookIds: [], genreSlugs: [], formatValues: [] };
+    dynamic = {
+      bookIds: [], genreSlugs: [], formatValues: [], reviewerGenreSlugs: [],
+    };
   }
 
   res.setHeader('Content-Type', 'text/xml');
