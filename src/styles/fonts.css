@@ -1,0 +1,57 @@
+/*
+ * Self-hosted web fonts (SEO phase S5b — Core Web Vitals).
+ *
+ * These @font-face rules replace the render-blocking Google Fonts <link>s that
+ * used to live in _document.tsx. The family names are kept EXACTLY as before
+ * ('Source Sans 3', 'Fraunces', 'Rambla') so every literal font-family
+ * reference across the codebase and the MUI theme keeps resolving unchanged.
+ *
+ * Files live in public/fonts/ (served at /fonts/...) and are the latin subset,
+ * which covers Spanish accents (á é í ó ú ñ ü ¿ ¡) — hence one file per face
+ * with no unicode-range. font-display: swap avoids invisible text (FOIT) while
+ * the woff2 downloads.
+ *
+ * Plain CSS (imported from _app.tsx) is used instead of createGlobalStyle so
+ * the rules ship in the initial stylesheet, with no styled-components runtime
+ * injection delay.
+ */
+
+@font-face {
+  font-family: 'Source Sans 3';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/source-sans-3-400.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Source Sans 3';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/source-sans-3-600.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Fraunces';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/fraunces-600.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Fraunces';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/fraunces-italic-400.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Rambla';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/rambla-400.woff2') format('woff2');
+}

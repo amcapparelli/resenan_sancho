@@ -68,15 +68,17 @@ class MyDocument extends Document<MyDocumentInitialProps> {
         <Head>
           {this.props.emotionStyleTags}
           {/*
-            Google Fonts stylesheets belong here (not in next/head): Next 15 warns
-            against adding `rel="stylesheet"` via next/head. preconnect goes first
-            so the font origins are warmed up before the stylesheets request them.
+            Preload the self-hosted fonts used above the fold (body 400/600 +
+            heading 600) so first paint isn't blocked on their discovery. The
+            @font-face rules themselves live in src/styles/fonts.css. crossOrigin
+            is required even same-origin: fonts fetch in CORS mode, and omitting
+            it makes the browser double-fetch. rambla-400 and fraunces-italic-400
+            are intentionally NOT preloaded — they're secondary and would compete
+            with the LCP image.
           */}
-          <link rel="preconnect" href="https://fonts.googleapis.com" />
-          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-          <link href="https://fonts.googleapis.com/css?family=Rambla&display=swap" rel="stylesheet" />
-          {/* Fuentes del rediseño: Fraunces (titulares) + Source Sans 3 (cuerpo) */}
-          <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;1,400&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet" />
+          <link rel="preload" href="/fonts/source-sans-3-400.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+          <link rel="preload" href="/fonts/source-sans-3-600.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+          <link rel="preload" href="/fonts/fraunces-600.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         </Head>
         <body>
           <Main />

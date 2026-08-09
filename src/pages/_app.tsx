@@ -10,6 +10,9 @@ import { MuiTheme, StyledTheme } from '../store/context/StylesContext/Theme';
 import createEmotionCache from '../utils/createEmotionCache';
 import { Meta } from '../components';
 import '../i18n';
+// Self-hosted @font-face rules (replaces Google Fonts links). Next Pages Router
+// only allows global CSS imports from _app.tsx.
+import '../styles/fonts.css';
 
 const clientSideEmotionCache = createEmotionCache();
 
