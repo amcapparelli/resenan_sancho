@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import Image from 'next/image';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { Reviewer } from '../../interfaces/reviewer';
+import { isOptimizedImageHost } from '../../utils/imageHost';
 import {
   BlogIcon,
   YoutubeIcon,
@@ -62,18 +64,27 @@ const Header = styled.div`
   margin-bottom: 14px;
 `;
 
-const AvatarImage = styled.img`
-  width: 52px;
-  height: 52px;
+const AVATAR_SIZE = 52;
+
+/* Fixed-size relative frame so next/image `fill` has a positioned box to fill.
+   Border + rounding live here; the image inside just crops via object-fit. */
+const AvatarFrame = styled.div`
+  position: relative;
+  width: ${AVATAR_SIZE}px;
+  height: ${AVATAR_SIZE}px;
   border-radius: 50%;
   border: 2px solid ${({ theme }) => theme.lightBorder};
   flex-shrink: 0;
+  overflow: hidden;
+`;
+
+const AvatarImage = styled(Image)`
   object-fit: cover;
 `;
 
 const AvatarInitials = styled.div`
-  width: 52px;
-  height: 52px;
+  width: ${AVATAR_SIZE}px;
+  height: ${AVATAR_SIZE}px;
   border-radius: 50%;
   border: 2px solid ${({ theme }) => theme.lightBorder};
   flex-shrink: 0;
@@ -231,14 +242,19 @@ interface AvatarProps {
 const Avatar: React.FC<AvatarProps> = ({ avatar, name, lastName }) => {
   const fullName = `${name ?? ''} ${lastName ?? ''}`.trim();
 
-  if (avatar) {
+  // Trim guards against whitespace-only legacy values ("  ") that would render
+  // a broken next/image instead of falling back to the initials.
+  if (avatar?.trim()) {
     return (
-      <AvatarImage
-        src={avatar}
-        alt={`Avatar de ${fullName}`}
-        width={52}
-        height={52}
-      />
+      <AvatarFrame>
+        <AvatarImage
+          src={avatar}
+          alt={`Avatar de ${fullName}`}
+          fill
+          sizes={`${AVATAR_SIZE}px`}
+          unoptimized={!isOptimizedImageHost(avatar)}
+        />
+      </AvatarFrame>
     );
   }
 
