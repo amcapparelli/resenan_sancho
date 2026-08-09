@@ -4,6 +4,16 @@ const nextConfig = {
   compiler: {
     styledComponents: true,
   },
+  images: {
+    // Covers & avatars are served from Cloudinary. Keep this in sync with the
+    // allow-list in src/utils/imageHost.ts (isOptimizedImageHost).
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+      },
+    ],
+  },
   i18n: {
     defaultLocale: 'es',
     locales: ['es', 'en'],

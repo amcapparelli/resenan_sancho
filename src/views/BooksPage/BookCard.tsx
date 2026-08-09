@@ -1,10 +1,12 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import styled, { css } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
 import { Book } from '../../interfaces/books';
 import genres from '../../utils/constants/genres';
+import { isOptimizedImageHost } from '../../utils/imageHost';
 
 interface BookCardProps {
   book: Book;
@@ -37,21 +39,21 @@ const Card = styled.article`
   ${reducedMotion}
 `;
 
-/* Takes the top 45% of the square card. flex-shrink: 0 prevents it
-   from collapsing when CardBody content grows. */
+/* Reserves the cover box with a fixed 3/4 aspect-ratio (matching
+   BookCardSkeleton's CoverSkeleton) so the frame's height never depends on the
+   auto-height Card. With next/image `fill` the image is position:absolute and
+   contributes no layout, so this deterministic height is what prevents CLS. */
 const CoverArea = styled.div`
   position: relative;
-  height: 60%;
+  width: 100%;
+  aspect-ratio: 3 / 4;
 `;
 
-/* object-fit: contain shows the full image without cropping;
-   cream background fills any empty space around it. */
-const CoverImage = styled.img`
-  width: 100%;
-  height: 100%;
+/* Cover fills the CoverArea via next/image `fill`; object-fit crops to that
+   box, matching the previous <img> behaviour. */
+const CoverImage = styled(Image)`
   object-fit: cover;
   object-position: center top;
-  display: block;
 `;
 
 // Shown when no cover URL is provided
@@ -218,7 +220,9 @@ const BookCard: React.FC<BookCardProps> = ({ book }) => {
   const { t } = useTranslation();
   const genreName =
     genres.find((g) => g.code === book.genre)?.name;
-  const hasCover = Boolean(book.cover);
+  // Trim guards against whitespace-only legacy values ("  ") that would render
+  // a broken next/image instead of falling back to the placeholder icon.
+  const hasCover = Boolean(book.cover?.trim());
 
   return (
     <Card>
@@ -227,7 +231,10 @@ const BookCard: React.FC<BookCardProps> = ({ book }) => {
           <CoverImage
             src={book.cover}
             alt={`Portada de ${book.title}`}
-            loading="lazy"
+            fill
+            // Grid columns at the BooksPage breakpoints: 1 / 2 / 4 per row.
+            sizes="(min-width: 900px) 25vw, (min-width: 480px) 50vw, 100vw"
+            unoptimized={!isOptimizedImageHost(book.cover)}
           />
         ) : (
           <CoverFallback aria-hidden="true">

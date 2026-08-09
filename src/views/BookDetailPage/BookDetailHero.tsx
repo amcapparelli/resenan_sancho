@@ -1,9 +1,11 @@
 import React from 'react';
+import Image from 'next/image';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
 import { Book } from '../../interfaces/books';
 import genres from '../../utils/constants/genres';
+import { isOptimizedImageHost } from '../../utils/imageHost';
 import BookDetailCTA from './BookDetailCTA';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -99,20 +101,27 @@ const CoverCol = styled.div`
   position: relative;
 `;
 
-const CoverImage = styled.img`
+/* Sizing container for the fill-mode cover image: it owns the aspect-ratio,
+   responsive max-width, centering and rounding that used to live on the <img>.
+   `position: relative` is required by next/image `fill`. */
+const CoverFrame = styled.div`
+  position: relative;
   width: 100%;
   aspect-ratio: 3 / 4;
-  object-fit: cover;
-  object-position: center top;
-  border-radius: 10px;
-  box-shadow: 0 4px 20px rgba(61, 58, 53, 0.18);
-  display: block;
   max-width: 200px;
   margin: 0 auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(61, 58, 53, 0.18);
+  overflow: hidden;
 
   @media (min-width: 600px) {
     max-width: 100%;
   }
+`;
+
+const CoverImage = styled(Image)`
+  object-fit: cover;
+  object-position: center top;
 `;
 
 const CoverFallback = styled.div`
@@ -242,7 +251,9 @@ const BookDetailHero: React.FC<BookDetailHeroProps> = ({
   const { t } = useTranslation();
 
   const genreName = genres.find((g) => g.code === book.genre)?.name;
-  const hasCover = Boolean(book.cover);
+  // Trim guards against whitespace-only legacy values ("  ") that would render
+  // a broken next/image instead of falling back to the placeholder icon.
+  const hasCover = Boolean(book.cover?.trim());
 
   return (
     <Section>
@@ -250,10 +261,19 @@ const BookDetailHero: React.FC<BookDetailHeroProps> = ({
         {/* Left column — cover */}
         <CoverCol>
           {hasCover ? (
-            <CoverImage
-              src={book.cover}
-              alt={`Portada de ${book.title}`}
-            />
+            <CoverFrame>
+              <CoverImage
+                src={book.cover}
+                alt={`Portada de ${book.title}`}
+                fill
+                // LCP element on the detail page: eager-load and preload it.
+                priority
+                // Frame width: 200px at <600px (capped) and 600–899px column,
+                // 240px at >=900px column. Doubled for retina.
+                sizes="(min-width: 900px) 480px, (min-width: 600px) 300px, 200px"
+                unoptimized={!isOptimizedImageHost(book.cover)}
+              />
+            </CoverFrame>
           ) : (
             <CoverFallback aria-label="Sin portada">
               <BookFallbackIcon />

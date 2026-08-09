@@ -81,11 +81,35 @@ describe('BookCard — content', () => {
     ).toBeInTheDocument();
   });
 
-  it('uses the cover image when provided', () => {
+  it('renders the cover with an accessible alt when provided', () => {
     const book = { ...BOOK_FIXTURE, cover: 'https://example.com/cover.jpg' };
     renderCard(book);
-    const img = screen.getByAltText('Portada de El Quijote');
-    expect(img).toHaveAttribute('src', 'https://example.com/cover.jpg');
+    expect(screen.getByAltText('Portada de El Quijote')).toBeInTheDocument();
+  });
+
+  it('keeps the raw src for a non-optimizable host (unoptimized fallback)', () => {
+    // Unknown host (not in images.remotePatterns): the host guard renders an
+    // unoptimized next/image, so the original URL is served as-is rather than
+    // routed through /_next/image (which would throw for that host).
+    const book = { ...BOOK_FIXTURE, cover: 'https://example.com/cover.jpg' };
+    renderCard(book);
+    expect(screen.getByAltText('Portada de El Quijote')).toHaveAttribute(
+      'src',
+      'https://example.com/cover.jpg',
+    );
+  });
+
+  it('serves a Cloudinary cover through the Next image optimizer', () => {
+    // Allow-listed host: next/image rewrites src to /_next/image?url=… and the
+    // encoded original still contains the cloudinary path.
+    const book = {
+      ...BOOK_FIXTURE,
+      cover: 'https://res.cloudinary.com/dnhkw9n4n/image/upload/cover.jpg',
+    };
+    renderCard(book);
+    const src = screen.getByAltText('Portada de El Quijote').getAttribute('src') ?? '';
+    expect(src).toContain('/_next/image');
+    expect(decodeURIComponent(src)).toContain('res.cloudinary.com');
   });
 });
 
