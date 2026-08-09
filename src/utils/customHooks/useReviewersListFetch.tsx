@@ -16,8 +16,14 @@ const initialState: State = {
 
 type Filters = QueryParams;
 
-const useReviewersListFetch = (): [State, Function, boolean] => {
-  const [state, dispatch] = useReducer(reviewersListLoad, initialState);
+/**
+ * List fetch state for /reviewers. When `seedState` is provided (SSR-rendered
+ * data from getServerSideProps) the reducer starts already populated, so the
+ * first paint shows real results with no skeleton flash and the view can skip
+ * the redundant mount fetch. Without a seed it behaves exactly as before.
+ */
+const useReviewersListFetch = (seedState?: State): [State, Function, boolean] => {
+  const [state, dispatch] = useReducer(reviewersListLoad, seedState ?? initialState);
   const [loading, setLoading] = useState(false);
   const listRequest = async (filters: Filters = {}): Promise<void> => {
     const options = {

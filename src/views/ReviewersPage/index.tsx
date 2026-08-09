@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
+import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import {
   useReviewersListFetch,
@@ -7,6 +8,9 @@ import {
 } from '../../utils/customHooks';
 import genresList from '../../utils/constants/genres';
 import formatsList from '../../utils/constants/formats';
+import { genreSlugToCode, genreCodeToSlug } from '../../utils/seo/facets';
+import { ListFacets } from '../../utils/seo/listSeo';
+import { GetReviewersResult } from '../../utils/seo/getReviewers';
 import EmptyState from '../../components/EmptyState';
 import PageHeader from '../../components/PageHeader';
 import SearchFilters from './SearchFilters';
@@ -75,26 +79,104 @@ const EmptyPersonIcon: React.FC = () => (
 // formatsList contains enum values (strings), so this cast is safe
 const FORMATS: string[] = formatsList as unknown as string[];
 
+// ─── SSR seeding helpers ─────────────────────────────────────────────────────
+
+/**
+ * Turns URL facets (public slugs) into the draft/applied filter values the
+ * filter selects expect. The genre select is keyed by the internal DB CODE
+ * (see SearchFilters), so the slug is mapped back to its code here; the format
+ * value is already the DB value. `searchText` is intentionally absent: it's a
+ * client-only filter that never appears in the URL/SSR, so it always starts
+ * empty on a fresh (server-rendered) load.
+ */
+const facetsToFilterValues = (facets?: ListFacets): Record<string, string> => {
+  if (!facets) return {};
+  const values: Record<string, string> = {};
+  const genreCode = facets.genre ? genreSlugToCode(facets.genre) : undefined;
+  if (genreCode) values.genre = genreCode;
+  if (facets.format) values.format = facets.format;
+  return values;
+};
+
+/**
+ * Reverse of facetsToFilterValues for the URL: internal filter values (genre
+ * CODE, format value) → the query params that make up the public URL (genre
+ * SLUG, format value). Param order is fixed (genre, format, page) so the
+ * shallow-routed URL matches the server's canonical ordering.
+ *
+ * `searchText` is deliberately excluded: it's a client-only filter and must
+ * never enter the URL (it would create infinite non-indexable variants), even
+ * though it IS still sent in the client-side fetch below.
+ */
+const buildReviewerListQuery = (
+  values: Record<string, string>,
+  page: number,
+): Record<string, string> => {
+  const query: Record<string, string> = {};
+  const genreSlug = values.genre ? genreCodeToSlug(values.genre) : undefined;
+  if (genreSlug) query.genre = genreSlug;
+  if (values.format) query.format = values.format;
+  if (page > 1) query.page = String(page);
+  return query;
+};
+
+// ─── Props ───────────────────────────────────────────────────────────────────
+
+interface ReviewersPageProps {
+  /** URL-derived facets from SSR. Absent when rendered without server props. */
+  initialFacets?: ListFacets;
+  /** Server-fetched first page so the initial paint shows real data. */
+  initialData?: GetReviewersResult;
+}
+
 // ─── Component ─────────────────────────────────────────────────────────────
 
-const ReviewersPage: React.FC = () => {
+const ReviewersPage: React.FC<ReviewersPageProps> = ({ initialFacets, initialData }) => {
+  const router = useRouter();
+  const hasSsrData = Boolean(initialData);
+
   const {
     draftFilters,
     setDraftFilter,
     appliedFilters,
     applyFilters,
     goToPage,
-  } = useListFilters();
-  const [state, listRequest, loading] = useReviewersListFetch();
+  } = useListFilters(facetsToFilterValues(initialFacets));
+  const [state, listRequest, loading] = useReviewersListFetch(initialData);
   const currentPage = appliedFilters.page;
   const resultsSectionRef = useScrollToTopOnPageChange<HTMLDivElement>(currentPage);
 
+  // Skip the client fetch that would otherwise duplicate the SSR fetch on first
+  // paint. Only the mount run is skipped; every later `appliedFilters` change
+  // (filter apply, pagination) still fetches. When there is no SSR data (e.g.
+  // the standalone unit test), fetch on mount as before.
+  const didMount = useRef(false);
+
   // The applied filters are the only trigger for a request: pressing "Filtrar"
   // or changing page produces a new object here and this effect fetches once.
-  // `listRequest` is intentionally out of the deps — the hook returns a new
-  // function on every render, so including it would fetch in a loop.
+  // `listRequest`/`router` are intentionally out of the deps — including a
+  // value that changes every render would fetch in a loop.
   useEffect(() => {
+    if (!didMount.current) {
+      didMount.current = true;
+      // With SSR data already in state, don't refetch the identical first page.
+      // searchText always starts empty on a server-rendered load, so the SSR
+      // result and the equivalent client fetch would be identical anyway.
+      if (hasSsrData) return;
+    }
+
+    // The client fetch DOES include searchText (it filters results), but the
+    // URL sync below does NOT — searchText stays out of the indexable surface.
     listRequest({ ...appliedFilters.values, page: appliedFilters.page });
+
+    // Reflect the applied facets in the URL (public slugs, deterministic order)
+    // without re-running getServerSideProps. Shallow keeps the SSR data path for
+    // real navigations/crawlers while the SPA handles in-page filtering.
+    const listQuery = buildReviewerListQuery(appliedFilters.values, appliedFilters.page);
+    router.push({ pathname: '/reviewers', query: listQuery }, undefined, {
+      shallow: true,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [appliedFilters]);
 
   const isEmpty = !loading && state.reviewers.length === 0;

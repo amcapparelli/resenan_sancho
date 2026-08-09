@@ -29,6 +29,21 @@ jest.mock('react-i18next', () => ({
   }),
 }));
 
+// next/router: the view syncs applied facets into the URL via
+// `router.push(..., { shallow: true })`. Without a mounted router `useRouter`
+// throws "NextRouter was not mounted", so supply a router shape with a `push`
+// spy — same precedent as BooksPage. The spy is hoisted (jest allows
+// out-of-scope refs prefixed with `mock`) so tests can assert the URL-sync
+// contract; it's reset per test in `beforeEach`.
+const mockRouterPush = jest.fn();
+jest.mock('next/router', () => ({
+  useRouter: () => ({
+    pathname: '/reviewers',
+    query: {},
+    push: mockRouterPush,
+  }),
+}));
+
 // ─── Fetch mock helpers ─────────────────────────────────────────────────────
 
 /** Shape returned by the real /reviewers endpoint. Empty `reviewers` keeps
@@ -97,10 +112,37 @@ describe('ReviewersPage — fetch/filter contract', () => {
 
     await waitFor(() => expect(fetchSpy).toHaveBeenCalledTimes(1));
 
+    // Type a free-text search alongside the genre pick: searchText must reach
+    // the client fetch but must NOT reach the pushed URL (client-only filter).
+    await user.type(
+      screen.getByLabelText(/buscar por nombre o descripción/i),
+      'María',
+    );
     await user.selectOptions(screen.getByLabelText(/género literario/i), 'ADV');
+
+    // Isolate the push caused by the click from the mount push so the
+    // "once per applied change" contract is asserted cleanly.
+    mockRouterPush.mockClear();
     await user.click(screen.getByRole('button', { name: /filtrar reseñadores/i }));
 
     await waitFor(() => expect(fetchSpy).toHaveBeenCalledTimes(2));
+
+    // The client fetch DOES carry searchText (it filters results).
+    const lastCallUrl = fetchSpy.mock.calls[fetchSpy.mock.calls.length - 1][0] as string;
+    const fetchParams = new URL(lastCallUrl).searchParams;
+    expect(fetchParams.get('searchText')).toBe('María');
+
+    // URL-sync contract: applying facets shallow-routes exactly once with the
+    // public query — genre CODE (ADV) mapped to its SLUG (aventura), page 1
+    // dropped, and searchText deliberately absent from the indexable URL.
+    expect(mockRouterPush).toHaveBeenCalledTimes(1);
+    expect(mockRouterPush).toHaveBeenCalledWith(
+      { pathname: '/reviewers', query: { genre: 'aventura' } },
+      undefined,
+      { shallow: true },
+    );
+    const pushedQuery = mockRouterPush.mock.calls[0][0].query;
+    expect(pushedQuery).not.toHaveProperty('searchText');
   });
 
   it('resets to page 1 when filtering from a later page, and highlights page 1 again', async () => {
