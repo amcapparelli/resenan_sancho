@@ -80,3 +80,27 @@ export const buildReviewerListPath = (facets: ListFacets): string => {
 
   return params.length > 0 ? `/reviewers?${params.join('&')}` : '/reviewers';
 };
+
+/**
+ * Canonical landing path for the genre facet: `/resenadores/genero/<genre>`
+ * (phase S6b). Genre is promoted to a crawlable PATH segment; the format facet
+ * and pagination stay in the query with the SAME deterministic order as
+ * buildReviewerListPath (format, then page). Page 1 is never emitted.
+ *
+ * This is the single source of truth for the reviewer genre landing URL shape:
+ * the landing route (self-canonical), the /reviewers legacy redirect, and the
+ * sitemap all reuse it, so the path format is defined once. A genre is ALWAYS
+ * required here — this is the genre landing path — so callers must pass a
+ * non-null `facets.genre`.
+ *
+ * Note: a genre landing carrying a `format` facet is noindex,follow (see
+ * computeReviewerListIndexing), but the path is still self-canonical to itself.
+ */
+export const buildReviewerGenrePath = (facets: ListFacets): string => {
+  const params: string[] = [];
+  if (facets.format) params.push(`format=${facets.format}`);
+  if (facets.page > 1) params.push(`page=${facets.page}`);
+
+  const base = `/resenadores/genero/${facets.genre}`;
+  return params.length > 0 ? `${base}?${params.join('&')}` : base;
+};

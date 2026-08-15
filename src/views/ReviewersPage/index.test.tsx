@@ -19,6 +19,8 @@ import userEvent from '@testing-library/user-event';
 import { ThemeProvider } from 'styled-components';
 
 import { StyledTheme } from '../../store/context/StylesContext/Theme';
+import { ListFacets } from '../../utils/seo/listSeo';
+import { GetReviewersResult } from '../../utils/seo/getReviewers';
 import ReviewersPage from './index';
 
 // react-i18next: return the last segment of the key as a plain string, same
@@ -29,12 +31,14 @@ jest.mock('react-i18next', () => ({
   }),
 }));
 
-// next/router: the view syncs applied facets into the URL via
-// `router.push(..., { shallow: true })`. Without a mounted router `useRouter`
-// throws "NextRouter was not mounted", so supply a router shape with a `push`
-// spy — same precedent as BooksPage. The spy is hoisted (jest allows
-// out-of-scope refs prefixed with `mock`) so tests can assert the URL-sync
-// contract; it's reset per test in `beforeEach`.
+// next/router: the view syncs applied facets into the URL via `router.push`.
+// Without a mounted router `useRouter` throws "NextRouter was not mounted", so
+// supply a router shape with a `push` spy — same precedent as BooksPage.
+// The view no longer keys shallow-vs-navigate off `router.pathname` (it compares
+// the target genre slug against the SSR facets instead), so `pathname` here is
+// informational only. The spy is hoisted (jest allows out-of-scope refs prefixed
+// with `mock`) so tests can assert the URL-sync contract; it's reset per test in
+// `beforeEach`.
 const mockRouterPush = jest.fn();
 jest.mock('next/router', () => ({
   useRouter: () => ({
@@ -64,12 +68,24 @@ function mockFetch(totalPages = 10) {
   return fetchMock;
 }
 
-function renderPage() {
+interface RenderPageProps {
+  initialFacets?: ListFacets;
+  initialData?: GetReviewersResult;
+}
+
+function renderPage(props: RenderPageProps = {}) {
   return render(
     <ThemeProvider theme={StyledTheme}>
-      <ReviewersPage />
+      <ReviewersPage {...props} />
     </ThemeProvider>,
   );
+}
+
+/** SSR seed for a landing surface: mirrors what getServerSideProps feeds in. */
+function ssrResult(totalPages = 10): GetReviewersResult {
+  return {
+    ok: true, reviewers: [], totalElements: 0, totalPages,
+  };
 }
 
 beforeEach(() => {
@@ -103,22 +119,24 @@ describe('ReviewersPage — fetch/filter contract', () => {
     expect(fetchSpy).toHaveBeenCalledTimes(1);
   });
 
-  it('fetches exactly one additional request when pressing "Filtrar" while already on page 1', async () => {
+  it('fetches exactly one additional request when applying a (non-genre) filter while already on page 1', async () => {
     // REGRESSION: same case that catches the narrowed-dep mutation on
-    // BooksPage — see that file's fail-first proof.
+    // BooksPage — see that file's fail-first proof. A format-only filter keeps
+    // us on /reviewers, so this stays the SHALLOW, client-fetch path (a genre
+    // filter is a real navigation — see the next test).
     const fetchSpy = mockFetch();
     const user = userEvent.setup();
     renderPage();
 
     await waitFor(() => expect(fetchSpy).toHaveBeenCalledTimes(1));
 
-    // Type a free-text search alongside the genre pick: searchText must reach
+    // Type a free-text search alongside the format pick: searchText must reach
     // the client fetch but must NOT reach the pushed URL (client-only filter).
     await user.type(
       screen.getByLabelText(/buscar por nombre o descripción/i),
       'María',
     );
-    await user.selectOptions(screen.getByLabelText(/género literario/i), 'ADV');
+    await user.selectOptions(screen.getByLabelText(/formato del libro/i), 'papel');
 
     // Isolate the push caused by the click from the mount push so the
     // "once per applied change" contract is asserted cleanly.
@@ -132,12 +150,98 @@ describe('ReviewersPage — fetch/filter contract', () => {
     const fetchParams = new URL(lastCallUrl).searchParams;
     expect(fetchParams.get('searchText')).toBe('María');
 
-    // URL-sync contract: applying facets shallow-routes exactly once with the
-    // public query — genre CODE (ADV) mapped to its SLUG (aventura), page 1
-    // dropped, and searchText deliberately absent from the indexable URL.
+    // URL-sync contract: a no-genre filter shallow-routes exactly once with the
+    // public query — format kept, page 1 dropped, pathname /reviewers, and
+    // searchText deliberately absent from the indexable URL.
     expect(mockRouterPush).toHaveBeenCalledTimes(1);
     expect(mockRouterPush).toHaveBeenCalledWith(
-      { pathname: '/reviewers', query: { genre: 'aventura' } },
+      { pathname: '/reviewers', query: { format: 'papel' } },
+      undefined,
+      { shallow: true },
+    );
+    const pushedQuery = mockRouterPush.mock.calls[0][0].query;
+    expect(pushedQuery).not.toHaveProperty('searchText');
+  });
+
+  it('navigates to the genre landing path (real navigation, no client refetch) when a genre is applied', async () => {
+    // Phase S6b: genre is a PATH facet. Applying one must be a REAL navigation to
+    // /resenadores/genero/[slug] (NOT shallow) so the landing route's SSR emits
+    // the right canonical/robots; the client must NOT refetch, because SSR + the
+    // route `key` reseed the remounted view. Contrast with the format test
+    // above, which stays shallow and client-fetches.
+    const fetchSpy = mockFetch();
+    const user = userEvent.setup();
+    renderPage();
+
+    await waitFor(() => expect(fetchSpy).toHaveBeenCalledTimes(1));
+
+    // Type a free-text search alongside the genre pick: even so, searchText must
+    // NOT leak into the pushed URL — genre-select is a real navigation to the
+    // landing page, where searchText (client-only) intentionally starts empty
+    // (Option A). It is not carried across the SSR boundary.
+    await user.type(
+      screen.getByLabelText(/buscar por nombre o descripción/i),
+      'María',
+    );
+    await user.selectOptions(screen.getByLabelText(/género literario/i), 'ADV');
+
+    mockRouterPush.mockClear();
+    await user.click(screen.getByRole('button', { name: /filtrar reseñadores/i }));
+
+    // Real navigation: one push to the landing path, no shallow option, genre
+    // CODE (ADV) mapped to its SLUG (aventura) in the [slug] segment.
+    await waitFor(() => expect(mockRouterPush).toHaveBeenCalledTimes(1));
+    expect(mockRouterPush).toHaveBeenCalledWith({
+      pathname: '/resenadores/genero/[slug]',
+      query: { slug: 'aventura' },
+    });
+
+    // searchText stays out of the emitted target entirely (URL/path only).
+    const pushedQuery = mockRouterPush.mock.calls[0][0].query;
+    expect(pushedQuery).not.toHaveProperty('searchText');
+
+    // No extra client fetch beyond the mount one — SSR owns the landing data.
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps a searchText-only change on the same genre landing SHALLOW (client fetch carries searchText, URL does not)', async () => {
+    // REGRESSION (S6b): on a genre landing (/resenadores/genero/biografia),
+    // applying a searchText-only change used to be treated as a real navigation
+    // back to the same SSR route, which drops the client-only searchText. The fix
+    // decides shallow by "same genre surface": target genre === current genre
+    // (both 'biografia') ⇒ SHALLOW, so the client fetch runs with searchText and
+    // the shallow push stays on the landing path without leaking searchText.
+    const fetchSpy = mockFetch();
+    const user = userEvent.setup();
+    // Seed the landing surface: initialFacets.genre is the current slug, and
+    // initialData makes the mount skip its fetch (as SSR does on a real landing).
+    renderPage({
+      initialFacets: { genre: 'biografia', format: null, page: 1 },
+      initialData: ssrResult(),
+    });
+
+    // The mount fetch is skipped because SSR data is present.
+    expect(fetchSpy).not.toHaveBeenCalled();
+
+    await user.type(
+      screen.getByLabelText(/buscar por nombre o descripción/i),
+      'María',
+    );
+
+    mockRouterPush.mockClear();
+    await user.click(screen.getByRole('button', { name: /filtrar reseñadores/i }));
+
+    // Shallow path: exactly one client fetch, carrying searchText.
+    await waitFor(() => expect(fetchSpy).toHaveBeenCalledTimes(1));
+    const lastCallUrl = fetchSpy.mock.calls[fetchSpy.mock.calls.length - 1][0] as string;
+    const fetchParams = new URL(lastCallUrl).searchParams;
+    expect(fetchParams.get('searchText')).toBe('María');
+
+    // URL-sync contract: one shallow push that stays on the landing path with the
+    // same genre slug, and searchText stays out of the indexable URL.
+    expect(mockRouterPush).toHaveBeenCalledTimes(1);
+    expect(mockRouterPush).toHaveBeenCalledWith(
+      { pathname: '/resenadores/genero/[slug]', query: { slug: 'biografia' } },
       undefined,
       { shallow: true },
     );

@@ -132,9 +132,10 @@ const buildSitemap = (dynamic: DynamicUrls): string => {
   // Genre is a PATH landing (phase S6); format stays a query facet on /books.
   const genreUrls = dynamic.genreSlugs.map((slug) => toUrl(`/libros/genero/${slug}`));
   const formatUrls = dynamic.formatValues.map((value) => toUrl(`/books?format=${value}`));
-  // Genre-only reviewer facets (the sole indexable reviewer URL set).
+  // Genre-only reviewer facets (the sole indexable reviewer URL set). Genre is a
+  // PATH landing (phase S6b): /resenadores/genero/<slug>.
   const reviewerGenreUrls = dynamic.reviewerGenreSlugs
-    .map((slug) => toUrl(`/reviewers?genre=${slug}`));
+    .map((slug) => toUrl(`/resenadores/genero/${slug}`));
 
   const urls = [
     ...staticUrls,
