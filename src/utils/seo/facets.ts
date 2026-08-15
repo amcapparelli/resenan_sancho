@@ -1,8 +1,9 @@
 /**
  * Single source of truth for the public, indexable listing facets.
  *
- * The listing URLs (/books?genre=<slug>&format=<value>) are part of the SEO
- * surface, so the slugs are STABLE public identifiers and must never drift.
+ * The listing URLs (the /libros/genero/<slug> genre landing and the
+ * /books?format=<value> format facet) are part of the SEO surface, so the slugs
+ * are STABLE public identifiers and must never drift.
  * They are decoupled from the internal genre `code` the API/DB uses (ADV, ROM…)
  * and from the i18n keys used elsewhere in the UI: a URL slug is ASCII,
  * accent-free and human-readable, whereas the code is an opaque DB value.

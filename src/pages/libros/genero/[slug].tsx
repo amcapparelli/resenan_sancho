@@ -1,29 +1,28 @@
 import React from 'react';
 import { GetServerSideProps } from 'next';
-import BooksPage from '../views/BooksPage';
-import { PublicZoneLayout } from '../components/Layouts';
-import { Seo } from '../components';
-import { getBooks, GetBooksResult } from '../utils/seo/getBooks';
-import { isValidGenreSlug, isValidFormatSlug } from '../utils/seo/facets';
+import BooksPage from '../../../views/BooksPage';
+import { PublicZoneLayout } from '../../../components/Layouts';
+import { Seo } from '../../../components';
+import { getBooks, GetBooksResult } from '../../../utils/seo/getBooks';
+import { isValidGenreSlug, isValidFormatSlug } from '../../../utils/seo/facets';
 import {
   ListFacets,
   computeListIndexing,
   buildListTitle,
   buildListDescription,
-  buildListPath,
   buildGenrePath,
-} from '../utils/seo/listSeo';
+} from '../../../utils/seo/listSeo';
 
-interface BooksRouteProps {
+interface GenreLandingProps {
   facets: ListFacets;
   initialData: GetBooksResult;
 }
 
-/** Reads a possibly-array query value as a single string (Next repeats keys). */
+/** Reads a possibly-array route/query value as a single string (Next repeats keys). */
 const firstValue = (value: string | string[] | undefined): string | undefined =>
   (Array.isArray(value) ? value[0] : value);
 
-const Books: React.FC<BooksRouteProps> = ({ facets, initialData }): JSX.Element => {
+const GenreLanding: React.FC<GenreLandingProps> = ({ facets, initialData }): JSX.Element => {
   const { indexable } = computeListIndexing(facets, initialData.totalElements);
 
   // A fetch failure must never emit a cacheable `noindex` (it would drop an
@@ -38,70 +37,61 @@ const Books: React.FC<BooksRouteProps> = ({ facets, initialData }): JSX.Element 
         title={buildListTitle(facets)}
         description={buildListDescription(facets)}
         // Self-canonical: the canonical always points at this same normalized
-        // URL (incl. any page param) so paginated/faceted variants don't fold
-        // into the bare /books.
-        path={buildListPath(facets)}
+        // landing path (incl. any format/page) so faceted variants don't fold
+        // into a different URL. Genre-only + results → indexable; genre+format
+        // or empty → noindex,follow (decided by computeListIndexing).
+        path={buildGenrePath(facets)}
         noindex={robotsNoindex}
         follow={robotsNoindex}
       />
       <PublicZoneLayout>
-        <BooksPage initialFacets={facets} initialData={initialData} />
+        {/*
+          Key on the full facet signature (genre, format, page). Every applied
+          filter/page change on this landing route is a real navigation that
+          re-runs SSR on the same [slug] route WITHOUT unmounting the view. The
+          changing key forces a remount, which reseeds the list reducer from the
+          fresh SSR initialData and resets the mount-skip guard — so the new
+          results render immediately with no client double-fetch, whether the
+          user switched genre (fantasia → terror), added a format, or paged.
+        */}
+        <BooksPage
+          key={`${facets.genre ?? 'all'}|${facets.format ?? ''}|${facets.page}`}
+          initialFacets={facets}
+          initialData={initialData}
+        />
       </PublicZoneLayout>
     </>
   );
 };
 
-export const getServerSideProps: GetServerSideProps<BooksRouteProps> = async ({
+export const getServerSideProps: GetServerSideProps<GenreLandingProps> = async ({
+  params,
   query,
   res,
 }) => {
-  // Permanently redirect the legacy /books?book=<id> detail URL to the
-  // dedicated server-rendered /books/<id> route (phase S3).
-  if (query.book) {
-    return {
-      redirect: {
-        destination: `/books/${firstValue(query.book)}`,
-        permanent: true,
-      },
-    };
-  }
+  const slug = firstValue(params?.slug);
 
-  const genreSlug = firstValue(query.genre);
-  const formatSlug = firstValue(query.format);
-  const rawPage = firstValue(query.page);
-
-  // Unknown facet slug → 404. We never serve a listing for a slug that isn't in
+  // Unknown genre slug → 404. We never serve a landing for a slug that isn't in
   // the approved map: it would be a thin, uncrawlable dead-end.
-  if (genreSlug && !isValidGenreSlug(genreSlug)) return { notFound: true };
+  if (!slug || !isValidGenreSlug(slug)) return { notFound: true };
+
+  const formatSlug = firstValue(query.format);
+  // A format is optional here, but if present it must be a known value —
+  // otherwise the landing would 200 on garbage. 404 mirrors the /books route.
   if (formatSlug && !isValidFormatSlug(formatSlug)) return { notFound: true };
 
-  const genre = genreSlug ?? null;
   const format = formatSlug ?? null;
+  const rawPage = firstValue(query.page);
 
   // Normalize page: only a positive integer > 1 survives in the URL. Any other
   // present `page` value (1, 0, negatives, non-numeric) 301-redirects to the
-  // clean path so a single URL owns the first page and the canonical stays
-  // consistent with the address bar.
+  // clean landing path (dropping `page`, KEEPING `format`) so a single URL owns
+  // the first page and the canonical stays consistent with the address bar.
   const parsedPage = rawPage ? Number.parseInt(rawPage, 10) : 1;
   const page = Number.isInteger(parsedPage) && parsedPage > 1 ? parsedPage : 1;
 
-  // Genre is now a PATH facet (phase S6): permanently redirect any legacy/
-  // external `?genre=<slug>` link to the dedicated /libros/genero/<slug> landing.
-  // Invalid genre slugs already 404'd above; here the slug is known-valid. The
-  // path-irrelevant params ride along — `format` (if present, already validated)
-  // and `page` (only when > 1) — dropping `genre` (now in the path) and page=1.
-  // buildGenrePath is the single source for the destination's param order.
-  if (genre) {
-    return {
-      redirect: {
-        destination: buildGenrePath({ genre, format, page }),
-        permanent: true,
-      },
-    };
-  }
-
   if (rawPage !== undefined && page === 1) {
-    const cleanPath = buildListPath({ genre, format, page: 1 });
+    const cleanPath = buildGenrePath({ genre: slug, format, page: 1 });
     return {
       redirect: {
         destination: cleanPath,
@@ -111,7 +101,7 @@ export const getServerSideProps: GetServerSideProps<BooksRouteProps> = async ({
   }
 
   const initialData = await getBooks({
-    genre: genre ?? undefined,
+    genre: slug,
     format: format ?? undefined,
     page,
   });
@@ -125,7 +115,7 @@ export const getServerSideProps: GetServerSideProps<BooksRouteProps> = async ({
     res.setHeader('Cache-Control', 'no-store');
     return {
       props: {
-        facets: { genre, format, page },
+        facets: { genre: slug, format, page },
         initialData,
       },
     };
@@ -137,10 +127,10 @@ export const getServerSideProps: GetServerSideProps<BooksRouteProps> = async ({
 
   return {
     props: {
-      facets: { genre, format, page },
+      facets: { genre: slug, format, page },
       initialData,
     },
   };
 };
 
-export default Books;
+export default GenreLanding;

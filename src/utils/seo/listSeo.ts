@@ -88,3 +88,23 @@ export const buildListPath = (facets: ListFacets): string => {
 
   return params.length > 0 ? `/books?${params.join('&')}` : '/books';
 };
+
+/**
+ * Canonical landing path for the genre facet: `/libros/genero/<genre>` (phase
+ * S6). Genre is promoted to a crawlable PATH segment; the format facet and
+ * pagination stay in the query with the SAME deterministic order as
+ * buildListPath (format, then page). Page 1 is never emitted.
+ *
+ * This is the single source of truth for the genre landing URL shape: the route
+ * itself (self-canonical), the sitemap, and the /books legacy redirect all reuse
+ * it, so the path format is defined once. A genre is ALWAYS required here — this
+ * is the genre landing path — so callers must pass a non-null `facets.genre`.
+ */
+export const buildGenrePath = (facets: ListFacets): string => {
+  const params: string[] = [];
+  if (facets.format) params.push(`format=${facets.format}`);
+  if (facets.page > 1) params.push(`page=${facets.page}`);
+
+  const base = `/libros/genero/${facets.genre}`;
+  return params.length > 0 ? `${base}?${params.join('&')}` : base;
+};

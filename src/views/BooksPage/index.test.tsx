@@ -38,12 +38,14 @@ jest.mock('react-i18next', () => ({
   }),
 }));
 
-// next/router: the view syncs applied facets into the URL via
-// `router.push(..., { shallow: true })`. Without a mounted router `useRouter`
-// throws "NextRouter was not mounted", so supply a router shape with a `push`
-// spy — same precedent as BookDetailCTA/MyBooksSection. The spy is hoisted
-// (jest allows out-of-scope refs prefixed with `mock`) so tests can assert the
-// URL-sync contract; it's reset per test in `beforeEach`.
+// next/router: the view syncs applied facets into the URL via `router.push`.
+// Without a mounted router `useRouter` throws "NextRouter was not mounted", so
+// supply a router shape with a `push` spy — same precedent as
+// BookDetailCTA/MyBooksSection. `pathname` is '/books' here so no-genre filters
+// stay shallow (the genre → /libros/genero path is a REAL navigation, covered by
+// the genre test below). The spy is hoisted (jest allows out-of-scope refs
+// prefixed with `mock`) so tests can assert the URL-sync contract; it's reset
+// per test in `beforeEach`.
 const mockRouterPush = jest.fn();
 jest.mock('next/router', () => ({
   useRouter: () => ({
@@ -113,19 +115,23 @@ describe('BooksPage — fetch/filter contract', () => {
     expect(fetchSpy).toHaveBeenCalledTimes(1);
   });
 
-  it('fetches exactly one additional request when pressing "Filtrar" while already on page 1', async () => {
+  it('fetches exactly one additional request when applying a (non-genre) filter while already on page 1', async () => {
     // REGRESSION: this is the case the reviewer's mutation breaks. Narrowing
     // the view's effect dependency to `appliedFilters.page` means a fresh
     // `appliedFilters` object with the SAME page number no longer triggers a
     // refetch, because `page` itself didn't change — reproducing the exact
     // original bug (pressing "Filtrar" on page 1 does nothing).
+    //
+    // A format-only filter keeps us on /books, so this stays the SHALLOW,
+    // client-fetch path (a genre filter is a real navigation — see the next
+    // test — and would not refetch here).
     const fetchSpy = mockFetch();
     const user = userEvent.setup();
     renderPage();
 
     await waitFor(() => expect(fetchSpy).toHaveBeenCalledTimes(1));
 
-    await user.selectOptions(screen.getByLabelText(/género literario/i), 'ADV');
+    await user.selectOptions(screen.getByLabelText(/formato del libro/i), 'papel');
 
     // Applying resets the URL-sync spy count to isolate the push caused by the
     // click from the mount push, so the "once per applied change" contract is
@@ -135,15 +141,43 @@ describe('BooksPage — fetch/filter contract', () => {
 
     await waitFor(() => expect(fetchSpy).toHaveBeenCalledTimes(2));
 
-    // URL-sync contract: applying facets shallow-routes exactly once with the
-    // public query — genre CODE (ADV) mapped to its SLUG (aventura), page 1
-    // dropped from the URL.
+    // URL-sync contract: a no-genre filter shallow-routes exactly once with the
+    // public query — format kept, page 1 dropped from the URL, pathname /books.
     expect(mockRouterPush).toHaveBeenCalledTimes(1);
     expect(mockRouterPush).toHaveBeenCalledWith(
-      { pathname: '/books', query: { genre: 'aventura' } },
+      { pathname: '/books', query: { format: 'papel' } },
       undefined,
       { shallow: true },
     );
+  });
+
+  it('navigates to the genre landing path (real navigation, no client refetch) when a genre is applied', async () => {
+    // Phase S6: genre is a PATH facet. Applying one must be a REAL navigation to
+    // /libros/genero/[slug] (NOT shallow) so the landing route's SSR emits the
+    // right canonical/robots; the client must NOT refetch, because SSR + the
+    // route `key` reseed the remounted view. Contrast with the format test
+    // above, which stays shallow and client-fetches.
+    const fetchSpy = mockFetch();
+    const user = userEvent.setup();
+    renderPage();
+
+    await waitFor(() => expect(fetchSpy).toHaveBeenCalledTimes(1));
+
+    await user.selectOptions(screen.getByLabelText(/género literario/i), 'ADV');
+
+    mockRouterPush.mockClear();
+    await user.click(screen.getByRole('button', { name: /filtrar libros/i }));
+
+    // Real navigation: one push to the landing path, no shallow option, genre
+    // CODE (ADV) mapped to its SLUG (aventura) in the [slug] segment.
+    await waitFor(() => expect(mockRouterPush).toHaveBeenCalledTimes(1));
+    expect(mockRouterPush).toHaveBeenCalledWith({
+      pathname: '/libros/genero/[slug]',
+      query: { slug: 'aventura' },
+    });
+
+    // No extra client fetch beyond the mount one — SSR owns the landing data.
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
   });
 
   it('resets to page 1 when filtering from a later page, and highlights page 1 again', async () => {
