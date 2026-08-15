@@ -1,29 +1,28 @@
 import React from 'react';
 import { GetServerSideProps } from 'next';
-import ReviewersPage from '../views/ReviewersPage';
-import { PublicZoneLayout } from '../components/Layouts';
-import { Seo } from '../components';
-import { getReviewers, GetReviewersResult } from '../utils/seo/getReviewers';
-import { isValidGenreSlug, isValidFormatSlug } from '../utils/seo/facets';
-import { ListFacets } from '../utils/seo/listSeo';
+import ReviewersPage from '../../../views/ReviewersPage';
+import { PublicZoneLayout } from '../../../components/Layouts';
+import { Seo } from '../../../components';
+import { getReviewers, GetReviewersResult } from '../../../utils/seo/getReviewers';
+import { isValidGenreSlug, isValidFormatSlug } from '../../../utils/seo/facets';
+import { ListFacets } from '../../../utils/seo/listSeo';
 import {
   computeReviewerListIndexing,
   buildReviewerListTitle,
   buildReviewerListDescription,
-  buildReviewerListPath,
   buildReviewerGenrePath,
-} from '../utils/seo/reviewerListSeo';
+} from '../../../utils/seo/reviewerListSeo';
 
-interface ReviewersRouteProps {
+interface GenreLandingProps {
   facets: ListFacets;
   initialData: GetReviewersResult;
 }
 
-/** Reads a possibly-array query value as a single string (Next repeats keys). */
+/** Reads a possibly-array route/query value as a single string (Next repeats keys). */
 const firstValue = (value: string | string[] | undefined): string | undefined =>
   (Array.isArray(value) ? value[0] : value);
 
-const Reviewers: React.FC<ReviewersRouteProps> = ({ facets, initialData }): JSX.Element => {
+const GenreLanding: React.FC<GenreLandingProps> = ({ facets, initialData }): JSX.Element => {
   const { indexable } = computeReviewerListIndexing(facets, initialData.totalElements);
 
   // A fetch failure must never emit a cacheable `noindex` (it would drop an
@@ -38,65 +37,62 @@ const Reviewers: React.FC<ReviewersRouteProps> = ({ facets, initialData }): JSX.
         title={buildReviewerListTitle(facets)}
         description={buildReviewerListDescription(facets)}
         // Self-canonical: the canonical always points at this same normalized
-        // URL (incl. any genre/format/page param) so paginated/faceted variants
-        // don't fold into the bare /reviewers.
-        path={buildReviewerListPath(facets)}
+        // landing path (incl. any format/page) so faceted variants don't fold
+        // into a different URL. Genre-only + results → indexable; genre+format
+        // or empty → noindex,follow (decided by computeReviewerListIndexing:
+        // any `format` present ⇒ not indexable).
+        path={buildReviewerGenrePath(facets)}
         noindex={robotsNoindex}
         follow={robotsNoindex}
       />
       <PublicZoneLayout>
-        <ReviewersPage initialFacets={facets} initialData={initialData} />
+        {/*
+          Key on the full facet signature (genre, format, page). Every applied
+          filter/page change on this landing route is a real navigation that
+          re-runs SSR on the same [slug] route WITHOUT unmounting the view. The
+          changing key forces a remount, which reseeds the list reducer from the
+          fresh SSR initialData and resets the mount-skip guard — so the new
+          results render immediately with no client double-fetch, whether the
+          user switched genre (fantasia → terror), added a format, or paged.
+        */}
+        <ReviewersPage
+          key={`${facets.genre ?? 'all'}|${facets.format ?? ''}|${facets.page}`}
+          initialFacets={facets}
+          initialData={initialData}
+        />
       </PublicZoneLayout>
     </>
   );
 };
 
-export const getServerSideProps: GetServerSideProps<ReviewersRouteProps> = async ({
+export const getServerSideProps: GetServerSideProps<GenreLandingProps> = async ({
+  params,
   query,
   res,
 }) => {
-  const genreSlug = firstValue(query.genre);
-  const formatSlug = firstValue(query.format);
-  const rawPage = firstValue(query.page);
+  const slug = firstValue(params?.slug);
 
-  // searchText is intentionally NOT read here: it's a client-only filter that
-  // never enters SSR or the URL (see ReviewersPage). Only genre/format/page
-  // drive the server-rendered, indexable surface.
-
-  // Unknown facet slug → 404. We never serve a listing for a slug that isn't in
+  // Unknown genre slug → 404. We never serve a landing for a slug that isn't in
   // the approved map: it would be a thin, uncrawlable dead-end.
-  if (genreSlug && !isValidGenreSlug(genreSlug)) return { notFound: true };
+  if (!slug || !isValidGenreSlug(slug)) return { notFound: true };
+
+  const formatSlug = firstValue(query.format);
+  // A format is optional here, but if present it must be a known value —
+  // otherwise the landing would 200 on garbage. 404 mirrors the /reviewers route.
   if (formatSlug && !isValidFormatSlug(formatSlug)) return { notFound: true };
 
-  const genre = genreSlug ?? null;
   const format = formatSlug ?? null;
+  const rawPage = firstValue(query.page);
 
   // Normalize page: only a positive integer > 1 survives in the URL. Any other
   // present `page` value (1, 0, negatives, non-numeric) 301-redirects to the
-  // clean path so a single URL owns the first page and the canonical stays
-  // consistent with the address bar.
+  // clean landing path (dropping `page`, KEEPING `format`) so a single URL owns
+  // the first page and the canonical stays consistent with the address bar.
   const parsedPage = rawPage ? Number.parseInt(rawPage, 10) : 1;
   const page = Number.isInteger(parsedPage) && parsedPage > 1 ? parsedPage : 1;
 
-  // Genre is now a PATH facet (phase S6b): permanently redirect any legacy/
-  // external `?genre=<slug>` link to the dedicated /resenadores/genero/<slug>
-  // landing. Invalid genre slugs already 404'd above; here the slug is
-  // known-valid. The path-irrelevant params ride along — `format` (if present,
-  // already validated) and `page` (only when > 1) — dropping `genre` (now in the
-  // path) and page=1. buildReviewerGenrePath is the single source for the
-  // destination's param order. This runs BEFORE the page-1 redirect below, which
-  // now only handles the no-genre / format-only cases.
-  if (genre) {
-    return {
-      redirect: {
-        destination: buildReviewerGenrePath({ genre, format, page }),
-        permanent: true,
-      },
-    };
-  }
-
   if (rawPage !== undefined && page === 1) {
-    const cleanPath = buildReviewerListPath({ genre, format, page: 1 });
+    const cleanPath = buildReviewerGenrePath({ genre: slug, format, page: 1 });
     return {
       redirect: {
         destination: cleanPath,
@@ -106,7 +102,7 @@ export const getServerSideProps: GetServerSideProps<ReviewersRouteProps> = async
   }
 
   const initialData = await getReviewers({
-    genre: genre ?? undefined,
+    genre: slug,
     format: format ?? undefined,
     page,
   });
@@ -120,7 +116,7 @@ export const getServerSideProps: GetServerSideProps<ReviewersRouteProps> = async
     res.setHeader('Cache-Control', 'no-store');
     return {
       props: {
-        facets: { genre, format, page },
+        facets: { genre: slug, format, page },
         initialData,
       },
     };
@@ -132,10 +128,10 @@ export const getServerSideProps: GetServerSideProps<ReviewersRouteProps> = async
 
   return {
     props: {
-      facets: { genre, format, page },
+      facets: { genre: slug, format, page },
       initialData,
     },
   };
 };
 
-export default Reviewers;
+export default GenreLanding;

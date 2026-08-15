@@ -99,25 +99,61 @@ const facetsToFilterValues = (facets?: ListFacets): Record<string, string> => {
 };
 
 /**
- * Reverse of facetsToFilterValues for the URL: internal filter values (genre
- * CODE, format value) → the query params that make up the public URL (genre
- * SLUG, format value). Param order is fixed (genre, format, page) so the
- * shallow-routed URL matches the server's canonical ordering.
+ * Reverse of facetsToFilterValues for the URL, phase S6b path-aware.
  *
- * `searchText` is deliberately excluded: it's a client-only filter and must
- * never enter the URL (it would create infinite non-indexable variants), even
- * though it IS still sent in the client-side fetch below.
+ * Genre is a PATH facet (`/resenadores/genero/<slug>`), format/page stay in the
+ * query. This maps the internal filter values (genre CODE, format value) to a
+ * Next router target and resolves the target's public genre slug so the caller
+ * can decide shallow-vs-navigate by comparing genre "surfaces":
+ *  - With a genre → pathname `/resenadores/genero/[slug]` (Next fills [slug]
+ *    from the query key) and `genreSlug` is the resolved public slug.
+ *  - Without a genre → pathname `/reviewers` with format/page in the query,
+ *    exactly as before, and `genreSlug` is null.
+ *
+ * The caller uses `genreSlug` to pick between two modes (see the effect below):
+ *  - SAME genre surface as the current SSR page ⇒ shallow, client-side filtering.
+ *    This is where ReviewersPage intentionally diverges from BooksPage: reviewers
+ *    have a client-only `searchText` filter, so staying shallow lets a searchText
+ *    change reach the client fetch WITHOUT re-running SSR (which would drop it).
+ *  - DIFFERENT genre surface ⇒ real navigation, so the target route's SSR emits
+ *    the right canonical/robots and `searchText` resets (Option A).
+ *
+ * Query key order is fixed (format, page) to mirror the server's canonical
+ * ordering (buildReviewerGenrePath / buildReviewerListPath).
+ *
+ * `searchText` is deliberately excluded from the target query in BOTH branches:
+ * it's a client-only filter and must never enter the URL/path (it would create
+ * infinite non-indexable variants), even though it IS still sent in the
+ * client-side fetch below.
  */
-const buildReviewerListQuery = (
+interface ReviewerListTarget {
+  href: { pathname: string; query: Record<string, string> };
+  /** Resolved public genre slug of the target, or null when there's no genre. */
+  genreSlug: string | null;
+}
+
+const buildReviewerListTarget = (
   values: Record<string, string>,
   page: number,
-): Record<string, string> => {
-  const query: Record<string, string> = {};
+): ReviewerListTarget => {
   const genreSlug = values.genre ? genreCodeToSlug(values.genre) : undefined;
-  if (genreSlug) query.genre = genreSlug;
+  const query: Record<string, string> = {};
   if (values.format) query.format = values.format;
   if (page > 1) query.page = String(page);
-  return query;
+
+  if (genreSlug) {
+    // The [slug] dynamic segment is supplied via the query object; Next
+    // interpolates it into the pathname and leaves the rest as the query string.
+    return {
+      href: {
+        pathname: '/resenadores/genero/[slug]',
+        query: { slug: genreSlug, ...query },
+      },
+      genreSlug,
+    };
+  }
+
+  return { href: { pathname: '/reviewers', query }, genreSlug: null };
 };
 
 // ─── Props ───────────────────────────────────────────────────────────────────
@@ -134,6 +170,12 @@ interface ReviewersPageProps {
 const ReviewersPage: React.FC<ReviewersPageProps> = ({ initialFacets, initialData }) => {
   const router = useRouter();
   const hasSsrData = Boolean(initialData);
+
+  // The genre surface this page was server-rendered on: the slug on a landing
+  // route (e.g. 'biografia'), or null on /reviewers (where `?genre=` 301s to the
+  // path, so SSR never renders a genre facet in the query). The effect compares
+  // this against the target's genre slug to decide shallow-vs-navigate.
+  const currentGenreSlug = initialFacets?.genre ?? null;
 
   const {
     draftFilters,
@@ -165,6 +207,31 @@ const ReviewersPage: React.FC<ReviewersPageProps> = ({ initialFacets, initialDat
       if (hasSsrData) return;
     }
 
+    const target = buildReviewerListTarget(appliedFilters.values, appliedFilters.page);
+
+    // Shallow when the target stays on the SAME genre surface as the current SSR
+    // page (both null on /reviewers, or the same slug on a landing route). This
+    // is the crux of the reviewers-only divergence from BooksPage: staying
+    // shallow lets a client-only `searchText` change reach the client fetch
+    // without re-running SSR (which never sees searchText and would drop it).
+    //
+    // A DIFFERENT genre surface — selecting a genre, switching between slugs, or
+    // clearing the genre — is a real navigation so the destination route's
+    // getServerSideProps emits the right canonical/robots and (via the route's
+    // `key`) reseeds the list from fresh SSR data. searchText resets there by
+    // design (client-only, never crosses the SSR boundary) — Option A.
+    const isShallow = target.genreSlug === currentGenreSlug;
+
+    if (!isShallow) {
+      // Real navigation: SSR fetches and remounts this view with fresh
+      // initialData, so we must NOT client-fetch here (that would duplicate the
+      // SSR request). The mount-skip guard resets on remount and swallows the
+      // would-be duplicate on the destination. searchText (client-only, never in
+      // the URL) intentionally starts empty on the destination — Option A.
+      router.push(target.href);
+      return;
+    }
+
     // The client fetch DOES include searchText (it filters results), but the
     // URL sync below does NOT — searchText stays out of the indexable surface.
     listRequest({ ...appliedFilters.values, page: appliedFilters.page });
@@ -172,10 +239,7 @@ const ReviewersPage: React.FC<ReviewersPageProps> = ({ initialFacets, initialDat
     // Reflect the applied facets in the URL (public slugs, deterministic order)
     // without re-running getServerSideProps. Shallow keeps the SSR data path for
     // real navigations/crawlers while the SPA handles in-page filtering.
-    const listQuery = buildReviewerListQuery(appliedFilters.values, appliedFilters.page);
-    router.push({ pathname: '/reviewers', query: listQuery }, undefined, {
-      shallow: true,
-    });
+    router.push(target.href, undefined, { shallow: true });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [appliedFilters]);
 
