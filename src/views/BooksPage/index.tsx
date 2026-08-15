@@ -100,21 +100,46 @@ const facetsToFilterValues = (facets?: ListFacets): Record<string, string> => {
 };
 
 /**
- * Reverse of facetsToFilterValues for the URL: internal filter values (genre
- * CODE, format value) → the query params that make up the public, indexable
- * URL (genre SLUG, format value). Param order is fixed (genre, format, page) so
- * the shallow-routed URL matches the server's canonical ordering.
+ * Reverse of facetsToFilterValues for the URL, phase S6 path-aware.
+ *
+ * Genre is a PATH facet (`/libros/genero/<slug>`), format/page stay in the
+ * query. This maps the internal filter values (genre CODE, format value) to a
+ * Next router target and flags whether reaching it crosses a URL boundary:
+ *  - With a genre → pathname `/libros/genero/[slug]` (Next fills [slug] from the
+ *    query key). `crossUrl` is true so the caller navigates for real (non-
+ *    shallow) and the landing route's getServerSideProps emits the right
+ *    canonical/robots for the new genre.
+ *  - Without a genre → pathname `/books` with format/page in the query, exactly
+ *    as before. `crossUrl` is false so in-page filtering stays shallow.
+ *
+ * Query key order is fixed (format, page) to mirror the server's canonical
+ * ordering (buildGenrePath / buildListPath).
  */
-const buildListQuery = (
+interface ListTarget {
+  href: { pathname: string; query: Record<string, string> };
+  /** True when the target is the genre landing route (a different pathname). */
+  crossUrl: boolean;
+}
+
+const buildListTarget = (
   values: Record<string, string>,
   page: number,
-): Record<string, string> => {
-  const query: Record<string, string> = {};
+): ListTarget => {
   const genreSlug = values.genre ? genreCodeToSlug(values.genre) : undefined;
-  if (genreSlug) query.genre = genreSlug;
+  const query: Record<string, string> = {};
   if (values.format) query.format = values.format;
   if (page > 1) query.page = String(page);
-  return query;
+
+  if (genreSlug) {
+    // The [slug] dynamic segment is supplied via the query object; Next
+    // interpolates it into the pathname and leaves the rest as the query string.
+    return {
+      href: { pathname: '/libros/genero/[slug]', query: { slug: genreSlug, ...query } },
+      crossUrl: true,
+    };
+  }
+
+  return { href: { pathname: '/books', query }, crossUrl: false };
 };
 
 // ─── Props ───────────────────────────────────────────────────────────────────
@@ -151,7 +176,7 @@ const BooksPage: React.FC<BooksPageProps> = ({ initialFacets, initialData }) => 
   const didMount = useRef(false);
 
   // The applied filters are the only trigger for a request: pressing "Filtrar"
-  // or changing page produces a new object here and this effect fetches once.
+  // or changing page produces a new object here and this effect reacts once.
   // `listRequest`/`router` are intentionally out of the deps — including a
   // value that changes every render would fetch in a loop.
   useEffect(() => {
@@ -161,15 +186,31 @@ const BooksPage: React.FC<BooksPageProps> = ({ initialFacets, initialData }) => 
       if (hasSsrData) return;
     }
 
+    const target = buildListTarget(appliedFilters.values, appliedFilters.page);
+
+    // Shallow only when we stay put on /books with no genre: same pathname, SPA
+    // in-page filtering, SSR data path preserved for crawlers. Any other outcome
+    // crosses a URL boundary — into a genre landing, between genre slugs, or back
+    // out to /books — where the target's getServerSideProps must run to emit the
+    // right canonical/robots and (via the route's `key`) reseed the list from
+    // fresh SSR data.
+    const isShallow = !target.crossUrl && router.pathname === '/books';
+
+    if (!isShallow) {
+      // Real navigation: SSR fetches and remounts this view with fresh
+      // initialData, so we must NOT client-fetch here (that would duplicate the
+      // SSR request). The mount-skip guard resets on remount and swallows the
+      // would-be duplicate on the destination.
+      router.push(target.href);
+      return;
+    }
+
     listRequest({ ...appliedFilters.values, page: appliedFilters.page });
 
     // Reflect the applied filters in the URL (public slugs, deterministic order)
     // without re-running getServerSideProps. Shallow keeps the SSR data path for
     // real navigations/crawlers while the SPA handles in-page filtering.
-    const listQuery = buildListQuery(appliedFilters.values, appliedFilters.page);
-    router.push({ pathname: '/books', query: listQuery }, undefined, {
-      shallow: true,
-    });
+    router.push(target.href, undefined, { shallow: true });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [appliedFilters]);
 
