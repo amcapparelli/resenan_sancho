@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { Book } from '../../interfaces/books';
 import genres from '../../utils/constants/genres';
 import { isOptimizedImageHost } from '../../utils/imageHost';
+import BookCoverFallback from '../../components/BookCoverFallback';
 
 interface BookCardProps {
   book: Book;
@@ -54,18 +55,6 @@ const CoverArea = styled.div`
 const CoverImage = styled(Image)`
   object-fit: cover;
   object-position: center top;
-`;
-
-// Shown when no cover URL is provided
-const CoverFallback = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: ${({ theme }) => theme.cream};
-  color: ${({ theme }) => theme.terracotta};
-  opacity: 0.3;
 `;
 
 const GenreBadge = styled.span`
@@ -199,23 +188,6 @@ const CTAButton = styled(Link)`
   ${reducedMotion}
 `;
 
-const BookFallbackIcon: React.FC = () => (
-  <svg
-    width="48"
-    height="48"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.5"
-    aria-hidden="true"
-  >
-    <path d="M6 2h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" />
-    <line x1="8" y1="6" x2="16" y2="6" />
-    <line x1="8" y1="10" x2="16" y2="10" />
-    <line x1="8" y1="14" x2="13" y2="14" />
-  </svg>
-);
-
 const BookCard: React.FC<BookCardProps> = ({ book }) => {
   const { t } = useTranslation();
   const genreName =
@@ -237,9 +209,7 @@ const BookCard: React.FC<BookCardProps> = ({ book }) => {
             unoptimized={!isOptimizedImageHost(book.cover)}
           />
         ) : (
-          <CoverFallback aria-hidden="true">
-            <BookFallbackIcon />
-          </CoverFallback>
+          <BookCoverFallback />
         )}
         {genreName && <GenreBadge>{t(`genres.${genreName}`)}</GenreBadge>}
       </CoverArea>

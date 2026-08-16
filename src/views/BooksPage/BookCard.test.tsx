@@ -87,6 +87,16 @@ describe('BookCard — content', () => {
     expect(screen.getByAltText('Portada de El Quijote')).toBeInTheDocument();
   });
 
+  it('renders the placeholder when the book has no cover', () => {
+    // The placeholder now comes from the shared BookCoverFallback: this keeps
+    // /books covering that path after the extraction. It is decorative, so it
+    // must contribute no image and no accessible name.
+    const { container } = renderCard();
+
+    expect(container.querySelector('img')).toBeNull();
+    expect(container.querySelector('[aria-hidden="true"] svg')).toBeInTheDocument();
+  });
+
   it('keeps the raw src for a non-optimizable host (unoptimized fallback)', () => {
     // Unknown host (not in images.remotePatterns): the host guard renders an
     // unoptimized next/image, so the original URL is served as-is rather than

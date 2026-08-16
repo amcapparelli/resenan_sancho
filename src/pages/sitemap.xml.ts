@@ -6,7 +6,9 @@ import { genreCodeToSlug, genreNameToSlug, FORMAT_FACETS } from '../utils/seo/fa
 
 // Public, indexable static routes. Private/auth routes are intentionally
 // excluded (also blocked in robots.txt).
-const STATIC_PATHS = ['/', '/about', '/books', '/reviewers', '/legal'];
+// `/libros/genero` is the genre hub: static like the rest (the per-genre
+// landings it links to are emitted below, only for genres that have books).
+const STATIC_PATHS = ['/', '/about', '/books', '/libros/genero', '/reviewers', '/legal'];
 
 // One wide pull is enough for the current catalogue size (~100s of books). If
 // the API caps the page size below this, we page through totalPages defensively.

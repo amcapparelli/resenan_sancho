@@ -100,6 +100,22 @@ export const genreNameToSlug = (name: string): string | undefined =>
 export const getGenreLabel = (slug: string, locale: Locale = 'es'): string | undefined =>
   genreBySlug.get(slug)?.label[locale];
 
+/**
+ * Same label as `getGenreLabel`, but with the first letter uppercased, for the
+ * places where the genre is shown ON ITS OWN (a card, a link) instead of
+ * interpolated mid-sentence — which is why the labels are stored lowercase.
+ *
+ * The capitalization is done in JS on purpose: CSS `text-transform: capitalize`
+ * uppercases EVERY word, which in Spanish yields wrong titles like "Novela
+ * Histórica" or "Ciencia Ficción", and would leave the DOM text lowercase for
+ * anything reading it (crawlers, assistive tech, copy-paste).
+ */
+export const getGenreDisplayName = (slug: string, locale: Locale = 'es'): string | undefined => {
+  const label = getGenreLabel(slug, locale);
+  if (!label) return undefined;
+  return label.charAt(0).toUpperCase() + label.slice(1);
+};
+
 // ─── Format helpers ──────────────────────────────────────────────────────────
 
 export const isValidFormatSlug = (slug: string): boolean => formatByValue.has(slug);
