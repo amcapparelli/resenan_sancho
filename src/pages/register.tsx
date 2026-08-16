@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styledComponents from 'styled-components';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
@@ -80,7 +81,15 @@ const Register: React.FC = (): JSX.Element => {
       <Seo noindex title="Crea tu cuenta | Reseñan Sancho" description="Regístrate en Reseñan Sancho." path="/register" />
       <StyledForm>
         <Link href="/">
-          <StyledLogo src="/static/logo-web.webp" alt="logo reseñan sancho" />
+          <StyledLogo
+            src="/static/logo-web.webp"
+            alt="logo reseñan sancho"
+            width={1054}
+            height={389}
+            // Logo renders at 25% of a form that is 35% of the viewport, i.e.
+            // ~8.75vw. The hint lets the optimizer pick a small source.
+            sizes="9vw"
+          />
         </Link>
       {fields.map((text) => (
         <TextField
@@ -130,8 +139,11 @@ const Register: React.FC = (): JSX.Element => {
   );
 };
 
-const StyledLogo = styledComponents.img`
+// Fluid logo: width tracks the form container; height:auto keeps the intrinsic
+// 1054x389 aspect ratio (next/image needs one dimension left to auto).
+const StyledLogo = styledComponents(Image)`
   width: 25%;
+  height: auto;
   justify-self: center;
 `;
 

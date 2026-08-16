@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import styledComponents from 'styled-components';
 import NavActions from './NavActions';
@@ -13,7 +14,13 @@ const NavBar = ({ isLoggedIn, userInitials, onLogout }: NavBarProps): JSX.Elemen
   <NavBarWrapper>
     <LogoGroup>
       <Link href="/">
-        <StyledLogo src="/static/logo-web.webp" alt="logo reseñan sancho" />
+        <StyledLogo
+          src="/static/logo-web.webp"
+          alt="logo reseñan sancho"
+          width={1054}
+          height={389}
+          priority
+        />
       </Link>
       <Tagline>Reseñan, Sancho, señal que somos escritores.</Tagline>
     </LogoGroup>
@@ -41,7 +48,10 @@ const LogoGroup = styledComponents.div`
   gap: 6px;
 `;
 
-const StyledLogo = styledComponents.img`
+// next/image requires intrinsic width/height props (1054x389 source). The fixed
+// 48px display height plus width:auto preserves the original rendered size and
+// aspect ratio while letting the optimizer serve a downscaled source.
+const StyledLogo = styledComponents(Image)`
   height: 48px;
   width: auto;
 
