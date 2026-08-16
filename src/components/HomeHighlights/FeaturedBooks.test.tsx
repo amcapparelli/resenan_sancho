@@ -5,6 +5,8 @@ import { ThemeProvider } from 'styled-components';
 import { StyledTheme } from '../../store/context/StylesContext/Theme';
 import FeaturedBooks, { FeaturedBook } from './FeaturedBooks';
 
+const COVER_URL = 'https://res.cloudinary.com/dnhkw9n4n/image/upload/v1776802384/book_covers/v3mvtydp1o64pcycs38w.jpg';
+
 const BOOKS: FeaturedBook[] = [
   {
     id: '684cc507aa5f1100147f757c',
@@ -12,6 +14,7 @@ const BOOKS: FeaturedBook[] = [
     author: 'Eric Marreros',
     genreName: 'Terror',
     copies: 22,
+    cover: COVER_URL,
   },
   {
     id: '6534fd5e9208e90014391987',
@@ -19,6 +22,7 @@ const BOOKS: FeaturedBook[] = [
     author: 'Juanjo Galvez Benavente',
     genreName: 'Novela histórica',
     copies: 1,
+    cover: COVER_URL,
   },
 ];
 
@@ -33,7 +37,7 @@ describe('FeaturedBooks — content', () => {
     renderBlock();
 
     expect(
-      screen.getByRole('heading', { level: 2, name: /libros gratis para reseñar/i }),
+      screen.getByRole('heading', { level: 2, name: /libros disponibles para reseñar/i }),
     ).toBeInTheDocument();
   });
 
@@ -74,6 +78,51 @@ describe('FeaturedBooks — content', () => {
       screen.getByRole('heading', { level: 3, name: 'Bastión, El Conocimiento Poderoso' }),
     ).toBeInTheDocument();
     expect(screen.getByText('22 ejemplares disponibles')).toBeInTheDocument();
+  });
+});
+
+describe('FeaturedBooks — cover', () => {
+  it('renders the cover of each book', () => {
+    const { container } = renderBlock();
+
+    const covers = container.querySelectorAll('img');
+
+    expect(covers).toHaveLength(2);
+    // next/image rewrites the src through the optimizer, so assert on the
+    // Cloudinary asset id rather than on the exact URL.
+    expect(covers[0].getAttribute('src')).toContain('v3mvtydp1o64pcycs38w');
+  });
+
+  it('keeps the raw src for a non-optimizable host (unoptimized fallback)', () => {
+    // Unknown host (not in images.remotePatterns): the host guard renders an
+    // unoptimized next/image, so the original URL is served as-is rather than
+    // routed through /_next/image, which would throw for that host and take the
+    // home down. Same contract as BookCard.
+    const { container } = renderBlock([{ ...BOOKS[0], cover: 'https://example.com/cover.jpg' }]);
+
+    expect(container.querySelector('img')).toHaveAttribute('src', 'https://example.com/cover.jpg');
+  });
+
+  it('marks the cover as decorative', () => {
+    // The title sits inside the same <a>: a descriptive alt would make the link
+    // announce it twice. See the alt="" comment in the component.
+    const { container } = renderBlock();
+
+    expect(container.querySelector('img')).toHaveAttribute('alt', '');
+  });
+
+  it('falls back to the placeholder and keeps the card when there is no cover', () => {
+    const { container } = renderBlock([{ ...BOOKS[0], cover: undefined }]);
+
+    expect(container.querySelectorAll('img')).toHaveLength(0);
+    // The placeholder is the shared decorative book icon.
+    expect(container.querySelector('svg')).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { level: 3, name: 'Bastión, El Conocimiento Poderoso' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: /Bastión/ }),
+    ).toHaveAttribute('href', '/books/684cc507aa5f1100147f757c');
   });
 });
 

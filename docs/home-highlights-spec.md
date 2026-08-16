@@ -39,7 +39,8 @@ desde `getServerSideProps` de home.
       "titulo": "...",
       "autor": "...",
       "genero": "HIF",
-      "ejemplaresDisponibles": 8
+      "ejemplaresDisponibles": 8,
+      "cover": "https://..."
     }
   ],
   "topGenres": [
@@ -168,7 +169,14 @@ responsabilidad de `senior-backend`.
 
 Ordenar por `ejemplaresDisponibles` descendente, limitar a 4, proyectar solo
 los campos necesarios para la card (`titulo`, `autor`, `genero` — código de
-3 letras —, `ejemplaresDisponibles`, `id`). Sin slug ni nombre de género.
+3 letras —, `ejemplaresDisponibles`, `id`, `cover`). Sin slug ni nombre de
+género.
+
+**Nota (actualización posterior al primer despliegue):** el campo `cover`
+ya existe en el modelo de libro y se añadió a esta query — la
+implementación inicial no lo incluía, por lo que las cards de "libros
+destacados" salieron sin portada. Revisar que la ruta ya en producción de
+`getFeaturedBooks()` proyecte también este campo.
 
 ### `getTopGenres()`
 
@@ -186,6 +194,9 @@ slug — eso lo resuelve el frontend.
       `src/data/genres.ts`, antes de pasar props a los componentes.
 - [ ] Omitir silenciosamente cualquier código no reconocido por
       `genres.ts`, sin romper el render de home.
+- [ ] Renderizar `cover` en la card de "Libros disponibles para reseñar" (campo
+      ya disponible en el payload). Definir fallback visual para el caso de
+      `cover` ausente o con URL rota.
 - [ ] Implementar/ajustar componentes `FeaturedBooks` y `TopGenres` según
       `sistema-diseno-resenan-sancho.md`.
 - [ ] Enlazar cada libro destacado a `/books/[id]` y cada género a
@@ -196,6 +207,8 @@ slug — eso lo resuelve el frontend.
 
 - [ ] Implementar `getFeaturedBooks()` y `getTopGenres()` devolviendo
       códigos crudos de `utils/constants/genres.js`, sin slug ni nombre.
+- [ ] Confirmar que `getFeaturedBooks()` proyecta también el campo `cover`
+      (actualización tras el primer despliegue — ver nota más arriba).
 - [ ] Implementar caché en memoria con TTL de 24h, entrada única.
 - [ ] Exponer `GET /home/highlights`.
 - [ ] Verificar índices de Mongo necesarios para ambas queries.

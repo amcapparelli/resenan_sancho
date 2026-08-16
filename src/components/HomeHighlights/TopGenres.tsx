@@ -3,7 +3,9 @@ import Link from 'next/link';
 import styled from 'styled-components';
 
 import formatBookCount from '../../utils/formatBookCount';
-import SectionHeading from './SectionHeading';
+import { GENRE_FACETS } from '../../utils/seo/facets';
+import SectionHeading, { HeadingAccent } from './SectionHeading';
+import BlockLink from './BlockLink';
 
 /** Tile view-model: name and slug are resolved from the DB code in SSR. */
 export interface TopGenre {
@@ -24,7 +26,9 @@ const TopGenres = ({ genres }: TopGenresProps): JSX.Element | null => {
 
   return (
     <Section>
-      <SectionHeading>Empieza por tu género favorito</SectionHeading>
+      <SectionHeading>
+        Géneros más <HeadingAccent>populares</HeadingAccent>
+      </SectionHeading>
 
       <GenreGrid>
         {genres.map((genre) => (
@@ -38,12 +42,26 @@ const TopGenres = ({ genres }: TopGenresProps): JSX.Element | null => {
           </GenreItem>
         ))}
       </GenreGrid>
+
+      <BlockLink href="/libros/genero">
+        {/* The count comes from GENRE_FACETS so the copy can't go stale when a
+            genre is added. Deliberately a different verb + object than the
+            "Ver todos los libros…" CTA of the block above: two consecutive
+            links starting with the same words read as the same destination.
+            The arrow is decoration, hidden so it is not read out as "flecha". */}
+        Explora los {GENRE_FACETS.length} géneros <span aria-hidden="true">→</span>
+      </BlockLink>
     </Section>
   );
 };
 
+/**
+ * Cream background: it closes the home's cream/white alternation, with
+ * FeaturedBooks (white) right above. The tiles take white so they still read as
+ * cards against the section.
+ */
 const Section = styled.section`
-  background-color: ${({ theme }) => theme.white};
+  background-color: ${({ theme }) => theme.cream};
   padding: 40px 20px;
   border-bottom: 0.5px solid ${({ theme }) => theme.lightBorder};
 
@@ -79,7 +97,7 @@ const GenreTile = styled(Link)`
   gap: 4px;
   width: 100%;
   padding: 18px 16px;
-  background: ${({ theme }) => theme.cream};
+  background: ${({ theme }) => theme.white};
   border: 1px solid ${({ theme }) => theme.lightBorder};
   border-radius: 12px;
   text-align: center;

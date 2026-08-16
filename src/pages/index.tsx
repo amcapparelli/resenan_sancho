@@ -4,6 +4,7 @@ import { GetServerSideProps } from 'next';
 import { PublicZoneLayout } from '../components/Layouts';
 import HeroSection from '../components/HeroSection';
 import {
+  AboutPlatform,
   FeaturedBooks,
   TopGenres,
   FeaturedBook,
@@ -44,6 +45,11 @@ const HomePage: React.FC<HomePageProps> = ({ featuredBooks, topGenres }) => (
     </Head>
     <PublicZoneLayout showFooter>
       <HeroSection />
+      {/* Backgrounds alternate cream/white down the page: hero (cream) →
+          SocialProof (white) → AboutPlatform (cream) → FeaturedBooks (white) →
+          TopGenres (cream). Two adjacent blocks of the same colour would merge
+          into one visual section. */}
+      <AboutPlatform />
       {/* Each block renders null when its list is empty (API blip or every
           entry filtered out), so the rest of the home always shows up. */}
       <FeaturedBooks books={featuredBooks} />

@@ -6,12 +6,15 @@
 import { HighlightBook, HighlightGenre } from './getHomeHighlights';
 import { toFeaturedBook, toTopGenre, mapDefined } from './homeHighlightsMappers';
 
+const COVER_URL = 'https://res.cloudinary.com/dnhkw9n4n/image/upload/v1776802384/book_covers/v3mvtydp1o64pcycs38w.jpg';
+
 const BOOK: HighlightBook = {
   id: '684cc507aa5f1100147f757c',
   title: 'Bastión, El Conocimiento Poderoso',
   author: 'Eric Marreros',
   genre: 'TER',
   copies: 22,
+  cover: COVER_URL,
 };
 
 const GENRE: HighlightGenre = { code: 'FAN', totalBooks: 11 };
@@ -27,7 +30,17 @@ describe('toFeaturedBook', () => {
       author: 'Eric Marreros',
       genreName: 'Terror',
       copies: 22,
+      cover: COVER_URL,
     });
+  });
+
+  it('omits the cover key when the book has none', () => {
+    // Same rule as the genre tag: no cover never costs the book its card, and
+    // `undefined` would break Next's props serialization.
+    const mapped = toFeaturedBook({ ...BOOK, cover: undefined });
+
+    expect(mapped).not.toHaveProperty('cover');
+    expect(mapped.title).toBe(BOOK.title);
   });
 
   it('keeps the book and omits only the tag when the genre is unknown', () => {

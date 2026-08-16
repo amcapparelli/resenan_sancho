@@ -1,18 +1,28 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import styled from 'styled-components';
 
 import formatAvailableCopies from '../../utils/formatAvailableCopies';
+import { isOptimizedImageHost } from '../../utils/imageHost';
+import BookCoverFallback from '../BookCoverFallback';
 import SectionHeading, { HeadingAccent } from './SectionHeading';
+import BlockLink from './BlockLink';
 
 /**
- * Card view-model. The highlights endpoint returns no cover and no synopsis, so
- * this block cannot reuse `BookCard`/`BookListItem` (both need the full `Book`).
- * The genre arrives already translated from its DB code in getServerSideProps.
+ * Card view-model. The highlights endpoint returns no synopsis and no formats,
+ * so this block cannot reuse `BookCard`/`BookListItem` (both need the full
+ * `Book`). The genre arrives already translated from its DB code in
+ * getServerSideProps.
  */
 export interface FeaturedBook {
   id: string;
   title: string;
+  /**
+   * Absolute cover URL. Omitted for books uploaded before covers existed; the
+   * card then renders the shared placeholder.
+   */
+  cover?: string;
   /** Null when the author account was deleted; the byline is then omitted. */
   author: string | null;
   /**
@@ -39,7 +49,10 @@ const FeaturedBooks = ({ books }: FeaturedBooksProps): JSX.Element | null => {
         eyebrow="SI RESEÑAS LIBROS"
         subtitle="Los cuatro libros con más ejemplares disponibles. Pide el tuyo y el autor te lo envía."
       >
-        Libros <HeadingAccent>gratis</HeadingAccent> para reseñar
+        {/* The accent falls on "disponibles" because it is the only new piece of
+            information in the sentence ("Libros… para reseñar" repeats all over
+            the site) and, at 360px, the line breaks right after it. */}
+        Libros <HeadingAccent>disponibles</HeadingAccent> para reseñar
       </SectionHeading>
 
       <CardGrid>
@@ -52,10 +65,35 @@ const FeaturedBooks = ({ books }: FeaturedBooksProps): JSX.Element | null => {
                 copies from screen readers and break WCAG 2.5.3 (Label in Name)
                 against the visible text. */}
             <Card href={`/books/${book.id}`}>
-              {book.genreName && <CardGenre>{book.genreName}</CardGenre>}
-              <CardTitle>{book.title}</CardTitle>
-              {book.author && <CardAuthor>por {book.author}</CardAuthor>}
-              <CardCopies>{formatAvailableCopies(book.copies)}</CardCopies>
+              <CoverArea>
+                {book.cover ? (
+                  <CoverImage
+                    src={book.cover}
+                    /* Decorative on purpose, unlike BookCard's "Portada de X":
+                       here the cover lives INSIDE the same <a> as the title, so
+                       a described alt would make the link announce the title
+                       twice ("Portada de X, X, por Autor…"). */
+                    alt=""
+                    fill
+                    /* Cover box across this block's own grid: a fixed thumbnail
+                       on mobile (row layout), then 2 and 4 columns of a 1040px
+                       container minus paddings. */
+                    sizes="(min-width: 1040px) 220px, (min-width: 900px) 22vw, (min-width: 480px) 45vw, 76px"
+                    /* An unexpected host in legacy data would make next/image
+                       throw and take the home down; unoptimized renders it as-is. */
+                    unoptimized={!isOptimizedImageHost(book.cover)}
+                  />
+                ) : (
+                  <BookCoverFallback />
+                )}
+              </CoverArea>
+
+              <CardBody>
+                {book.genreName && <CardGenre>{book.genreName}</CardGenre>}
+                <CardTitle>{book.title}</CardTitle>
+                {book.author && <CardAuthor>por {book.author}</CardAuthor>}
+                <CardCopies>{formatAvailableCopies(book.copies)}</CardCopies>
+              </CardBody>
             </Card>
           </CardItem>
         ))}
@@ -69,8 +107,14 @@ const FeaturedBooks = ({ books }: FeaturedBooksProps): JSX.Element | null => {
   );
 };
 
+/**
+ * White background: the home alternates cream/white section by section, and the
+ * new "Qué es Reseñan Sancho" block right above this one is cream. The cards
+ * take the cream fill this section used to have so they keep standing out
+ * against the section behind them.
+ */
 const Section = styled.section`
-  background-color: ${({ theme }) => theme.cream};
+  background-color: ${({ theme }) => theme.white};
   padding: 40px 20px;
   border-bottom: 0.5px solid ${({ theme }) => theme.lightBorder};
 
@@ -101,13 +145,18 @@ const CardItem = styled.li`
   display: flex;
 `;
 
+/**
+ * Cover beside the text on mobile (a full-width poster per card would turn the
+ * stacked block into four screens of scrolling) and above it from 480px up,
+ * where the grid gets narrow columns.
+ */
 const Card = styled(Link)`
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  flex-direction: row;
+  gap: 12px;
   width: 100%;
   padding: 16px;
-  background: ${({ theme }) => theme.white};
+  background: ${({ theme }) => theme.cream};
   border: 1px solid ${({ theme }) => theme.lightBorder};
   border-radius: 12px;
   text-decoration: none;
@@ -124,10 +173,54 @@ const Card = styled(Link)`
     outline-offset: 2px;
   }
 
+  @media (min-width: 480px) {
+    flex-direction: column;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     transition: none;
     transform: none;
   }
+`;
+
+/**
+ * Reserves the cover box with a fixed 3/4 aspect-ratio, so the frame's height
+ * never depends on the auto-height card and the image can't be stretched:
+ * `object-fit: cover` crops instead, which matters because real covers range
+ * from near-square to very tall. With next/image `fill` the image is
+ * position:absolute and contributes no layout, so this box is what prevents CLS.
+ * `align-self` stops the row layout from stretching the box to the card height.
+ */
+const CoverArea = styled.div`
+  position: relative;
+  flex: none;
+  align-self: flex-start;
+  width: 76px;
+  aspect-ratio: 3 / 4;
+  border-radius: 8px;
+  overflow: hidden;
+  /* Sits under the placeholder (which is translucent) so an empty slot still
+     reads as a frame against the cream card. */
+  background: ${({ theme }) => theme.white};
+
+  @media (min-width: 480px) {
+    align-self: stretch;
+    width: 100%;
+  }
+`;
+
+const CoverImage = styled(Image)`
+  object-fit: cover;
+  object-position: center top;
+`;
+
+/** Text column. `flex: 1` + `min-width: 0` keeps the ellipsis on long bylines. */
+const CardBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
 `;
 
 const CardGenre = styled.p`
@@ -135,7 +228,8 @@ const CardGenre = styled.p`
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.06em;
-  /* theme.muted only reaches ~3.3:1 on white, below the 4.5:1 AA asks at 11px. */
+  /* theme.muted only reaches ~2.8:1 on the cream card, far below the 4.5:1 AA
+     asks at 11px; theme.brown is at ~7.1:1. */
   color: ${({ theme }) => theme.brown};
   margin: 0;
 `;
@@ -170,32 +264,11 @@ const CardCopies = styled.p`
   font-family: 'Source Sans 3', sans-serif;
   font-size: 13px;
   font-weight: 600;
+  /* successDark keeps 4.6:1 on the cream card; the lighter "success" green
+     would drop to ~3.1:1, under AA for this 13px line. */
   color: ${({ theme }) => theme.successDark};
   margin: auto 0 0;
   padding-top: 6px;
-`;
-
-const BlockLink = styled(Link)`
-  display: block;
-  width: fit-content;
-  margin: 24px auto 0;
-  /* Only CTA of the block on mobile: the padding takes the tap target from the
-     ~20px of the bare text line to the ~44px touch targets should have. */
-  padding: 10px 12px;
-  font-family: 'Source Sans 3', sans-serif;
-  font-size: 15px;
-  font-weight: 600;
-  color: ${({ theme }) => theme.terracotta};
-  text-decoration: none;
-
-  &:hover {
-    text-decoration: underline;
-  }
-
-  &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.terracotta};
-    outline-offset: 3px;
-  }
 `;
 
 export default FeaturedBooks;

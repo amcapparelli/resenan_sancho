@@ -3,12 +3,18 @@ import { homeHighlights as HOME_HIGHLIGHTS_URL } from '../../config/routes';
 /**
  * A book in the "featured" block, exactly as the API returns it.
  *
- * The payload is deliberately thin (no cover, no synopsis): it feeds a
- * text-only card, not the full Book shape used by /books.
+ * The payload is deliberately thin (no synopsis, no formats): it feeds a
+ * compact card, not the full Book shape used by /books.
  */
 export interface HighlightBook {
   id: string;
   title: string;
+  /**
+   * Absolute cover URL (Cloudinary today). Optional: books uploaded before
+   * covers existed have none, and a cover-less book is still worth featuring,
+   * so the card falls back to a placeholder instead of dropping the entry.
+   */
+  cover?: string;
   /**
    * Author name already flattened by the API (`name + lastName`). It is `null`
    * when the author account was deleted, and real data contains double spaces
@@ -62,13 +68,17 @@ const parseBook = (raw: unknown): HighlightBook | null => {
   if (!isRecord(raw)) return null;
 
   const {
-    id, title, author, genre, copies,
+    id, title, author, genre, copies, cover,
   } = raw;
 
   if (typeof id !== 'string' || typeof title !== 'string') return null;
   if (typeof genre !== 'string' || typeof copies !== 'number') return null;
 
   const normalizedAuthor = typeof author === 'string' ? normalizeWhitespace(author) : '';
+  // A missing/blank/non-string cover never rejects the book (same rule as the
+  // genre): the card just renders its placeholder. Trimming also guards against
+  // whitespace-only legacy values, which would render a broken <img>.
+  const normalizedCover = typeof cover === 'string' ? cover.trim() : '';
 
   return {
     id,
@@ -76,6 +86,9 @@ const parseBook = (raw: unknown): HighlightBook | null => {
     author: normalizedAuthor || null,
     genre,
     copies,
+    // Key omitted rather than set to undefined: these objects travel as
+    // getServerSideProps props, which Next refuses to serialize.
+    ...(normalizedCover ? { cover: normalizedCover } : {}),
   };
 };
 

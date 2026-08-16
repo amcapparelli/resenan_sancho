@@ -5,6 +5,8 @@
  */
 import { getHomeHighlights } from './getHomeHighlights';
 
+const COVER_URL = 'https://res.cloudinary.com/dnhkw9n4n/image/upload/v1776802384/book_covers/v3mvtydp1o64pcycs38w.jpg';
+
 const PRODUCTION_PAYLOAD = {
   featuredBooks: [
     {
@@ -13,6 +15,7 @@ const PRODUCTION_PAYLOAD = {
       author: 'Eric  Marreros',
       genre: 'TER',
       copies: 22,
+      cover: COVER_URL,
     },
     {
       id: '6534fd5e9208e90014391987',
@@ -20,6 +23,7 @@ const PRODUCTION_PAYLOAD = {
       author: 'Juanjo Galvez Benavente',
       genre: 'HIF',
       copies: 17,
+      cover: COVER_URL,
     },
   ],
   topGenres: [
@@ -80,6 +84,32 @@ describe('getHomeHighlights — happy path', () => {
     const { featuredBooks } = await getHomeHighlights();
 
     expect(featuredBooks[0].author).toBeNull();
+  });
+
+  it('keeps the cover URL the API returns', async () => {
+    mockFetchResolving(PRODUCTION_PAYLOAD);
+
+    const { featuredBooks } = await getHomeHighlights();
+
+    expect(featuredBooks[0].cover).toBe(COVER_URL);
+  });
+
+  it.each([
+    ['missing', undefined],
+    ['whitespace-only', '   '],
+    ['not a string', 42],
+  ])('keeps a book whose cover is %s, omitting the key', async (_case, cover) => {
+    // A cover-less book is still worth featuring: the card falls back to the
+    // placeholder. The key is omitted (not undefined) so Next can serialize it.
+    mockFetchResolving({
+      ...PRODUCTION_PAYLOAD,
+      featuredBooks: [{ ...PRODUCTION_PAYLOAD.featuredBooks[0], cover }],
+    });
+
+    const { featuredBooks } = await getHomeHighlights();
+
+    expect(featuredBooks).toHaveLength(1);
+    expect(featuredBooks[0]).not.toHaveProperty('cover');
   });
 
   it('resolves a whitespace-only author to null', async () => {

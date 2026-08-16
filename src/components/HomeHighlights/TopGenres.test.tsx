@@ -5,6 +5,15 @@ import { ThemeProvider } from 'styled-components';
 import { StyledTheme } from '../../store/context/StylesContext/Theme';
 import TopGenres, { TopGenre } from './TopGenres';
 
+// The facets table is stubbed with THREE genres so the expected copy ("3") can
+// never coincide with the real 17. Asserting `GENRE_FACETS.length` against the
+// real table would pass just as well with a hardcoded "17" in the component,
+// which is exactly the regression this test exists to catch.
+jest.mock('../../utils/seo/facets', () => ({
+  ...jest.requireActual('../../utils/seo/facets'),
+  GENRE_FACETS: [{ slug: 'a' }, { slug: 'b' }, { slug: 'c' }],
+}));
+
 const GENRES: TopGenre[] = [
   { slug: 'fantasia', name: 'Fantasía', totalBooks: 11 },
   { slug: 'novela-historica', name: 'Novela histórica', totalBooks: 1 },
@@ -21,7 +30,7 @@ describe('TopGenres', () => {
     renderBlock();
 
     expect(
-      screen.getByRole('heading', { level: 2, name: 'Empieza por tu género favorito' }),
+      screen.getByRole('heading', { level: 2, name: 'Géneros más populares' }),
     ).toBeInTheDocument();
   });
 
@@ -49,8 +58,22 @@ describe('TopGenres', () => {
     // wrapping another anchor.
     const { container } = renderBlock();
 
-    expect(container.querySelectorAll('a')).toHaveLength(2);
+    // One anchor per tile, plus the block link to the genre hub.
+    expect(container.querySelectorAll('a')).toHaveLength(GENRES.length + 1);
     expect(container.querySelectorAll('a a')).toHaveLength(0);
+  });
+
+  it('links to the genre hub with the count derived from the facets table', () => {
+    // The count must never be hardcoded in the copy: adding a genre to
+    // GENRE_FACETS has to update this CTA on its own. With the table stubbed at
+    // three entries, a hardcoded number would fail here.
+    renderBlock();
+
+    const hubLink = screen.getByRole('link', { name: 'Explora los 3 géneros' });
+
+    expect(hubLink).toHaveAttribute('href', '/libros/genero');
+    // The arrow is rendered but aria-hidden, so it stays out of the name above.
+    expect(hubLink).toHaveTextContent('Explora los 3 géneros →');
   });
 
   it('renders nothing when there are no genres', () => {

@@ -31,9 +31,10 @@ export const toFeaturedBook = (book: HighlightBook): FeaturedBook => {
     title: book.title,
     author: book.author,
     copies: book.copies,
-    // The key is omitted, not set to undefined: these objects travel as
+    // The keys are omitted, not set to undefined: these objects travel as
     // getServerSideProps props and Next refuses to serialize `undefined`.
     ...(genreName ? { genreName } : {}),
+    ...(book.cover ? { cover: book.cover } : {}),
   };
 };
 
