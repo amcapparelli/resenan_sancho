@@ -50,8 +50,10 @@ const FeaturedBooks = ({ books }: FeaturedBooksProps): JSX.Element | null => {
         subtitle="Pide el que te llame la atención y el autor te lo envía."
       >
         {/* The accent falls on "disponibles" because it is the only new piece of
-            information in the sentence ("Libros… para reseñar" repeats all over
-            the site) and, at 360px, the line breaks right after it. */}
+            information in the sentence ("libros… para reseñar" repeats all over
+            the site). It no longer coincides with the mobile line break: with
+            the "Algunos de los " prefix the title wraps mid-sentence at 360px,
+            so the accent is carried by colour alone. */}
         Algunos de los libros <HeadingAccent>disponibles</HeadingAccent> para reseñar
       </SectionHeading>
 

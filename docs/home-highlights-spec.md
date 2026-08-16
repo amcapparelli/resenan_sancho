@@ -194,9 +194,9 @@ slug — eso lo resuelve el frontend.
       `src/data/genres.ts`, antes de pasar props a los componentes.
 - [ ] Omitir silenciosamente cualquier código no reconocido por
       `genres.ts`, sin romper el render de home.
-- [ ] Renderizar `cover` en la card de "Libros disponibles para reseñar" (campo
-      ya disponible en el payload). Definir fallback visual para el caso de
-      `cover` ausente o con URL rota.
+- [x] Renderizar `cover` en la card de "Algunos de los libros disponibles para
+      reseñar" (campo ya disponible en el payload). Definir fallback visual
+      para el caso de `cover` ausente o con URL rota.
 - [ ] Implementar/ajustar componentes `FeaturedBooks` y `TopGenres` según
       `sistema-diseno-resenan-sancho.md`.
 - [ ] Enlazar cada libro destacado a `/books/[id]` y cada género a

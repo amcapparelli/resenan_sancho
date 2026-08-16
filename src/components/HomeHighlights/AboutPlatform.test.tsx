@@ -17,7 +17,7 @@ describe('AboutPlatform', () => {
     renderBlock();
 
     expect(
-      screen.getByRole('heading', { level: 2, name: 'Qué es Reseñan Sancho' }),
+      screen.getByRole('heading', { level: 2, name: '¿Qué es Reseñan Sancho?' }),
     ).toBeInTheDocument();
   });
 
@@ -37,9 +37,8 @@ describe('AboutPlatform', () => {
     )).toBeInTheDocument();
 
     expect(screen.getByText(
-      'Además, ofrecemos servicios pensados para dar más visibilidad a tu libro: '
-      + 'desde el envío de ejemplares gratuitos hasta campañas de promoción que '
-      + 'ayudan a que más reseñadores lo descubran.',
+      'Además, ofrecemos servicios pensados para dar más visibilidad a tu libro '
+      + 'que ayudan a que más reseñadores lo descubran.',
     )).toBeInTheDocument();
   });
 });

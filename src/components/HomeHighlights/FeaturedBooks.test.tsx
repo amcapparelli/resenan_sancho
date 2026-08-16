@@ -34,10 +34,27 @@ const renderBlock = (books: FeaturedBook[] = BOOKS) => render(
 
 describe('FeaturedBooks — content', () => {
   it('renders the section heading as an h2', () => {
+    // Full accessible name, not a substring: the accented <em> must not break
+    // the heading into pieces, and a copy change has to fail here instead of
+    // slipping through on a partial match. The string is duplicated on purpose
+    // rather than imported from the component — a shared constant would move
+    // with any typo and assert nothing.
     renderBlock();
 
     expect(
-      screen.getByRole('heading', { level: 2, name: /libros disponibles para reseñar/i }),
+      screen.getByRole('heading', {
+        level: 2,
+        name: 'Algunos de los libros disponibles para reseñar',
+      }),
+    ).toBeInTheDocument();
+  });
+
+  it('renders the eyebrow and the subtitle of the section', () => {
+    renderBlock();
+
+    expect(screen.getByText('SI RESEÑAS LIBROS')).toBeInTheDocument();
+    expect(
+      screen.getByText('Pide el que te llame la atención y el autor te lo envía.'),
     ).toBeInTheDocument();
   });
 

@@ -4,9 +4,9 @@ Contenido y diseño de la sección informativa/SEO de home. No requiere
 backend: es contenido estático, ya redactado, para maquetar directamente.
 Complementa `home-highlights-spec.md` (que sí requiere backend).
 
-Pensada para colocarse **antes** de la sección "Libros disponibles para
-reseñar" (ver captura de la implementación actual), como primer bloque de
-contenido tras el hero.
+Pensada para colocarse **antes** de la sección "Algunos de los libros
+disponibles para reseñar" (ver captura de la implementación actual), como
+primer bloque de contenido tras el hero.
 
 ---
 
@@ -23,7 +23,7 @@ contenido tras el hero.
 ## Contenido (texto final aprobado)
 
 **Encabezado:**
-> Qué es Reseñan Sancho
+> ¿Qué es Reseñan Sancho?
 
 **Párrafo 1:**
 > Reseñan Sancho conecta a personas que escriben con personas que
@@ -32,8 +32,7 @@ contenido tras el hero.
 
 **Párrafo 2:**
 > Además, ofrecemos servicios pensados para dar más visibilidad a tu
-> libro: desde el envío de ejemplares gratuitos hasta campañas de
-> promoción que ayudan a que más reseñadores lo descubran.
+> libro que ayudan a que más reseñadores lo descubran.
 
 ---
 
@@ -72,6 +71,7 @@ convención si se retoca el copy.
 - [ ] Maquetar sección estática con el texto de arriba (sin llamada a
       backend, contenido hardcoded en el componente o en un archivo de
       copy si el proyecto ya centraliza textos).
-- [ ] Colocar entre el hero y la sección "Libros disponibles para reseñar".
+- [ ] Colocar entre el hero y la sección "Algunos de los libros disponibles
+      para reseñar".
 - [ ] Revisar con `frontend-reviewer` coherencia de estilos con el resto
       de secciones de home ya implementadas.
