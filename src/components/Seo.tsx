@@ -49,6 +49,10 @@ const Seo = ({
   const absoluteOgImage = effectiveOgImage.startsWith('http')
     ? effectiveOgImage
     : `${SITE_URL}${effectiveOgImage}`;
+  // The dimension/type hints below describe the default 1200x630 PNG card only.
+  // Custom ogImage values (e.g. book covers from Cloudinary) have unknown,
+  // variable dimensions, so we must not assert 1200x630 / image/png for them.
+  const isDefaultOgImage = effectiveOgImage === DEFAULT_OG_IMAGE;
   // Decision: the English locale is kept out of the index for now (no hreflang
   // strategy yet), so any /en page is forced to noindex regardless of the prop.
   const shouldNoindex = noindex || locale === 'en';
@@ -71,6 +75,13 @@ const Seo = ({
       <meta property="og:url" content={canonical} />
       <meta property="og:type" content="website" />
       <meta property="og:image" content={absoluteOgImage} />
+      {isDefaultOgImage && (
+        <>
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
+          <meta property="og:image:type" content="image/png" />
+        </>
+      )}
       <meta property="og:locale" content={ogLocale} />
       <meta property="og:site_name" content={SITE_NAME} />
 

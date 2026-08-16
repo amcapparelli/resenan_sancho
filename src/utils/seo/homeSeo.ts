@@ -1,9 +1,10 @@
-import { SITE_URL, SITE_NAME, DEFAULT_OG_IMAGE } from '../constants/seo';
+import { SITE_URL, SITE_NAME, BRAND_LOGO } from '../constants/seo';
 
-// Absolute logo URL for the Organization schema (relative paths aren't allowed).
-const LOGO_URL = DEFAULT_OG_IMAGE.startsWith('http')
-  ? DEFAULT_OG_IMAGE
-  : `${SITE_URL}${DEFAULT_OG_IMAGE}`;
+// Absolute brand-logo URL for the Organization schema (relative paths aren't
+// allowed). Derived from BRAND_LOGO, not the OG social card.
+const LOGO_URL = BRAND_LOGO.startsWith('http')
+  ? BRAND_LOGO
+  : `${SITE_URL}${BRAND_LOGO}`;
 
 /**
  * schema.org/WebSite for the home page. No SearchAction: the site search is a

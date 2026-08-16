@@ -1,5 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import { NextPage } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
@@ -36,7 +37,15 @@ const Login: NextPage = (): JSX.Element => {
       <Seo noindex title="Iniciar sesión | Reseñan Sancho" description="Accede a tu cuenta de Reseñan Sancho." path="/login" />
       <StyledForm>
         <Link href="/">
-          <StyledLogo src="/static/logo-web.webp" alt="logo reseñan sancho" />
+          <StyledLogo
+            src="/static/logo-web.webp"
+            alt="logo reseñan sancho"
+            width={1054}
+            height={389}
+            // Logo renders at 25% of a form that is 30% of the viewport, i.e.
+            // ~7.5vw. The hint lets the optimizer pick a small source.
+            sizes="8vw"
+          />
         </Link>
       {['email', 'password'].map((text) => (
         <TextField
@@ -77,8 +86,11 @@ const Login: NextPage = (): JSX.Element => {
   );
 };
 
-const StyledLogo = styledComponents.img`
+// Fluid logo: width tracks the form container; height:auto keeps the intrinsic
+// 1054x389 aspect ratio (next/image needs one dimension left to auto).
+const StyledLogo = styledComponents(Image)`
   width: 25%;
+  height: auto;
   justify-self: center;
 `;
 
