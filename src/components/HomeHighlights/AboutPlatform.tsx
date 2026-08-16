@@ -14,7 +14,7 @@ import SectionHeading from './SectionHeading';
  */
 const AboutPlatform = (): JSX.Element => (
   <Section>
-    <SectionHeading>Qué es Reseñan Sancho</SectionHeading>
+    <SectionHeading>¿Qué es Reseñan Sancho?</SectionHeading>
 
     <Body>
       <Lead>
@@ -25,9 +25,8 @@ const AboutPlatform = (): JSX.Element => (
       {/* Brown, per spec: it separates the product/services message from the
           descriptive one above without introducing a second heading. */}
       <Services>
-        Además, ofrecemos servicios pensados para dar más visibilidad a tu libro:
-        desde el envío de ejemplares gratuitos hasta campañas de promoción que
-        ayudan a que más reseñadores lo descubran.
+        Además, ofrecemos servicios pensados para dar más visibilidad a tu
+        libro que ayudan a que más reseñadores lo descubran.
       </Services>
     </Body>
   </Section>

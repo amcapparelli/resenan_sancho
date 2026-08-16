@@ -47,12 +47,12 @@ const FeaturedBooks = ({ books }: FeaturedBooksProps): JSX.Element | null => {
     <Section>
       <SectionHeading
         eyebrow="SI RESEÑAS LIBROS"
-        subtitle="Los cuatro libros con más ejemplares disponibles. Pide el tuyo y el autor te lo envía."
+        subtitle="Pide el que te llame la atención y el autor te lo envía."
       >
         {/* The accent falls on "disponibles" because it is the only new piece of
             information in the sentence ("Libros… para reseñar" repeats all over
             the site) and, at 360px, the line breaks right after it. */}
-        Libros <HeadingAccent>disponibles</HeadingAccent> para reseñar
+        Algunos de los libros <HeadingAccent>disponibles</HeadingAccent> para reseñar
       </SectionHeading>
 
       <CardGrid>
