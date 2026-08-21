@@ -20,9 +20,9 @@ import AccountField, { FieldLabel, FieldError } from '../components/AccountField
 import AccountSelect from '../components/AccountSelect';
 import CoverUploader from '../components/CoverUploader';
 import SelectableChip from '../components/SelectableChip';
-import CharCounter from '../components/CharCounter';
+import CharCounter from '../../../components/CharCounter';
 import SaveBar from '../components/SaveBar';
-import { fieldBase } from '../components/styles';
+import { fieldBase } from '../../../components/styles';
 
 const SYNOPSIS_MAX = 2000;
 const FORMATS = ['epub', 'papel', 'mobi', 'pdf', 'audiolibro'];

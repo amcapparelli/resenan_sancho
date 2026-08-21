@@ -1,8 +1,8 @@
-import { css } from 'styled-components';
+import { css, keyframes } from 'styled-components';
 
-// Shared visual primitives for the account area. Kept as `css` fragments so they
-// can be applied to either <button>/<a> (buttons) or <input>/<select>/<textarea>
-// (fields) without duplicating the design-system values.
+// Shared visual primitives of the design system (account area, modals…). Kept as
+// `css` fragments so they can be applied to either <button>/<a> (buttons) or
+// <input>/<select>/<textarea> (fields) without duplicating the design-system values.
 
 // Primary action — confirm / save / business action (solid terracotta).
 export const primaryButton = css`
@@ -78,6 +78,27 @@ export const secondaryButton = css`
 
   @media (prefers-reduced-motion: reduce) {
     transition: none;
+  }
+`;
+
+const spin = keyframes`
+  to { transform: rotate(360deg); }
+`;
+
+// 16px spinner for a button in a pending state. Drawn with `currentColor` so the
+// same fragment works on the solid primary (white label) and on the outlined
+// secondary (terracotta label) without a variant.
+export const buttonSpinner = css`
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: ${spin} 0.7s linear infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
   }
 `;
 

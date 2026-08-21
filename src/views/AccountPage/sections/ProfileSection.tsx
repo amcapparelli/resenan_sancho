@@ -13,7 +13,7 @@ import AccountField, { FieldNote } from '../components/AccountField';
 import CountrySelect from '../components/CountrySelect';
 import SaveBar from '../components/SaveBar';
 import DangerZone from '../components/DangerZone';
-import { secondaryButton } from '../components/styles';
+import { secondaryButton } from '../../../components/styles';
 
 const getInitials = (name?: string, lastName?: string): string => {
   const first = name?.trim()[0] ?? '';

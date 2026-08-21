@@ -19,9 +19,9 @@ import {
 import SectionHeader from '../SectionHeader';
 import SaveBar from '../components/SaveBar';
 import SelectableChip from '../components/SelectableChip';
-import CharCounter from '../components/CharCounter';
+import CharCounter from '../../../components/CharCounter';
 import ChannelRow from '../components/ChannelRow';
-import { fieldBase } from '../components/styles';
+import { fieldBase } from '../../../components/styles';
 
 // Keep the previously enforced cap (the old input used maxLength 1000) to avoid
 // a save regression, even though the design spec mentions 2000.

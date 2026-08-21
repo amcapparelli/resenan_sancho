@@ -20,7 +20,7 @@ import { Book } from '../../../../interfaces/books';
 import AvailableFormats from '../../../../interfaces/formats';
 import SUPPORT_EMAIL from '../../../../utils/constants/support';
 import { PaymentCheckout } from '../../../../components';
-import { primaryButton } from '../styles';
+import { primaryButton } from '../../../../components/styles';
 import ModalHeader from './ModalHeader';
 import ServiceGrid from './ServiceGrid';
 import { getVisibleServices } from './availability';
@@ -172,6 +172,10 @@ const PromoteServicesModal: React.FC<PromoteServicesModalProps> = ({
       fullScreen={isMobile}
       maxWidth={false}
       aria-labelledby={titleId}
+      // MUI puts role="dialog" on the paper but never emits aria-modal, so
+      // without this a screen reader's virtual cursor can wander to the page
+      // behind the modal even though the keyboard focus trap holds.
+      PaperProps={{ 'aria-modal': true }}
     >
       <ModalHeader
         titleId={titleId}

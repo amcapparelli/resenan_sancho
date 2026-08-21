@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { fieldBase } from './styles';
+import { fieldBase } from '../../../components/styles';
 
 interface AccountFieldProps {
   label: string;

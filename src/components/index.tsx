@@ -1,5 +1,4 @@
-export { default as BookItem } from './BookItem';
-export { default as BookListItem } from './BookListItem';
+export { default as ContactModal } from './ContactModal';
 export { default as GenresSelector } from './GenresSelector';
 export { default as ErrorBoundary } from './ErrorBoundary';
 export { default as EmptyList } from './EmptyList';
@@ -14,8 +13,6 @@ export { default as LanguageSelector } from './LanguageSelector';
 export { default as Meta } from './Meta';
 export { default as PageHeader } from './PageHeader';
 export { default as ResultsMeta } from './ResultsMeta';
-export { default as ModalContact } from './ModalContact';
-export { default as ModalDialog } from './ModalDialog';
 export { default as PasswordFields } from './PasswordFields';
 export { default as PaymentCheckout } from './PaymentCheckout';
 export { default as ReviewerListItem } from './ReviewerListItem';
