@@ -6,7 +6,7 @@ import styled from 'styled-components';
 
 import { buttonSpinner, primaryButton, secondaryButton } from '../styles';
 import SubmitError from '../../utils/SubmitError';
-import { buildAuthorName } from '../../utils/seo/bookSeo';
+import buildFullName from '../../utils/buildFullName';
 import BookContextHeader from './BookContextHeader';
 import ConsentCheckbox from './ConsentCheckbox';
 import MessageField from './MessageField';
@@ -78,12 +78,9 @@ const ContactModal: React.FC<ContactModalProps> = ({
   // afford the full name (its height comes from the 40×54 cover and the line
   // truncates with an ellipsis), while the heading and the placeholder greet the
   // author by first name only, which is what keeps the heading on one line on a
-  // phone. `buildAuthorName` drops empty parts so a missing surname cannot leave
+  // phone. `buildFullName` drops empty parts so a missing surname cannot leave
   // a trailing space behind.
-  const authorFullName = buildAuthorName({
-    name: author.firstName,
-    lastName: author.lastName ?? '',
-  });
+  const authorFullName = buildFullName(author.firstName, author.lastName);
 
   const baseId = useId();
   const titleId = `${baseId}-title`;

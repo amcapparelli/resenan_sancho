@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
 import { Book } from '../../interfaces/books';
+import buildFullName from '../../utils/buildFullName';
 import genres from '../../utils/constants/genres';
 import { isOptimizedImageHost } from '../../utils/imageHost';
 import BookDetailCTA from './BookDetailCTA';
@@ -304,7 +305,7 @@ const BookDetailHero: React.FC<BookDetailHeroProps> = ({
           <AuthorLine>
             por{' '}
             <AuthorName>
-              {book.author.name} {book.author.lastName}
+              {buildFullName(book.author.name, book.author.lastName)}
             </AuthorName>
           </AuthorLine>
 

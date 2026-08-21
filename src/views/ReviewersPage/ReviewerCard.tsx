@@ -3,6 +3,7 @@ import Image from 'next/image';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { Reviewer } from '../../interfaces/reviewer';
+import buildFullName from '../../utils/buildFullName';
 import { isOptimizedImageHost } from '../../utils/imageHost';
 import {
   BlogIcon,
@@ -240,7 +241,7 @@ interface AvatarProps {
 }
 
 const Avatar: React.FC<AvatarProps> = ({ avatar, name, lastName }) => {
-  const fullName = `${name ?? ''} ${lastName ?? ''}`.trim();
+  const fullName = buildFullName(name, lastName);
 
   // Trim guards against whitespace-only legacy values ("  ") that would render
   // a broken next/image instead of falling back to the initials.
@@ -283,7 +284,7 @@ const ReviewerCard: React.FC<ReviewerCardProps> = ({ reviewer }) => {
   const [areGenresExpanded, setAreGenresExpanded] = useState(false);
 
   const { author, description, genres, formats } = reviewer;
-  const fullName = `${author.name ?? ''} ${author.lastName ?? ''}`.trim();
+  const fullName = buildFullName(author.name, author.lastName);
 
   // Channels: only render those with a non-empty url
   const activeChannels = CHANNEL_CONFIG.filter(({ key }) => {

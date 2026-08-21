@@ -7,6 +7,7 @@ import { useForm, useUploadImages } from '../../../utils/customHooks';
 import { update as URL } from '../../../config/routes';
 import { Response } from '../../../interfaces/response';
 import { UserLogged } from '../../../interfaces/user';
+import buildFullName from '../../../utils/buildFullName';
 import { getCountryName } from '../../../utils/constants/countries';
 import SectionHeader from '../SectionHeader';
 import AccountField, { FieldNote } from '../components/AccountField';
@@ -88,7 +89,7 @@ const ProfileSection: React.FC = (): JSX.Element => {
         {updateForm.avatar
           ? <AvatarImg src={updateForm.avatar} alt="Tu avatar" />
           : (
-            <AvatarInitials role="img" aria-label={`Avatar de ${user.name ?? ''} ${user.lastName ?? ''}`.trim()}>
+            <AvatarInitials role="img" aria-label={`Avatar de ${buildFullName(user.name, user.lastName)}`}>
               {getInitials(user.name, user.lastName)}
             </AvatarInitials>
           )}

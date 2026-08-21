@@ -1,4 +1,5 @@
 import { Book } from '../../interfaces/books';
+import buildFullName from '../buildFullName';
 import { SITE_URL, SITE_NAME } from '../constants/seo';
 
 // Target length for the meta description. Search engines truncate around
@@ -6,16 +7,12 @@ import { SITE_URL, SITE_NAME } from '../constants/seo';
 const DESCRIPTION_MAX_LENGTH = 158;
 
 /**
- * Builds a human-readable author name, collapsing empty/missing parts so we
- * never render stray spaces (e.g. when only the first name is present).
+ * Display name of a book's author. Books can arrive without an author block at
+ * all (legacy records), hence the guard on top of the shared join.
  */
-export const buildAuthorName = (author?: Book['author']): string => {
-  if (!author) return '';
-  return [author.name, author.lastName]
-    .map((part) => (part || '').trim())
-    .filter(Boolean)
-    .join(' ');
-};
+const buildAuthorName = (author?: Book['author']): string => (
+  author ? buildFullName(author.name, author.lastName) : ''
+);
 
 /**
  * Page <title> for a book detail page:

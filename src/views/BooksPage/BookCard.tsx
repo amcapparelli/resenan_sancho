@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
 import { Book } from '../../interfaces/books';
+import buildFullName from '../../utils/buildFullName';
 import genres from '../../utils/constants/genres';
 import { isOptimizedImageHost } from '../../utils/imageHost';
 import BookCoverFallback from '../../components/BookCoverFallback';
@@ -217,7 +218,7 @@ const BookCard: React.FC<BookCardProps> = ({ book }) => {
       <CardBody>
         <Title>{book.title}</Title>
         <Author>
-          por <strong>{book.author.name} {book.author.lastName}</strong>
+          por <strong>{buildFullName(book.author.name, book.author.lastName)}</strong>
         </Author>
 
         <Divider />
