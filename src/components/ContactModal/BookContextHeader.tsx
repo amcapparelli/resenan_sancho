@@ -6,6 +6,11 @@ import { isOptimizedImageHost } from '../../utils/imageHost';
 
 interface BookContextHeaderProps {
   title: string;
+  /**
+   * Display name, already composed by the caller — the full name when the
+   * author has a surname on record. It is safe to make it long here: the row's
+   * height comes from the cover and the line truncates with an ellipsis.
+   */
   authorName: string;
   coverUrl?: string;
 }
@@ -52,6 +57,11 @@ const Header = styled.div`
   align-items: center;
   gap: 12px;
   margin-bottom: 16px;
+
+  /* Tighter only on the bottom sheet, where vertical room is scarce. */
+  @media (max-width: 899px) {
+    margin-bottom: 12px;
+  }
 `;
 
 /* Sizing container for the fill-mode cover: `position: relative` is required by

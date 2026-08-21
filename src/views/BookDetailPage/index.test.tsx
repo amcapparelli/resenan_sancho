@@ -86,7 +86,7 @@ function renderPage({ strict = false } = {}) {
 async function orderACopy(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getByRole('button', { name: /pedir un ejemplar/i }));
   await user.click(screen.getByLabelText(/Al enviar el mensaje le facilitaremos tu email/));
-  await user.type(screen.getByLabelText('Tu mensaje para Marina'), 'Hola Marina');
+  await user.type(screen.getByLabelText('Tu mensaje'), 'Hola Marina');
   await user.click(screen.getByRole('button', { name: /enviar mensaje/i }));
 }
 

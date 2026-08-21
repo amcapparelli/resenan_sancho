@@ -6,6 +6,12 @@ import { BookmarkIcon } from './icons';
  * Friendly reminder shown above the message field. Its content is fixed by the
  * spec (no props): it exists to cut down requests with no real intention to
  * review, so the wording is deliberate and not caller-configurable.
+ *
+ * Two short rules in a real list, headingless: this box used to be the tallest
+ * block in the sheet and pushed the consent checkbox below the fold on a phone,
+ * and a list also lets a screen reader announce how many rules there are.
+ * Anything about what to write in the message belongs in MessageField's help
+ * text, not here — it used to be duplicated in both.
  */
 const TipsBox: React.FC = () => (
   <Box>
@@ -13,16 +19,8 @@ const TipsBox: React.FC = () => (
       <BookmarkIcon />
     </IconSlot>
     <Tips>
-      <p>
-        Antes de pedirlo, asegúrate de que este libro te llama de verdad — así la
-        reseña te saldrá sola. Aprovecha el mensaje para presentarte y contar en
-        qué blog o canal la vas a publicar: le da mucha tranquilidad a quien te
-        lo envía.
-      </p>
-      <p>
-        Y si al final no puedes escribirla, dile el motivo. Te lo van a agradecer
-        mucho más que el silencio, y dejas la puerta abierta para la próxima vez.
-      </p>
+      <li>Pídelo solo si te apetece leerlo y reseñarlo.</li>
+      <li>Si al final no puedes, avísale: mejor que el silencio.</li>
     </Tips>
   </Box>
 );
@@ -35,6 +33,14 @@ const Box = styled.div`
   background: ${({ theme }) => theme.cream};
   border: 1px solid ${({ theme }) => theme.lightBorder};
   border-radius: 10px;
+
+  /* Only the bottom sheet is short on height; the desktop dialog keeps the
+     original spacing. */
+  @media (max-width: 899px) {
+    margin-bottom: 16px;
+    padding-top: 14px;
+    padding-bottom: 14px;
+  }
 `;
 
 const IconSlot = styled.div`
@@ -43,18 +49,19 @@ const IconSlot = styled.div`
   color: ${({ theme }) => theme.terracotta};
 `;
 
-const Tips = styled.div`
+const Tips = styled.ul`
+  margin: 0;
+  /* The browser default (~40px) is too greedy here: the box already sits inside
+     the sheet padding and next to the icon, leaving ~250px of text width on a
+     360px phone, so an over-indented marker costs an extra wrapped line. */
+  padding-left: 17px;
   font-family: 'Source Sans 3', sans-serif;
   font-size: 13.5px;
   line-height: 1.6;
   color: ${({ theme }) => theme.brown};
 
-  p {
-    margin: 0;
-  }
-
-  p + p {
-    margin-top: 10px;
+  li + li {
+    margin-top: 6px;
   }
 `;
 

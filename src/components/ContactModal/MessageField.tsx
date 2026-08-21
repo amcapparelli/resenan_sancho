@@ -8,7 +8,11 @@ export const MESSAGE_MAX_LENGTH = 2000;
 interface MessageFieldProps {
   id: string;
   value: string;
-  /** Author's first name, already resolved by the caller. */
+  /**
+   * Author's first name, already resolved by the caller. Only the placeholder
+   * uses it now: the heading above already names the author, so having it in
+   * the label as well read as noise.
+   */
   authorName: string;
   disabled?: boolean;
   onChange: (value: string) => void;
@@ -25,7 +29,7 @@ const MessageField: React.FC<MessageFieldProps> = ({
 
   return (
     <Field>
-      <Label htmlFor={id}>{`Tu mensaje para ${authorName}`}</Label>
+      <Label htmlFor={id}>Tu mensaje</Label>
       <Help id={helpId}>
         Preséntate y cuéntale qué te ha llamado la atención del libro. Si tu blog
         o canal no aparece aún en tu perfil, menciónalo aquí.
@@ -49,6 +53,11 @@ const MessageField: React.FC<MessageFieldProps> = ({
 
 const Field = styled.div`
   margin-bottom: 18px;
+
+  /* Tighter only on the bottom sheet, where vertical room is scarce. */
+  @media (max-width: 899px) {
+    margin-bottom: 14px;
+  }
 `;
 
 const CounterRow = styled.div`

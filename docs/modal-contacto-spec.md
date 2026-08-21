@@ -126,32 +126,51 @@ Icono X, 16px, `stroke-width: 2`. `aria-label="Cerrar"`.
 ### 6.2 Contexto del libro
 ```
 display: flex; align-items: center; gap: 12px
-margin-bottom: 16px
+margin-bottom: 16px (12px en móvil, < 900px)
 ```
 - Miniatura de portada 40×54 (ratio 3:4), `border-radius: 5px`, fondo crema,
   borde `1px solid #d4c9b0`. Fallback: icono de libro (mismo patrón que
   `account-spec.md` → "Mis libros").
 - Título del libro: Source Sans 3, 13px, weight 600, tinta, una línea con
   ellipsis.
-- Autor: Source Sans 3, 12px, `#9a8c7e`, una línea con ellipsis.
+- Autor: `de {Nombre} {Apellido}` — Source Sans 3, 12px, `#9a8c7e`, una línea
+  con ellipsis. Aquí sí va el nombre completo (a diferencia del título, §6.3):
+  la altura de esta fila la fija la portada de 54px, así que un nombre largo
+  no cuesta alto, y si no cabe se recorta con ellipsis. Cuando no hay apellido
+  se muestra solo el nombre, sin espacio sobrante.
 
 ### 6.3 Título del modal
-`Pedir este ejemplar` — Fraunces 600, 22px (20px en móvil), tinta.
+`Pedir este ejemplar a {Nombre del autor}` — Fraunces 600, 22px (20px en
+móvil), tinta. Solo el nombre de pila, nunca el apellido: con apellido el
+título pasa de una línea a dos en móvil (~34 caracteres frente a los ~29 que
+caben a 20px en 360px) y se come el margen recuperado en la revisión de
+2026-08-21. `margin-bottom: 14px` (10px en móvil).
 
 ### 6.4 Caja de consejos (elemento nuevo)
 ```
 background: crema #FBF1D8
 border: 1px solid #d4c9b0
 border-radius: 10px
-padding: 16px 16px 16px 14px
-margin-bottom: 22px
+padding: 16px 16px 16px 14px (14px vertical en móvil, < 900px)
+margin-bottom: 22px (16px en móvil)
 display: flex; gap: 12px
 ```
 - Icono a la izquierda: marcador de libros de la marca (mismo motivo que el
   logo, ver `sistema-diseno-resenan-sancho.md`), 18×22px, relleno teja.
 - Texto: Source Sans 3, 13.5px, line-height 1.6, color marrón `#6B4A16`.
-  Dos párrafos cortos, `margin-top: 10px` entre ellos. Copy exacto en la
-  sección 11 — **no parafrasear**.
+  Lista (`<ul>` real, sin titulillo) de dos consejos muy cortos, `~6px` entre
+  ítems y `padding-left` reducido a `16-18px` (el de por defecto se come el
+  ancho disponible). Copy exacto en la sección 11 — **no parafrasear**.
+
+> **Revisión (2026-08-21).** Antes eran dos párrafos largos. Se acortaron a una
+> lista de dos ítems porque la caja era el bloque más alto del modal y obligaba
+> a hacer scroll para ver la casilla de consentimiento y el botón de enviar. De
+> paso se eliminó la frase "Aprovecha el mensaje para presentarte y contar en
+> qué blog o canal la vas a publicar…", que duplicaba el texto de ayuda del
+> campo de mensaje (§6.5) a pocos elementos de distancia en pantalla. Ese texto
+> de ayuda no cambia. El `min-height: 130px` del textarea se mantiene por
+> decisión expresa: la altura se recupera de los márgenes, no del área de
+> escritura.
 
 ### 6.5 Campo de mensaje
 Reutiliza el patrón de textarea + contador ya definido en
@@ -166,7 +185,9 @@ contador: 12px, #9a8c7e, alineado a la derecha, margin-top 6px
   Por encima de 1800 caracteres pasa a color teja (mismo criterio que el
   resto del producto).
 ```
-- Label: `Tu mensaje para {Nombre del autor}`
+- Label: `Tu mensaje` — sin el nombre del autor. Desde que el título (§6.3) lo
+  nombra, repetirlo aquí era la cuarta aparición del mismo nombre en un modal
+  corto. El placeholder sí lo conserva.
 - Field-help: copy exacto en sección 11.
 - Placeholder: copy exacto en sección 11.
 - `maxLength`: 2000.
@@ -261,14 +282,20 @@ interface ContactModalProps {
   };
   author: {
     firstName: string;
+    /** Puede venir vacío: muchos autores independientes solo registran nombre. */
+    lastName?: string;
   };
   onSubmit: (message: string) => Promise<void>;
 }
 ```
 
-`author.firstName` alimenta tanto el label del textarea (`Tu mensaje para
-Marina`) como el placeholder — pasar el nombre ya resuelto, no reconstruirlo
-en el componente.
+`author.firstName` alimenta el título del modal (§6.3) y el placeholder del
+mensaje. El nombre completo (`firstName` + `lastName`, uniendo solo las partes
+no vacías) alimenta la línea de autor del contexto del libro (§6.2). Son dos
+valores distintos para dos sitios distintos, a propósito: el título va sin
+apellido para no partirse en dos líneas en móvil, y el contexto sí lo lleva
+porque esa fila no crece de alto. Pasar los nombres ya resueltos, no
+reconstruirlos dentro del componente.
 
 ---
 
@@ -317,10 +344,11 @@ No parafrasear ninguno de estos textos al implementar:
 
 | Elemento | Texto |
 |---|---|
-| Título del modal | `Pedir este ejemplar` |
-| Caja de consejos, párrafo 1 | `Antes de pedirlo, asegúrate de que este libro te llama de verdad — así la reseña te saldrá sola. Aprovecha el mensaje para presentarte y contar en qué blog o canal la vas a publicar: le da mucha tranquilidad a quien te lo envía.` |
-| Caja de consejos, párrafo 2 | `Y si al final no puedes escribirla, dile el motivo. Te lo van a agradecer mucho más que el silencio, y dejas la puerta abierta para la próxima vez.` |
-| Label del textarea | `Tu mensaje para {Nombre del autor}` |
+| Título del modal | `Pedir este ejemplar a {Nombre del autor}` (solo nombre de pila) |
+| Caja de consejos, ítem 1 | `Pídelo solo si te apetece leerlo y reseñarlo.` |
+| Caja de consejos, ítem 2 | `Si al final no puedes, avísale: mejor que el silencio.` |
+| Label del textarea | `Tu mensaje` |
+| Autor en el contexto del libro | `de {Nombre} {Apellido}` (solo el nombre si no hay apellido) |
 | Ayuda bajo el label | `Preséntate y cuéntale qué te ha llamado la atención del libro. Si tu blog o canal no aparece aún en tu perfil, menciónalo aquí.` |
 | Placeholder del textarea | `Hola {Nombre}, soy… y escribo reseñas en… Me interesa tu libro porque…` |
 | Checkbox (sin cambios) | `Al enviar el mensaje le facilitaremos tu email al autor para que se ponga en contacto contigo. Marca esta casilla si estás de acuerdo.` |

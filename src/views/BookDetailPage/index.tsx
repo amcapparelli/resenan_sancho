@@ -133,7 +133,12 @@ const BookDetailPage: React.FC<BookDetailPageProps> = ({ book }) => {
         isOpen={isContactModalOpen}
         onClose={() => setIsContactModalOpen(false)}
         book={{ id: currentBook._id, title: currentBook.title, coverUrl: currentBook.cover }}
-        author={{ firstName: currentBook.author.name }}
+        author={{
+          // `author.name` is the given name, not the full name: the surname is
+          // a separate field, and it is often empty for independent authors.
+          firstName: currentBook.author.name,
+          lastName: currentBook.author.lastName,
+        }}
         onSubmit={handleOrderSubmit}
       />
 

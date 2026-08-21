@@ -6,6 +6,7 @@ import styled from 'styled-components';
 
 import { buttonSpinner, primaryButton, secondaryButton } from '../styles';
 import SubmitError from '../../utils/SubmitError';
+import { buildAuthorName } from '../../utils/seo/bookSeo';
 import BookContextHeader from './BookContextHeader';
 import ConsentCheckbox from './ConsentCheckbox';
 import MessageField from './MessageField';
@@ -52,6 +53,12 @@ interface ContactModalProps {
   };
   author: {
     firstName: string;
+    /**
+     * Optional on purpose: the API types it as a string, but this platform is
+     * mostly independent authors and many register with no surname at all, so
+     * it arrives missing, empty or whitespace-only often enough to plan for.
+     */
+    lastName?: string;
   };
   /**
    * Sends the request. It MUST reject when the send fails: a rejection is how
@@ -67,6 +74,17 @@ const ContactModal: React.FC<ContactModalProps> = ({
   author,
   onSubmit,
 }) => {
+  // Two names for two jobs, deliberately not unified: the context header can
+  // afford the full name (its height comes from the 40×54 cover and the line
+  // truncates with an ellipsis), while the heading and the placeholder greet the
+  // author by first name only, which is what keeps the heading on one line on a
+  // phone. `buildAuthorName` drops empty parts so a missing surname cannot leave
+  // a trailing space behind.
+  const authorFullName = buildAuthorName({
+    name: author.firstName,
+    lastName: author.lastName ?? '',
+  });
+
   const baseId = useId();
   const titleId = `${baseId}-title`;
   const messageId = `${baseId}-message`;
@@ -158,12 +176,15 @@ const ContactModal: React.FC<ContactModalProps> = ({
         <HeaderSlot>
           <BookContextHeader
             title={book.title}
-            authorName={author.firstName}
+            authorName={authorFullName}
             coverUrl={book.coverUrl}
           />
         </HeaderSlot>
 
-        <Title id={titleId}>Pedir este ejemplar</Title>
+        {/* First name only, and in a single text node: it keeps the accessible
+            name clean and the heading on one line at 20px on a 360px phone,
+            which a full name would not do. */}
+        <Title id={titleId}>{`Pedir este ejemplar a ${author.firstName}`}</Title>
 
         <TipsBox />
 
@@ -295,7 +316,7 @@ const Body = styled.div`
   padding: 24px 26px 4px;
 
   @media (max-width: 899px) {
-    padding: 20px 20px 4px;
+    padding: 16px 20px 4px;
   }
 `;
 
@@ -312,7 +333,11 @@ const Title = styled.h2`
   line-height: 1.2;
   color: ${({ theme }) => theme.ink};
 
+  /* Tighter only on the sheet: the desktop dialog never ran out of height, so
+     it keeps the roomier rhythm. Same reasoning in TipsBox, MessageField and
+     BookContextHeader. */
   @media (max-width: 899px) {
+    margin-bottom: 10px;
     font-size: 20px;
   }
 `;

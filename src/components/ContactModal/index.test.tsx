@@ -7,7 +7,9 @@
  * rejecting is the only signal the modal has to keep itself open and offer a retry.
  */
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import {
+  render, screen, waitFor, within,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ThemeProvider } from 'styled-components';
 
@@ -17,18 +19,24 @@ import ContactModal from '.';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
+type Author = React.ComponentProps<typeof ContactModal>['author'];
+
 const BOOK = { id: 'book-1', title: 'La sombra del viento', coverUrl: '' };
-const AUTHOR = { firstName: 'Marina' };
+// With a surname on purpose: it is what proves the heading and the placeholder
+// use the first name alone while the context header uses the full name.
+const AUTHOR: Author = { firstName: 'Marina', lastName: 'López' };
 const GENERIC_ERROR = 'No se pudo enviar el mensaje. Inténtalo de nuevo.';
 
 function renderModal(overrides: {
   onClose?: () => void;
   onSubmit?: (message: string) => Promise<void>;
   book?: { id: string; title: string; coverUrl?: string };
+  author?: Author;
 } = {}) {
   const onClose = overrides.onClose ?? jest.fn();
   const onSubmit = overrides.onSubmit ?? jest.fn().mockResolvedValue(undefined);
   const book = overrides.book ?? BOOK;
+  const author = overrides.author ?? AUTHOR;
 
   const markup = (isOpen: boolean) => (
     <ThemeProvider theme={StyledTheme}>
@@ -36,7 +44,7 @@ function renderModal(overrides: {
         isOpen={isOpen}
         onClose={onClose}
         book={book}
-        author={AUTHOR}
+        author={author}
         onSubmit={onSubmit}
       />
     </ThemeProvider>
@@ -54,7 +62,9 @@ function renderModal(overrides: {
 }
 
 const getSendButton = () => screen.getByRole('button', { name: /enviar mensaje/i });
-const getMessageField = () => screen.getByLabelText('Tu mensaje para Marina');
+const getMessageField = () => screen.getByLabelText('Tu mensaje');
+/** The `de …` line under the book title, in the context header. */
+const getAuthorLine = () => screen.getByText(/^de Marina/);
 // By label and not by role: this is what catches a broken htmlFor/id pairing,
 // which would leave the legal text unassociated from the box.
 const getConsentCheckbox = () => screen.getByLabelText(
@@ -75,16 +85,24 @@ function createDeferred() {
 
 // ─── Copy ────────────────────────────────────────────────────────────────────
 // The wording was signed off word by word (it is what keeps casual requests
-// down), so the two strings that changed late are pinned here.
+// down), so the strings that changed late are pinned here.
 
 describe('ContactModal — approved copy', () => {
-  it('renders the second tip in the second person ("Te lo van a agradecer")', () => {
+  // Copy and semantics in one assertion on purpose: checked separately, tips
+  // moved back into paragraphs would still pass as long as some other list
+  // existed in the modal. The sheet is short on room, so "list, 2 items" from
+  // the screen reader is what tells the user how many rules there are.
+  it('renders the two approved tips as an ordered pair of list items', () => {
     renderModal();
 
-    expect(screen.getByText(/Te lo van a agradecer mucho más que el silencio/)).toBeInTheDocument();
+    const items = within(screen.getByRole('list')).getAllByRole('listitem');
+    expect(items.map((li) => li.textContent)).toEqual([
+      'Pídelo solo si te apetece leerlo y reseñarlo.',
+      'Si al final no puedes, avísale: mejor que el silencio.',
+    ]);
   });
 
-  it('greets the author by name in the placeholder, with ellipsis characters', () => {
+  it('greets the author by first name in the placeholder, with ellipsis characters', () => {
     renderModal();
 
     expect(getMessageField()).toHaveAttribute(
@@ -92,11 +110,41 @@ describe('ContactModal — approved copy', () => {
       'Hola Marina, soy… y escribo reseñas en… Me interesa tu libro porque…',
     );
   });
+
+  // The heading already names the author, so the label no longer repeats it.
+  // Asserted through the `for`/`id` pairing rather than the text alone: an
+  // orphaned label would still read correctly on screen and leave the textarea
+  // with no accessible name.
+  it('labels the message field "Tu mensaje" and keeps it associated', () => {
+    renderModal();
+
+    expect(screen.getByText('Tu mensaje')).toHaveAttribute('for', getMessageField().id);
+  });
 });
 
 // ─── Book context ────────────────────────────────────────────────────────────
 
 describe('ContactModal — book context', () => {
+  it('names the author in full under the book title', () => {
+    renderModal();
+
+    expect(getAuthorLine().textContent).toBe('de Marina López');
+  });
+
+  // `lastName` is typed as a string but independent authors routinely register
+  // without one, and legacy records store it as blank rather than absent.
+  // Asserted on textContent because getByText normalises whitespace and would
+  // happily match the stray trailing space this is here to prevent.
+  it.each([
+    ['missing', undefined],
+    ['empty', ''],
+    ['whitespace-only', '   '],
+  ])('falls back to the first name when the surname is %s', (_case, lastName) => {
+    renderModal({ author: { firstName: 'Marina', lastName } });
+
+    expect(getAuthorLine().textContent).toBe('de Marina');
+  });
+
   it('renders the cover through next/image when the book has one', () => {
     renderModal({
       book: {
@@ -368,7 +416,9 @@ describe('ContactModal — dialog semantics', () => {
   it('is labelled by its own title', () => {
     renderModal();
 
-    expect(screen.getByRole('dialog')).toHaveAccessibleName('Pedir este ejemplar');
+    expect(screen.getByRole('dialog')).toHaveAccessibleName(
+      `Pedir este ejemplar a ${AUTHOR.firstName}`,
+    );
   });
 });
 
