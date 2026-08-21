@@ -1,0 +1,3 @@
+- [Test harness setup](project-test-harness.md) — jest.config.js + jest.setup.ts bootstrapped; next/jest + StyledTheme + router mock patterns
+- [Hook testing patterns](hook-testing-patterns.md) — renderHook+manual ref attach breaks timing; matchMedia mock recipe; no clearMocks in config; fail-first proof steps
+- [View integration fetch tests](view-integration-fetch-tests.md) — bugs in the view's effect deps/wiring need view-level fetch-count tests, not just hook tests; global.fetch mock recipe; findByRole timing; exact aria-label matching
