@@ -17,7 +17,7 @@ import MyBooksSkeleton from '../components/MyBooksSkeleton';
 import Toggle from '../components/Toggle';
 import PromoteServicesModal from '../components/PromoteServicesModal';
 import promotionServices from '../components/PromoteServicesModal/catalog';
-import { primaryButton, secondaryButton } from '../components/styles';
+import { primaryButton, secondaryButton } from '../../../components/styles';
 
 const MyBooksSection: React.FC = (): JSX.Element => {
   const router = useRouter();

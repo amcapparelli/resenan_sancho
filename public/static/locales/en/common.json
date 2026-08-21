@@ -66,7 +66,6 @@
   },
   "titles": {
     "chooseFormats": "Elige tus preferencias de lectura",
-    "contactAuthor": "¡Contact the author!",
     "describeYourself": "Tell the world how do you like to write your reviews",
     "mybooks": "My Books",
     "mySpaces": "My literary spaces",
@@ -78,7 +77,6 @@
     "homeFirst": "Reseñan Sancho is a site to connect writers with literary reviewers.",
     "homeSecond": "Books for Literary Reviewers.",
     "homeThird": "Promotion for writers.",
-    "sendMessage": "Send a personalized message:",
     "updateProfile": "Update Profile"
   },
   "paragraphs": {

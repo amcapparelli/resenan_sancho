@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { CHEVRON_SVG } from '../../../utils/selectChevron';
-import { fieldBase } from './styles';
+import { fieldBase } from '../../../components/styles';
 import {
   FieldWrapper,
   FieldLabel,

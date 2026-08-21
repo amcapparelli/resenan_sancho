@@ -10,7 +10,7 @@ import styled from 'styled-components';
 import UserContext from '../../../store/context/userContext/UserContext';
 import { deleteUser as URL } from '../../../config/routes';
 import AccountField from './AccountField';
-import { primaryButton, secondaryButton } from './styles';
+import { primaryButton, secondaryButton } from '../../../components/styles';
 
 const DELETE_DESCRIPTION = 'Se borrarán tu perfil, tus espacios literarios y los '
   + 'libros que hayas publicado. Esta acción no se puede deshacer.';

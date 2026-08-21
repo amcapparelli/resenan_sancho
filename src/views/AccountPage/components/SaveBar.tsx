@@ -1,6 +1,7 @@
 import React from 'react';
-import styled, { keyframes } from 'styled-components';
-import { primaryButton } from './styles';
+import styled from 'styled-components';
+import { buttonSpinner, primaryButton } from '../../../components/styles';
+import { CheckIcon } from '../../../components/icons';
 
 interface SaveBarFeedback {
   success?: boolean;
@@ -13,12 +14,6 @@ interface SaveBarProps {
   saveLabel?: string;
   feedback?: SaveBarFeedback;
 }
-
-const CheckIcon: React.FC = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" aria-hidden="true">
-    <polyline points="20 6 9 17 4 12" />
-  </svg>
-);
 
 const SaveBar: React.FC<SaveBarProps> = ({
   onSave,
@@ -98,21 +93,8 @@ const RetryButton = styled.button`
   text-decoration: underline;
 `;
 
-const spin = keyframes`
-  to { transform: rotate(360deg); }
-`;
-
 const Spinner = styled.span`
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.5);
-  border-top-color: ${({ theme }) => theme.white};
-  border-radius: 50%;
-  animation: ${spin} 0.7s linear infinite;
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-  }
+  ${buttonSpinner}
 `;
 
 export default SaveBar;

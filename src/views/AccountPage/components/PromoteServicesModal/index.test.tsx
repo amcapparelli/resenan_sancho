@@ -134,6 +134,14 @@ describe('PromoteServicesModal', () => {
     expect(card.getByText(/Ya usaste los 2 gratuitos/)).toBeInTheDocument();
   });
 
+  it('marks the dialog as modal for assistive tech', () => {
+    // REGRESSION: MUI puts role="dialog" on the paper but never emits aria-modal,
+    // so a screen reader's virtual cursor could wander to the page behind the
+    // modal even though the keyboard focus trap held.
+    renderModal();
+    expect(screen.getByRole('dialog')).toHaveAttribute('aria-modal', 'true');
+  });
+
   it('blocks the boost service when the book is not available on paper', () => {
     renderModal({ formats: ['epub'] });
     const card = within(cardFor('Acelera tu libro'));

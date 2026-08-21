@@ -22,6 +22,7 @@
   },
   "plugins": [
     "react",
+    "react-hooks",
     "@typescript-eslint",
     "jest"
   ],
@@ -40,6 +41,34 @@
   "rules": {
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": "error",
+    "no-undef": "off",
+    "no-use-before-define": "off",
+    "@typescript-eslint/no-use-before-define": [
+      "error",
+      {
+        "variables": false
+      }
+    ],
+    "react/function-component-definition": [
+      "error",
+      {
+        "namedComponents": [
+          "arrow-function",
+          "function-declaration"
+        ],
+        "unnamedComponents": "arrow-function"
+      }
+    ],
+    "react/require-default-props": "off",
+    "react/jsx-one-expression-per-line": "off",
+    "no-irregular-whitespace": [
+      "error",
+      {
+        "skipJSXText": true
+      }
+    ],
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
     "import/extensions": "off",
     "import/no-extraneous-dependencies": [
       "error",

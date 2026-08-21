@@ -11,7 +11,7 @@ import BlockLink from './BlockLink';
 
 /**
  * Card view-model. The highlights endpoint returns no synopsis and no formats,
- * so this block cannot reuse `BookCard`/`BookListItem` (both need the full
+ * so this block cannot reuse `BookCard` (it needs the full
  * `Book`). The genre arrives already translated from its DB code in
  * getServerSideProps.
  */

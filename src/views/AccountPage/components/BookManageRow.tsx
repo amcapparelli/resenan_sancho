@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import genres from '../../../utils/constants/genres';
 import formatAvailableCopies from '../../../utils/formatAvailableCopies';
-import { primaryButton, secondaryButton } from './styles';
+import { primaryButton, secondaryButton } from '../../../components/styles';
 
 interface BookManageRowProps {
   title: string;

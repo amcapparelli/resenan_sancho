@@ -1,19 +1,30 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+/* eslint-disable no-underscore-dangle */
+import React, {
+  useContext, useEffect, useState,
+} from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
+import ReactGA from 'react-ga4';
 
 import { useFetchBook } from '../../utils/customHooks';
 import UserContext from '../../store/context/userContext/UserContext';
-import { ModalContact } from '../../components';
+import { ContactModal } from '../../components';
 import { Book } from '../../interfaces/books';
 import BookDetailHero from './BookDetailHero';
 import BookDetailSynopsis from './BookDetailSynopsis';
+import OrderSuccessToast from './OrderSuccessToast';
+import useOrderBook from './useOrderBook';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 interface BookDetailPageProps {
   book: Book;
 }
+
+// ─── Constants ───────────────────────────────────────────────────────────────
+
+/** Long enough to read the confirmation, short enough not to sit on the page. */
+const SUCCESS_TOAST_MS = 6000;
 
 // ─── Styled ──────────────────────────────────────────────────────────────────
 
@@ -52,30 +63,56 @@ const BreadcrumbLink = styled(Link)`
 // ─── Component ───────────────────────────────────────────────────────────────
 
 const BookDetailPage: React.FC<BookDetailPageProps> = ({ book }) => {
-  const { isLogged } = useContext(UserContext);
+  const { isLogged, user } = useContext(UserContext);
   // The book is provided by SSR for the first paint. useFetchBook only drives
   // the client-side refetch after an order, so its reducer state stays empty
   // until then; we fall back to the SSR `book` while that is the case.
   const [refetchedBook, fetchBook] = useFetchBook();
   const currentBook: Book = refetchedBook._id ? refetchedBook : book;
 
-  const [openModalContact, setOpenModalContact] = useState(false);
-  // Tracks how many copies have been ordered so we can refetch after a
-  // successful order and show the updated copy count.
-  const [copiesDecrease, setCopiesDecrease] = useState<number>(0);
-  // Skip the mount run: SSR already provided the book, so we only refetch once
-  // the user actually orders a copy (copiesDecrease turns truthy).
-  const didMount = useRef(false);
+  const orderBook = useOrderBook();
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  // Counts successful orders so we can refetch the book and show the updated
+  // copy count. A counter (not a boolean) so a second order refetches again.
+  const [ordersPlaced, setOrdersPlaced] = useState(0);
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
 
+  // Refetch the book to pick up the new copy count. Guarded on the counter and
+  // not on a `didMount` ref: StrictMode runs setup → cleanup → setup, which a ref
+  // set on the first setup can no longer tell apart from a real order, so it used
+  // to fire a spurious fetch on mount in development.
   useEffect(() => {
-    if (!didMount.current) {
-      didMount.current = true;
-      return;
-    }
+    if (ordersPlaced === 0) return;
     fetchBook(book._id);
     // Refetch must fire only on a new order, not when fetchBook/book identity changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [copiesDecrease]);
+  }, [ordersPlaced]);
+
+  // Keyed on the order counter, not on the flag itself, so a second order within
+  // the same visit restarts the countdown instead of inheriting the old timer.
+  useEffect(() => {
+    if (ordersPlaced === 0) return undefined;
+    setShowSuccessToast(true);
+    const timeoutId = setTimeout(() => setShowSuccessToast(false), SUCCESS_TOAST_MS);
+    return () => clearTimeout(timeoutId);
+  }, [ordersPlaced]);
+
+  // The page owns the request: ContactModal is presentational and only needs the
+  // promise to reject when the send fails, so it can show its error banner.
+  const handleOrderSubmit = async (message: string) => {
+    await orderBook(currentBook._id, message);
+
+    setIsContactModalOpen(false);
+    // Drives both the copies refetch and the success toast.
+    setOrdersPlaced((count) => count + 1);
+
+    // Last: analytics must never be able to turn a successful order into the
+    // modal's error banner, which is what a throw before these setters would do.
+    ReactGA.event({
+      category: 'Ejemplar pedido',
+      action: `Libro pedido: ${currentBook.title}, reseñador: ${user.name} ${user.lastName || ''}`,
+    });
+  };
 
   return (
     <Wrapper>
@@ -87,20 +124,25 @@ const BookDetailPage: React.FC<BookDetailPageProps> = ({ book }) => {
       <BookDetailHero
         book={currentBook}
         isLoggedIn={isLogged}
-        onRequest={() => setOpenModalContact(true)}
+        onRequest={() => setIsContactModalOpen(true)}
       />
 
       <BookDetailSynopsis synopsis={currentBook.synopsis} />
 
-      <ModalContact
-        open={openModalContact}
-        onClose={(copiesOrdered: number) => {
-          setCopiesDecrease(copiesOrdered);
-          setOpenModalContact(false);
+      <ContactModal
+        isOpen={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
+        book={{ id: currentBook._id, title: currentBook.title, coverUrl: currentBook.cover }}
+        author={{
+          // `author.name` is the given name, not the full name: the surname is
+          // a separate field, and it is often empty for independent authors.
+          firstName: currentBook.author.name,
+          lastName: currentBook.author.lastName,
         }}
-        book={currentBook._id}
-        bookTitle={currentBook.title}
+        onSubmit={handleOrderSubmit}
       />
+
+      <OrderSuccessToast visible={showSuccessToast} />
     </Wrapper>
   );
 };

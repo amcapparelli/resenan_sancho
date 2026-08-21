@@ -7,13 +7,14 @@ import { useForm, useUploadImages } from '../../../utils/customHooks';
 import { update as URL } from '../../../config/routes';
 import { Response } from '../../../interfaces/response';
 import { UserLogged } from '../../../interfaces/user';
+import buildFullName from '../../../utils/buildFullName';
 import { getCountryName } from '../../../utils/constants/countries';
 import SectionHeader from '../SectionHeader';
 import AccountField, { FieldNote } from '../components/AccountField';
 import CountrySelect from '../components/CountrySelect';
 import SaveBar from '../components/SaveBar';
 import DangerZone from '../components/DangerZone';
-import { secondaryButton } from '../components/styles';
+import { secondaryButton } from '../../../components/styles';
 
 const getInitials = (name?: string, lastName?: string): string => {
   const first = name?.trim()[0] ?? '';
@@ -88,7 +89,7 @@ const ProfileSection: React.FC = (): JSX.Element => {
         {updateForm.avatar
           ? <AvatarImg src={updateForm.avatar} alt="Tu avatar" />
           : (
-            <AvatarInitials role="img" aria-label={`Avatar de ${user.name ?? ''} ${user.lastName ?? ''}`.trim()}>
+            <AvatarInitials role="img" aria-label={`Avatar de ${buildFullName(user.name, user.lastName)}`}>
               {getInitials(user.name, user.lastName)}
             </AvatarInitials>
           )}

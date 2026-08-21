@@ -13,6 +13,7 @@ import {
 } from '../../../utils/customHooks';
 import UserContext from '../../../store/context/userContext/UserContext';
 import { registerBook as URL } from '../../../config/routes';
+import buildFullName from '../../../utils/buildFullName';
 import genres from '../../../utils/constants/genres';
 import { BookForm, BookFormErrors } from '../../../interfaces/books';
 import SectionHeader from '../SectionHeader';
@@ -20,9 +21,9 @@ import AccountField, { FieldLabel, FieldError } from '../components/AccountField
 import AccountSelect from '../components/AccountSelect';
 import CoverUploader from '../components/CoverUploader';
 import SelectableChip from '../components/SelectableChip';
-import CharCounter from '../components/CharCounter';
+import CharCounter from '../../../components/CharCounter';
 import SaveBar from '../components/SaveBar';
-import { fieldBase } from '../components/styles';
+import { fieldBase } from '../../../components/styles';
 
 const SYNOPSIS_MAX = 2000;
 const FORMATS = ['epub', 'papel', 'mobi', 'pdf', 'audiolibro'];
@@ -168,7 +169,7 @@ const AddBookSection: React.FC = (): JSX.Element => {
             className="full-width"
             label={t('booksForm.author')}
             name="author"
-            value={`${user.name} ${user.lastName || ''}`.trim()}
+            value={buildFullName(user.name, user.lastName)}
             disabled
             note="Se publica con tu nombre de perfil."
           />

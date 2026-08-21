@@ -1,6 +1,6 @@
 import React, { useId } from 'react';
 import styled, { css } from 'styled-components';
-import { primaryButton, secondaryButton } from '../styles';
+import { buttonSpinner, primaryButton, secondaryButton } from '../../../../components/styles';
 import PriceTag from './PriceTag';
 import ServiceDetails from './ServiceDetails';
 import { ServiceIcon } from './icons';
@@ -284,20 +284,7 @@ const UnavailableNote = styled.p`
 `;
 
 const Spinner = styled.span`
-  width: 16px;
-  height: 16px;
-  border: 2px solid currentColor;
-  border-top-color: transparent;
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-  }
+  ${buttonSpinner}
 `;
 
 interface CardVariantProps {
