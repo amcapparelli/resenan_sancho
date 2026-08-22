@@ -4,11 +4,11 @@
  * detail page. `getReviewers` is mocked at the module boundary; the slug/path
  * helpers run for real so redirect destinations are verified end to end.
  */
-import { getServerSideProps } from './reviewers';
-import { getReviewers, GetReviewersResult } from '../utils/seo/getReviewers';
-import { createMockContext } from '../test-utils/ssrContext';
+import { getServerSideProps } from '../../pages/reviewers';
+import { getReviewers, GetReviewersResult } from '../../utils/seo/getReviewers';
+import { createMockContext } from '../../test-utils/ssrContext';
 
-jest.mock('../utils/seo/getReviewers');
+jest.mock('../../utils/seo/getReviewers');
 
 const mockedGetReviewers = getReviewers as jest.MockedFunction<typeof getReviewers>;
 

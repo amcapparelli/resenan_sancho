@@ -6,11 +6,11 @@
  * helpers (`facets`, `listSeo`) run for real so redirect destinations are
  * verified end to end against their true output.
  */
-import { getServerSideProps } from './books';
-import { getBooks, GetBooksResult } from '../utils/seo/getBooks';
-import { createMockContext } from '../test-utils/ssrContext';
+import { getServerSideProps } from '../../pages/books';
+import { getBooks, GetBooksResult } from '../../utils/seo/getBooks';
+import { createMockContext } from '../../test-utils/ssrContext';
 
-jest.mock('../utils/seo/getBooks');
+jest.mock('../../utils/seo/getBooks');
 
 const mockedGetBooks = getBooks as jest.MockedFunction<typeof getBooks>;
 

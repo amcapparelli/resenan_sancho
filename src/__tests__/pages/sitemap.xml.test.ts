@@ -5,15 +5,15 @@
  * The facet helpers (`facets`) run for real, so the emitted <loc> URLs are
  * verified against the true slug mapping.
  */
-import { getServerSideProps } from './sitemap.xml';
-import { getBooks, GetBooksResult } from '../utils/seo/getBooks';
-import { getReviewers, GetReviewersResult } from '../utils/seo/getReviewers';
-import { Book } from '../interfaces/books';
-import { SITE_URL } from '../utils/constants/seo';
-import { createMockContext } from '../test-utils/ssrContext';
+import { getServerSideProps } from '../../pages/sitemap.xml';
+import { getBooks, GetBooksResult } from '../../utils/seo/getBooks';
+import { getReviewers, GetReviewersResult } from '../../utils/seo/getReviewers';
+import { Book } from '../../interfaces/books';
+import { SITE_URL } from '../../utils/constants/seo';
+import { createMockContext } from '../../test-utils/ssrContext';
 
-jest.mock('../utils/seo/getBooks');
-jest.mock('../utils/seo/getReviewers');
+jest.mock('../../utils/seo/getBooks');
+jest.mock('../../utils/seo/getReviewers');
 
 const mockedGetBooks = getBooks as jest.MockedFunction<typeof getBooks>;
 const mockedGetReviewers = getReviewers as jest.MockedFunction<typeof getReviewers>;

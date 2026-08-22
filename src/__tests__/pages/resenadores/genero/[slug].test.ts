@@ -1,28 +1,28 @@
 /**
- * Unit tests for the /libros/genero/[slug] genre landing SSR entry point. The
- * data fetch (`getBooks`) is mocked at the module boundary; the slug/path
- * helpers run for real so the page-1 redirect destination is verified end to
- * end against `buildGenrePath`.
+ * Unit tests for the /resenadores/genero/[slug] reviewer genre landing SSR entry
+ * point. Mirror of the /libros/genero/[slug] tests: `getReviewers` is mocked at
+ * the module boundary; the slug/path helpers run for real so the page-1 redirect
+ * destination is verified end to end against `buildReviewerGenrePath`.
  */
-import { getServerSideProps } from './[slug]';
-import { getBooks, GetBooksResult } from '../../../utils/seo/getBooks';
-import { createMockContext } from '../../../test-utils/ssrContext';
+import { getServerSideProps } from '../../../../pages/resenadores/genero/[slug]';
+import { getReviewers, GetReviewersResult } from '../../../../utils/seo/getReviewers';
+import { createMockContext } from '../../../../test-utils/ssrContext';
 
-jest.mock('../../../utils/seo/getBooks');
+jest.mock('../../../../utils/seo/getReviewers');
 
-const mockedGetBooks = getBooks as jest.MockedFunction<typeof getBooks>;
+const mockedGetReviewers = getReviewers as jest.MockedFunction<typeof getReviewers>;
 
-const okResult = (overrides: Partial<GetBooksResult> = {}): GetBooksResult => ({
+const okResult = (overrides: Partial<GetReviewersResult> = {}): GetReviewersResult => ({
   ok: true,
-  books: [],
+  reviewers: [],
   totalElements: 5,
   totalPages: 1,
   ...overrides,
 });
 
-const failedResult: GetBooksResult = {
+const failedResult: GetReviewersResult = {
   ok: false,
-  books: [],
+  reviewers: [],
   totalElements: 0,
   totalPages: 0,
 };
@@ -31,14 +31,14 @@ afterEach(() => {
   jest.resetAllMocks();
 });
 
-describe('libros/genero/[slug] getServerSideProps — 404 branches', () => {
+describe('resenadores/genero/[slug] getServerSideProps — 404 branches', () => {
   it('returns notFound when the slug is missing', async () => {
     const context = createMockContext({ params: {} });
 
     const result = await getServerSideProps(context);
 
     expect(result).toEqual({ notFound: true });
-    expect(mockedGetBooks).not.toHaveBeenCalled();
+    expect(mockedGetReviewers).not.toHaveBeenCalled();
   });
 
   it('returns notFound for an unknown genre slug', async () => {
@@ -47,42 +47,42 @@ describe('libros/genero/[slug] getServerSideProps — 404 branches', () => {
     const result = await getServerSideProps(context);
 
     expect(result).toEqual({ notFound: true });
-    expect(mockedGetBooks).not.toHaveBeenCalled();
+    expect(mockedGetReviewers).not.toHaveBeenCalled();
   });
 
   it('returns notFound for an unknown format on a valid genre', async () => {
     const context = createMockContext({
-      params: { slug: 'terror' },
+      params: { slug: 'romantica' },
       query: { format: 'not-a-format' },
     });
 
     const result = await getServerSideProps(context);
 
     expect(result).toEqual({ notFound: true });
-    expect(mockedGetBooks).not.toHaveBeenCalled();
+    expect(mockedGetReviewers).not.toHaveBeenCalled();
   });
 });
 
-describe('libros/genero/[slug] getServerSideProps — page normalization redirect', () => {
+describe('resenadores/genero/[slug] getServerSideProps — page normalization redirect', () => {
   it.each([
-    ['1', '/libros/genero/terror'],
-    ['0', '/libros/genero/terror'],
-    ['abc', '/libros/genero/terror'],
+    ['1', '/resenadores/genero/romantica'],
+    ['0', '/resenadores/genero/romantica'],
+    ['abc', '/resenadores/genero/romantica'],
   ])('redirects a present page=%s to the clean landing path', async (page, destination) => {
     const context = createMockContext({
-      params: { slug: 'terror' },
+      params: { slug: 'romantica' },
       query: { page },
     });
 
     const result = await getServerSideProps(context);
 
     expect(result).toEqual({ redirect: { destination, permanent: true } });
-    expect(mockedGetBooks).not.toHaveBeenCalled();
+    expect(mockedGetReviewers).not.toHaveBeenCalled();
   });
 
   it('keeps the format facet while dropping page=1', async () => {
     const context = createMockContext({
-      params: { slug: 'terror' },
+      params: { slug: 'romantica' },
       query: { format: 'papel', page: '1' },
     });
 
@@ -90,28 +90,28 @@ describe('libros/genero/[slug] getServerSideProps — page normalization redirec
 
     expect(result).toEqual({
       redirect: {
-        destination: '/libros/genero/terror?format=papel',
+        destination: '/resenadores/genero/romantica?format=papel',
         permanent: true,
       },
     });
   });
 });
 
-describe('libros/genero/[slug] getServerSideProps — happy path', () => {
+describe('resenadores/genero/[slug] getServerSideProps — happy path', () => {
   it('returns props and a short-lived cache header on a successful fetch', async () => {
-    mockedGetBooks.mockResolvedValue(okResult());
-    const context = createMockContext({ params: { slug: 'terror' } });
+    mockedGetReviewers.mockResolvedValue(okResult());
+    const context = createMockContext({ params: { slug: 'romantica' } });
 
     const result = await getServerSideProps(context);
 
-    expect(mockedGetBooks).toHaveBeenCalledWith({
-      genre: 'terror',
+    expect(mockedGetReviewers).toHaveBeenCalledWith({
+      genre: 'romantica',
       format: undefined,
       page: 1,
     });
     expect(result).toEqual({
       props: {
-        facets: { genre: 'terror', format: null, page: 1 },
+        facets: { genre: 'romantica', format: null, page: 1 },
         initialData: okResult(),
       },
     });
@@ -123,10 +123,10 @@ describe('libros/genero/[slug] getServerSideProps — happy path', () => {
   });
 });
 
-describe('libros/genero/[slug] getServerSideProps — fetch failure', () => {
+describe('resenadores/genero/[slug] getServerSideProps — fetch failure', () => {
   it('serves 503 with no-store and still returns props on ok:false', async () => {
-    mockedGetBooks.mockResolvedValue(failedResult);
-    const context = createMockContext({ params: { slug: 'terror' } });
+    mockedGetReviewers.mockResolvedValue(failedResult);
+    const context = createMockContext({ params: { slug: 'romantica' } });
 
     const result = await getServerSideProps(context);
 
@@ -134,7 +134,7 @@ describe('libros/genero/[slug] getServerSideProps — fetch failure', () => {
     expect(context.res.setHeader).toHaveBeenCalledWith('Cache-Control', 'no-store');
     expect(result).toEqual({
       props: {
-        facets: { genre: 'terror', format: null, page: 1 },
+        facets: { genre: 'romantica', format: null, page: 1 },
         initialData: failedResult,
       },
     });
