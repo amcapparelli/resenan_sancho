@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, {
+  useState, useRef, useEffect,
+} from 'react';
 import Image from 'next/image';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
@@ -271,8 +273,6 @@ const Avatar: React.FC<AvatarProps> = ({ avatar, name, lastName }) => {
 // ─── Main component ────────────────────────────────────────────────────────
 
 const MAX_GENRES_VISIBLE = 4;
-// Approximate threshold — avoids measuring DOM; toggle only shown when text is clearly long
-const DESCRIPTION_TOGGLE_THRESHOLD = 240;
 
 interface ReviewerCardProps {
   reviewer: Reviewer & { _id?: string };
@@ -282,9 +282,31 @@ const ReviewerCard: React.FC<ReviewerCardProps> = ({ reviewer }) => {
   const { t } = useTranslation();
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [areGenresExpanded, setAreGenresExpanded] = useState(false);
+  const [isOverflowing, setIsOverflowing] = useState(false);
+  const descriptionRef = useRef<HTMLParagraphElement>(null);
 
   const { author, description, genres, formats } = reviewer;
   const fullName = buildFullName(author.name, author.lastName);
+
+  // Show the toggle only when the collapsed description is actually clipped by
+  // the CSS line-clamp — a char-count heuristic can't know the real rendered
+  // height, so it produced a "Ver más" that revealed nothing. Measure only
+  // while collapsed: when expanded the element is `overflow: visible`, so
+  // scrollHeight === clientHeight and we'd wrongly hide the toggle. The last
+  // measured value is preserved while expanded, keeping "Ver menos" visible.
+  useEffect(() => {
+    if (isDescriptionExpanded) return undefined;
+
+    const measure = () => {
+      const el = descriptionRef.current;
+      if (!el) return;
+      setIsOverflowing(el.scrollHeight > el.clientHeight);
+    };
+
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, [isDescriptionExpanded, description]);
 
   // Channels: only render those with a non-empty url
   const activeChannels = CHANNEL_CONFIG.filter(({ key }) => {
@@ -293,7 +315,7 @@ const ReviewerCard: React.FC<ReviewerCardProps> = ({ reviewer }) => {
   });
 
   const hasChannels = activeChannels.length > 0;
-  const showDescriptionToggle = description && description.length > DESCRIPTION_TOGGLE_THRESHOLD;
+  const showDescriptionToggle = isOverflowing;
 
   // Genre display: cap at 4 unless expanded
   const visibleGenres = areGenresExpanded ? genres : genres.slice(0, MAX_GENRES_VISIBLE);
@@ -315,7 +337,7 @@ const ReviewerCard: React.FC<ReviewerCardProps> = ({ reviewer }) => {
 
       {/* Description with expand/collapse */}
       <DescriptionWrapper>
-        <DescriptionText $expanded={isDescriptionExpanded}>
+        <DescriptionText ref={descriptionRef} $expanded={isDescriptionExpanded}>
           {description}
         </DescriptionText>
         {showDescriptionToggle && (
