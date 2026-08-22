@@ -4,9 +4,9 @@
  * `global.fetch`. Every branch resolves to either the book props or a 404 —
  * there are no redirects or cache headers on this route.
  */
-import { getServerSideProps } from './[id]';
-import { Book } from '../../interfaces/books';
-import { createMockContext } from '../../test-utils/ssrContext';
+import { getServerSideProps } from '../../../pages/books/[id]';
+import { Book } from '../../../interfaces/books';
+import { createMockContext } from '../../../test-utils/ssrContext';
 
 // jsdom ships no global.fetch, so jest.spyOn(global, 'fetch') has nothing to spy
 // on. We capture the original (undefined here) and restore it in afterEach so the
