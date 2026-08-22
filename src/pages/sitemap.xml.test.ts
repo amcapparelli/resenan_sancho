@@ -111,6 +111,27 @@ describe('sitemap.xml getServerSideProps — happy path', () => {
   });
 });
 
+describe('sitemap.xml getServerSideProps — de-dupes book ids across pages', () => {
+  it('emits each book URL only once even if the API returns a duplicate id across pages', async () => {
+    // Defensive pagination can pull the same book id twice: page 1 declares two
+    // pages and returns id X, and page 2 returns id X again (an API that repeats
+    // a row across page boundaries). The sitemap must still emit it once.
+    mockedGetBooks.mockResolvedValue({
+      ok: true,
+      books: [{ _id: 'book-dup', genre: 'TER', formats: ['papel'] }] as Book[],
+      totalElements: 1,
+      totalPages: 2,
+    });
+    mockedGetReviewers.mockResolvedValue(reviewersResult([]));
+
+    const { xml } = await runSitemap();
+
+    const bookUrl = `<loc>${SITE_URL}/books/book-dup</loc>`;
+    const occurrences = xml.split(bookUrl).length - 1;
+    expect(occurrences).toBe(1);
+  });
+});
+
 describe('sitemap.xml getServerSideProps — degrades when a helper throws', () => {
   it('still emits the static routes without crashing when getBooks rejects', async () => {
     mockedGetBooks.mockRejectedValue(new Error('API down'));
