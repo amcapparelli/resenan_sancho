@@ -8,11 +8,11 @@
  * failure the home stays 200 (it degrades, dropping the accessory blocks) and
  * only marks the response no-store — it does NOT 503 like the listing routes.
  */
-import { getServerSideProps } from './index';
-import { getHomeHighlights, GetHomeHighlightsResult } from '../utils/seo/getHomeHighlights';
-import { createMockContext } from '../test-utils/ssrContext';
+import { getServerSideProps } from '../../pages/index';
+import { getHomeHighlights, GetHomeHighlightsResult } from '../../utils/seo/getHomeHighlights';
+import { createMockContext } from '../../test-utils/ssrContext';
 
-jest.mock('../utils/seo/getHomeHighlights');
+jest.mock('../../utils/seo/getHomeHighlights');
 
 const mockedGetHomeHighlights = getHomeHighlights as jest.MockedFunction<
   typeof getHomeHighlights
