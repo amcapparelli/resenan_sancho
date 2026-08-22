@@ -111,6 +111,27 @@ describe('sitemap.xml getServerSideProps — happy path', () => {
   });
 });
 
+describe('sitemap.xml getServerSideProps — deduplicates book URLs', () => {
+  it('emits each book URL only once even if the API returns a duplicate id across pages', async () => {
+    // The sitemap pages through the API defensively (looping over totalPages).
+    // With totalPages: 2 and the same book id returned on every page, the id
+    // reaches URL collection twice; the sitemap must still emit its <loc> once.
+    mockedGetBooks.mockResolvedValue({
+      ok: true,
+      books: [{ _id: 'book-dup' }] as Book[],
+      totalElements: 1,
+      totalPages: 2,
+    });
+    mockedGetReviewers.mockResolvedValue(reviewersResult([]));
+
+    const { xml } = await runSitemap();
+
+    const bookLoc = `<loc>${SITE_URL}/books/book-dup</loc>`;
+    const occurrences = xml.split(bookLoc).length - 1;
+    expect(occurrences).toBe(1);
+  });
+});
+
 describe('sitemap.xml getServerSideProps — degrades when a helper throws', () => {
   it('still emits the static routes without crashing when getBooks rejects', async () => {
     mockedGetBooks.mockRejectedValue(new Error('API down'));

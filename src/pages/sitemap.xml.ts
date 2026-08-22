@@ -55,14 +55,19 @@ const collectDynamicUrls = async (): Promise<DynamicUrls> => {
 
   const genreCodes = new Set<string>();
   const formatValues = new Set<string>();
-  const bookIds: string[] = [];
+  // A Set (like genre/format) dedupes ids: the defensive pagination above can
+  // pull the same book across pages, and an id must emit its <loc> only once.
+  const bookIdSet = new Set<string>();
 
   books.forEach((book) => {
-    if (book._id) bookIds.push(book._id);
+    if (book._id) bookIdSet.add(book._id);
     if (book.genre) genreCodes.add(book.genre);
     // A book can offer several formats; every present one is a valid facet.
     (book.formats ?? []).forEach((format) => formatValues.add(format));
   });
+
+  // Preserve first-seen order so the sitemap URL order stays stable.
+  const bookIds = Array.from(bookIdSet);
 
   // Map genre codes → public slugs, dropping any code not in the approved map.
   const genreSlugs = Array.from(genreCodes)
