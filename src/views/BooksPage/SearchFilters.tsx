@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { CHEVRON_SVG } from '../../utils/selectChevron';
-import { TrashIcon } from '../../components/icons';
+import ClearFiltersButton from '../../components/ClearFiltersButton';
 
 // Visually hidden but accessible to screen readers
 const VisuallyHidden = styled.label`
@@ -94,36 +94,6 @@ const FilterButton = styled.button`
   }
 `;
 
-// Discreet reset action, not a navigation link: a <button>, not styled(Link),
-// visually matching BookDetailPage's BreadcrumbLink (text + icon, no border/fill).
-const ClearButton = styled.button`
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  background: none;
-  border: none;
-  padding: 9px 4px;
-  font-family: 'Source Sans 3', sans-serif;
-  font-size: 13px;
-  color: ${({ theme }) => theme.brown};
-  cursor: pointer;
-  transition: color 0.15s ease;
-
-  &:hover:not(:disabled) {
-    color: ${({ theme }) => theme.terracotta};
-  }
-
-  &:disabled {
-    color: ${({ theme }) => theme.lightBorder};
-    cursor: default;
-  }
-
-  @media (max-width: 480px) {
-    width: 100%;
-    justify-content: center;
-  }
-`;
-
 const SearchIcon: React.FC = () => (
   <svg
     width="14"
@@ -206,15 +176,11 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
         Filtrar
       </FilterButton>
 
-      <ClearButton
-        type="button"
+      <ClearFiltersButton
         onClick={onClear}
         disabled={!hasActiveFilter}
-        aria-label="Limpiar filtros de libros"
-      >
-        <TrashIcon />
-        Limpiar filtros
-      </ClearButton>
+        ariaLabel="Limpiar filtros de libros"
+      />
     </Bar>
   )
 };
