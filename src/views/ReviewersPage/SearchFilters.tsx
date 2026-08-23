@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { TrashIcon } from '../../components/icons';
 
 // Chevron SVG encoded for use as CSS background-image (terracotta stroke)
 const CHEVRON_SVG = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpolyline points='2%2C4 7%2C10 12%2C4' fill='none' stroke='%23C75B22' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%2F%3E%3C%2Fsvg%3E")`;
@@ -138,6 +139,36 @@ const FilterButton = styled.button`
   }
 `;
 
+// Discreet reset action, not a navigation link: a <button>, not styled(Link),
+// visually matching BookDetailPage's BreadcrumbLink (text + icon, no border/fill).
+const ClearButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  padding: 9px 4px;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 13px;
+  color: ${({ theme }) => theme.brown};
+  cursor: pointer;
+  transition: color 0.15s ease;
+
+  &:hover:not(:disabled) {
+    color: ${({ theme }) => theme.terracotta};
+  }
+
+  &:disabled {
+    color: ${({ theme }) => theme.lightBorder};
+    cursor: default;
+  }
+
+  @media (max-width: 480px) {
+    width: 100%;
+    justify-content: center;
+  }
+`;
+
 const SearchIcon: React.FC = () => (
   <svg
     width="14"
@@ -165,6 +196,7 @@ export interface ReviewerSearchFiltersProps {
   onGenreChange: (value: string) => void;
   onFormatChange: (value: string) => void;
   onFilter: () => void;
+  onClear: () => void;
 }
 
 const SearchFilters: React.FC<ReviewerSearchFiltersProps> = ({
@@ -177,8 +209,13 @@ const SearchFilters: React.FC<ReviewerSearchFiltersProps> = ({
   onGenreChange,
   onFormatChange,
   onFilter,
+  onClear,
 }) => {
   const { t } = useTranslation();
+  // No filter picked yet: clearing would be a no-op, so the action is disabled
+  // rather than hidden — hiding/showing it would shift the other controls
+  // around every time a filter is picked or cleared.
+  const hasActiveFilter = Boolean(searchText || selectedGenre || selectedFormat);
 
   return (
     <Bar role="search" aria-label="Filtros de búsqueda">
@@ -244,6 +281,16 @@ const SearchFilters: React.FC<ReviewerSearchFiltersProps> = ({
         <SearchIcon />
         Filtrar
       </FilterButton>
+
+      <ClearButton
+        type="button"
+        onClick={onClear}
+        disabled={!hasActiveFilter}
+        aria-label="Limpiar filtros de reseñadores"
+      >
+        <TrashIcon />
+        Limpiar filtros
+      </ClearButton>
     </Bar>
   );
 };

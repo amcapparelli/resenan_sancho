@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { CHEVRON_SVG } from '../../utils/selectChevron';
+import { TrashIcon } from '../../components/icons';
 
 // Visually hidden but accessible to screen readers
 const VisuallyHidden = styled.label`
@@ -93,6 +94,36 @@ const FilterButton = styled.button`
   }
 `;
 
+// Discreet reset action, not a navigation link: a <button>, not styled(Link),
+// visually matching BookDetailPage's BreadcrumbLink (text + icon, no border/fill).
+const ClearButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  padding: 9px 4px;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 13px;
+  color: ${({ theme }) => theme.brown};
+  cursor: pointer;
+  transition: color 0.15s ease;
+
+  &:hover:not(:disabled) {
+    color: ${({ theme }) => theme.terracotta};
+  }
+
+  &:disabled {
+    color: ${({ theme }) => theme.lightBorder};
+    cursor: default;
+  }
+
+  @media (max-width: 480px) {
+    width: 100%;
+    justify-content: center;
+  }
+`;
+
 const SearchIcon: React.FC = () => (
   <svg
     width="14"
@@ -118,6 +149,7 @@ interface SearchFiltersProps {
   onGenreChange: (value: string) => void;
   onFormatChange: (value: string) => void;
   onFilter: () => void;
+  onClear: () => void;
 }
 
 const SearchFilters: React.FC<SearchFiltersProps> = ({
@@ -128,8 +160,13 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
   onGenreChange,
   onFormatChange,
   onFilter,
+  onClear,
 }) => {
   const { t } = useTranslation();
+  // No filter picked yet: clearing would be a no-op, so the action is disabled
+  // rather than hidden — hiding/showing it would shift the other controls
+  // around every time a filter is picked or cleared.
+  const hasActiveFilter = Boolean(selectedGenre || selectedFormat);
   return (
     <Bar role="search" aria-label="Filtros de búsqueda">
       <VisuallyHidden htmlFor="genre-filter">Género literario</VisuallyHidden>
@@ -168,6 +205,16 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
         <SearchIcon />
         Filtrar
       </FilterButton>
+
+      <ClearButton
+        type="button"
+        onClick={onClear}
+        disabled={!hasActiveFilter}
+        aria-label="Limpiar filtros de libros"
+      >
+        <TrashIcon />
+        Limpiar filtros
+      </ClearButton>
     </Bar>
   )
 };

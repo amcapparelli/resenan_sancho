@@ -24,6 +24,8 @@ export interface UseListFiltersResult {
   appliedFilters: AppliedFilters;
   /** Commits the draft values and goes back to the first page. */
   applyFilters: () => void;
+  /** Resets both draft and applied filters to empty and goes back to the first page. */
+  clearFilters: () => void;
   goToPage: (page: number) => void;
 }
 
@@ -56,6 +58,15 @@ const useListFilters = (initialFilters: FilterValues = {}): UseListFiltersResult
     setAppliedFilters({ values: draftFilters, page: FIRST_PAGE });
   }, [draftFilters]);
 
+  const clearFilters = useCallback(() => {
+    // Mirrors applyFilters: a fresh `appliedFilters` reference (even though the
+    // values are the same empty object shape) so the view's fetch effect, keyed
+    // on identity, always re-runs. draftFilters resets too, so the inputs
+    // reflect the cleared state instead of leaving stale picks in the UI.
+    setDraftFilters({});
+    setAppliedFilters({ values: {}, page: FIRST_PAGE });
+  }, []);
+
   const goToPage = useCallback((page: number) => {
     // Keeping the same reference when the page didn't change avoids a redundant
     // request if the user clicks the page they are already on.
@@ -69,6 +80,7 @@ const useListFilters = (initialFilters: FilterValues = {}): UseListFiltersResult
     setDraftFilter,
     appliedFilters,
     applyFilters,
+    clearFilters,
     goToPage,
   };
 };
