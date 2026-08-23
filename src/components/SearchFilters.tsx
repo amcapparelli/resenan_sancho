@@ -1,8 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { CHEVRON_SVG } from '../../utils/selectChevron';
-import ClearFiltersButton from '../../components/ClearFiltersButton';
+import { CHEVRON_SVG } from '../utils/selectChevron';
+import ClearFiltersButton from './ClearFiltersButton';
 
 // Visually hidden but accessible to screen readers
 const VisuallyHidden = styled.label`
@@ -32,6 +32,51 @@ const Bar = styled.div`
   @media (max-width: 480px) {
     padding: 12px 16px;
     gap: 8px;
+  }
+`;
+
+const SearchInputWrapper = styled.div`
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+  max-width: 320px;
+
+  @media (max-width: 480px) {
+    max-width: 100%;
+    width: 100%;
+  }
+`;
+
+const SearchIconWrapper = styled.span`
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9a8c7e;
+  width: 15px;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+`;
+
+const TextInput = styled.input`
+  background: ${({ theme }) => theme.white};
+  border: 1.5px solid ${({ theme }) => theme.lightBorder};
+  border-radius: 8px;
+  padding: 9px 14px 9px 38px;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 14px;
+  color: ${({ theme }) => theme.ink};
+  width: 100%;
+
+  &:focus {
+    border-color: ${({ theme }) => theme.terracotta};
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(199, 91, 34, 0.18);
+  }
+
+  &::placeholder {
+    color: #9a8c7e;
   }
 `;
 
@@ -111,7 +156,7 @@ const SearchIcon: React.FC = () => (
   </svg>
 );
 
-interface SearchFiltersProps {
+export interface SearchFiltersProps {
   genres: Array<{ name: string; code: string }>;
   formats: string[];
   selectedGenre: string;
@@ -120,6 +165,20 @@ interface SearchFiltersProps {
   onFormatChange: (value: string) => void;
   onFilter: () => void;
   onClear: () => void;
+  /**
+   * Label identifying what's being filtered, used to build the
+   * page-specific aria-labels ("Filtrar libros" vs "Filtrar reseñadores").
+   */
+  entityLabel: 'libros' | 'reseñadores';
+  /**
+   * Free-text search input, only used by ReviewersPage — BooksPage has no
+   * text search. Grouped into a single object so text/onChange can't drift
+   * apart at the type level (unlike two independent optional props).
+   */
+  search?: {
+    text: string;
+    onChange: (text: string) => void;
+  };
 }
 
 const SearchFilters: React.FC<SearchFiltersProps> = ({
@@ -131,17 +190,51 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
   onFormatChange,
   onFilter,
   onClear,
+  entityLabel,
+  search,
 }) => {
   const { t } = useTranslation();
+  const genreFilterId = `${entityLabel}-genre-filter`;
+  const formatFilterId = `${entityLabel}-format-filter`;
+  const searchTextId = `${entityLabel}-search-text`;
   // No filter picked yet: clearing would be a no-op, so the action is disabled
   // rather than hidden — hiding/showing it would shift the other controls
   // around every time a filter is picked or cleared.
-  const hasActiveFilter = Boolean(selectedGenre || selectedFormat);
+  const hasActiveFilter = Boolean(search?.text || selectedGenre || selectedFormat);
+
   return (
     <Bar role="search" aria-label="Filtros de búsqueda">
-      <VisuallyHidden htmlFor="genre-filter">Género literario</VisuallyHidden>
+      {search !== undefined && (
+        <SearchInputWrapper>
+          <VisuallyHidden htmlFor={searchTextId}>
+            Buscar por nombre o descripción
+          </VisuallyHidden>
+          <SearchIconWrapper aria-hidden="true">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              width="15"
+              height="15"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+          </SearchIconWrapper>
+          <TextInput
+            id={searchTextId}
+            type="text"
+            value={search.text}
+            onChange={(e) => search.onChange(e.target.value)}
+            placeholder="Buscar por nombre o descripción…"
+          />
+        </SearchInputWrapper>
+      )}
+
+      <VisuallyHidden htmlFor={genreFilterId}>Género literario</VisuallyHidden>
       <FilterSelect
-        id="genre-filter"
+        id={genreFilterId}
         value={selectedGenre}
         onChange={(e) => onGenreChange(e.target.value)}
       >
@@ -153,9 +246,9 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
         ))}
       </FilterSelect>
 
-      <VisuallyHidden htmlFor="format-filter">Formato del libro</VisuallyHidden>
+      <VisuallyHidden htmlFor={formatFilterId}>Formato del libro</VisuallyHidden>
       <FilterSelect
-        id="format-filter"
+        id={formatFilterId}
         value={selectedFormat}
         onChange={(e) => onFormatChange(e.target.value)}
       >
@@ -170,7 +263,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
       <FilterButton
         type="button"
         onClick={onFilter}
-        aria-label="Filtrar libros"
+        aria-label={`Filtrar ${entityLabel}`}
       >
         <SearchIcon />
         Filtrar
@@ -179,10 +272,10 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
       <ClearFiltersButton
         onClick={onClear}
         disabled={!hasActiveFilter}
-        ariaLabel="Limpiar filtros de libros"
+        ariaLabel={`Limpiar filtros de ${entityLabel}`}
       />
     </Bar>
-  )
+  );
 };
 
 export default SearchFilters;

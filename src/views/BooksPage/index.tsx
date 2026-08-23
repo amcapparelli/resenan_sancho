@@ -13,7 +13,7 @@ import { ListFacets } from '../../utils/seo/listSeo';
 import { GetBooksResult } from '../../utils/seo/getBooks';
 import EmptyState from '../../components/EmptyState';
 import PageHeader from '../../components/PageHeader';
-import SearchFilters from './SearchFilters';
+import SearchFilters from '../../components/SearchFilters';
 import ResultsMeta from '../../components/ResultsMeta';
 import BookCard from './BookCard';
 import BookCardSkeleton from './BookCardSkeleton';
@@ -235,6 +235,7 @@ const BooksPage: React.FC<BooksPageProps> = ({ initialFacets, initialData }) => 
           onFormatChange={(value) => setDraftFilter('format', value)}
           onFilter={applyFilters}
           onClear={clearFilters}
+          entityLabel="libros"
         />
 
         <ResultsMeta total={state.totalElements ?? 0} label="libros disponibles" />
