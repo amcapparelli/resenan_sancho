@@ -13,7 +13,7 @@ import { ListFacets } from '../../utils/seo/listSeo';
 import { GetReviewersResult } from '../../utils/seo/getReviewers';
 import EmptyState from '../../components/EmptyState';
 import PageHeader from '../../components/PageHeader';
-import SearchFilters from './SearchFilters';
+import SearchFilters from '../../components/SearchFilters';
 import ResultsMeta from '../../components/ResultsMeta';
 import ReviewerCard from './ReviewerCard';
 import ReviewerCardSkeleton from './ReviewerCardSkeleton';
@@ -258,14 +258,17 @@ const ReviewersPage: React.FC<ReviewersPageProps> = ({ initialFacets, initialDat
         <SearchFilters
           genres={genresList}
           formats={FORMATS}
-          searchText={draftFilters.searchText ?? ''}
+          search={{
+            text: draftFilters.searchText ?? '',
+            onChange: (value) => setDraftFilter('searchText', value),
+          }}
           selectedGenre={draftFilters.genre ?? ''}
           selectedFormat={draftFilters.format ?? ''}
-          onSearchTextChange={(value) => setDraftFilter('searchText', value)}
           onGenreChange={(value) => setDraftFilter('genre', value)}
           onFormatChange={(value) => setDraftFilter('format', value)}
           onFilter={applyFilters}
           onClear={clearFilters}
+          entityLabel="reseñadores"
         />
 
         <ResultsMeta total={state.totalElements ?? 0} label="reseñadores encontrados" />
