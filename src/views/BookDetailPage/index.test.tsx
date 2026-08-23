@@ -10,6 +10,7 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useRouter } from 'next/router';
 import { ThemeProvider } from 'styled-components';
 
 import { StyledTheme } from '../../store/context/StylesContext/Theme';
@@ -23,7 +24,7 @@ jest.mock('react-i18next', () => ({
 }));
 
 jest.mock('next/router', () => ({
-  useRouter: () => ({ asPath: '/books/book-1', query: {}, push: jest.fn() }),
+  useRouter: jest.fn(),
 }));
 
 jest.mock('react-ga4', () => ({
@@ -41,6 +42,7 @@ jest.mock('../../utils/customHooks', () => ({
 const ReactGA = require('react-ga4').default;
 
 const useFetchBookMock = useFetchBook as jest.Mock;
+const useRouterMock = useRouter as jest.Mock;
 const fetchBookMock = jest.fn();
 const gaEventMock = ReactGA.event as jest.Mock;
 
@@ -93,6 +95,7 @@ async function orderACopy(user: ReturnType<typeof userEvent.setup>) {
 beforeEach(() => {
   jest.clearAllMocks();
   useFetchBookMock.mockReturnValue([EMPTY_FETCHED_BOOK, fetchBookMock]);
+  useRouterMock.mockReturnValue({ asPath: '/books/book-1', query: {}, push: jest.fn() });
   global.fetch = jest.fn().mockResolvedValue({ json: () => Promise.resolve({ success: true }) });
 });
 
@@ -202,5 +205,93 @@ describe('BookDetailPage — when the order fails', () => {
     expect(screen.queryByText('Mensaje enviado')).not.toBeInTheDocument();
     expect(fetchBookMock).not.toHaveBeenCalled();
     expect(gaEventMock).not.toHaveBeenCalled();
+  });
+});
+
+// ─── "Back to books" link restores the listing's filters ───────────────────
+// Bug fixed: the breadcrumb always pointed to plain "/books", so applied
+// filters/pagination were lost on the way back. BookCard now appends a `from`
+// query param with the listing's current URL, and this link should use it.
+
+describe('BookDetailPage — back-to-books link', () => {
+  it('falls back to /books when there is no "from" query param', () => {
+    useRouterMock.mockReturnValue({ asPath: '/books/book-1', query: {}, push: jest.fn() });
+    renderPage();
+
+    expect(screen.getByRole('link', { name: /volver a libros/i })).toHaveAttribute(
+      'href',
+      '/books',
+    );
+  });
+
+  it('uses the "from" query param when it points to the books listing', () => {
+    const from = '/books?format=papel&page=2';
+    useRouterMock.mockReturnValue({
+      asPath: `/books/book-1?from=${encodeURIComponent(from)}`,
+      query: { id: 'book-1', from },
+      push: jest.fn(),
+    });
+    renderPage();
+
+    expect(screen.getByRole('link', { name: /volver a libros/i })).toHaveAttribute('href', from);
+  });
+
+  it('uses the "from" query param when it points to a genre facet route', () => {
+    const from = '/libros/genero/aventura?format=epub';
+    useRouterMock.mockReturnValue({
+      asPath: `/books/book-1?from=${encodeURIComponent(from)}`,
+      query: { id: 'book-1', from },
+      push: jest.fn(),
+    });
+    renderPage();
+
+    expect(screen.getByRole('link', { name: /volver a libros/i })).toHaveAttribute('href', from);
+  });
+
+  it('falls back to /books when "from" points to an external host', () => {
+    // REGRESSION: an open redirect. `//evil.com` is protocol-relative and
+    // `https://evil.com/books` fails the leading-slash check.
+    useRouterMock.mockReturnValue({
+      asPath: '/books/book-1?from=%2F%2Fevil.com',
+      query: { id: 'book-1', from: '//evil.com' },
+      push: jest.fn(),
+    });
+    renderPage();
+
+    expect(screen.getByRole('link', { name: /volver a libros/i })).toHaveAttribute(
+      'href',
+      '/books',
+    );
+  });
+
+  it('falls back to /books when "from" is an internal route outside the listing', () => {
+    useRouterMock.mockReturnValue({
+      asPath: '/books/book-1?from=%2Faccount',
+      query: { id: 'book-1', from: '/account' },
+      push: jest.fn(),
+    });
+    renderPage();
+
+    expect(screen.getByRole('link', { name: /volver a libros/i })).toHaveAttribute(
+      'href',
+      '/books',
+    );
+  });
+
+  it('falls back to /books when "from" is another book detail page', () => {
+    // REGRESSION: a plain `from.startsWith('/books')` check also matches
+    // `/books/[id]`, which would send "back to listing" to a different book
+    // detail page (or itself) instead of the actual listing.
+    useRouterMock.mockReturnValue({
+      asPath: '/books/book-1?from=%2Fbooks%2Fotro-id',
+      query: { id: 'book-1', from: '/books/otro-id' },
+      push: jest.fn(),
+    });
+    renderPage();
+
+    expect(screen.getByRole('link', { name: /volver a libros/i })).toHaveAttribute(
+      'href',
+      '/books',
+    );
   });
 });
