@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { CHEVRON_SVG } from '../../utils/selectChevron';
+import ClearFiltersButton from '../../components/ClearFiltersButton';
 
 // Visually hidden but accessible to screen readers
 const VisuallyHidden = styled.label`
@@ -118,6 +119,7 @@ interface SearchFiltersProps {
   onGenreChange: (value: string) => void;
   onFormatChange: (value: string) => void;
   onFilter: () => void;
+  onClear: () => void;
 }
 
 const SearchFilters: React.FC<SearchFiltersProps> = ({
@@ -128,8 +130,13 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
   onGenreChange,
   onFormatChange,
   onFilter,
+  onClear,
 }) => {
   const { t } = useTranslation();
+  // No filter picked yet: clearing would be a no-op, so the action is disabled
+  // rather than hidden — hiding/showing it would shift the other controls
+  // around every time a filter is picked or cleared.
+  const hasActiveFilter = Boolean(selectedGenre || selectedFormat);
   return (
     <Bar role="search" aria-label="Filtros de búsqueda">
       <VisuallyHidden htmlFor="genre-filter">Género literario</VisuallyHidden>
@@ -168,6 +175,12 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
         <SearchIcon />
         Filtrar
       </FilterButton>
+
+      <ClearFiltersButton
+        onClick={onClear}
+        disabled={!hasActiveFilter}
+        ariaLabel="Limpiar filtros de libros"
+      />
     </Bar>
   )
 };

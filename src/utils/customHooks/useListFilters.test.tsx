@@ -107,6 +107,42 @@ describe('useListFilters', () => {
     expect(result.current.appliedFilters.values).toEqual({ genre: 'poetry' });
   });
 
+  it('resets both draft and applied filters to empty on clear', () => {
+    const { result } = renderHook(() => useListFilters({ genre: 'novel' }));
+
+    act(() => {
+      result.current.setDraftFilter('format', 'ebook');
+    });
+    act(() => {
+      result.current.applyFilters();
+    });
+    act(() => {
+      result.current.goToPage(3);
+    });
+    expect(result.current.appliedFilters.values).toEqual({ genre: 'novel', format: 'ebook' });
+    expect(result.current.appliedFilters.page).toBe(3);
+
+    act(() => {
+      result.current.clearFilters();
+    });
+
+    expect(result.current.draftFilters).toEqual({});
+    expect(result.current.appliedFilters.values).toEqual({});
+    expect(result.current.appliedFilters.page).toBe(1);
+  });
+
+  it('produces a new appliedFilters reference when clearing, so a fetch effect keyed on identity re-runs', () => {
+    const { result } = renderHook(() => useListFilters());
+
+    const beforeClear = result.current.appliedFilters;
+
+    act(() => {
+      result.current.clearFilters();
+    });
+
+    expect(result.current.appliedFilters).not.toBe(beforeClear);
+  });
+
   it('returns the same appliedFilters reference when going to the already-current page', () => {
     // Clicking the page you're already on is a no-op, not a redundant request.
     const { result } = renderHook(() => useListFilters());

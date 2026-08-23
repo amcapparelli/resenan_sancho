@@ -289,4 +289,66 @@ describe('ReviewersPage — fetch/filter contract', () => {
 
     expect(fetchSpy).toHaveBeenCalledTimes(1);
   });
+
+  it('disables "Limpiar filtros" until a filter is picked, applies it, and removes it from the request on clear', async () => {
+    const fetchSpy = mockFetch();
+    const user = userEvent.setup();
+    renderPage();
+
+    await waitFor(() => expect(fetchSpy).toHaveBeenCalledTimes(1));
+
+    const clearButton = screen.getByRole('button', { name: /limpiar filtros de reseñadores/i });
+    expect(clearButton).toBeDisabled();
+
+    const searchInput = screen.getByLabelText(/buscar por nombre o descripción/i) as HTMLInputElement;
+    await user.type(searchInput, 'María');
+    expect(clearButton).toBeEnabled();
+
+    // Actually apply the draft pick first — a filter still sitting in the draft
+    // was never sent to the API, so clearing it wouldn't prove anything was
+    // removed from a real request.
+    await user.click(screen.getByRole('button', { name: /filtrar reseñadores/i }));
+    await waitFor(() => expect(fetchSpy).toHaveBeenCalledTimes(2));
+    const appliedCallUrl = fetchSpy.mock.calls[1][0] as string;
+    expect(new URL(appliedCallUrl).searchParams.get('searchText')).toBe('María');
+
+    mockRouterPush.mockClear();
+    await user.click(clearButton);
+
+    // Clearing re-fetches (a fresh appliedFilters reference) with the filter gone.
+    await waitFor(() => expect(fetchSpy).toHaveBeenCalledTimes(3));
+    const clearedCallUrl = fetchSpy.mock.calls[2][0] as string;
+    expect(new URL(clearedCallUrl).searchParams.get('searchText')).toBeNull();
+
+    // The input reflects the cleared draft state.
+    expect(searchInput.value).toBe('');
+    expect(clearButton).toBeDisabled();
+  });
+
+  it('navigates back to /reviewers (real navigation) when clearing filters from a genre landing route', async () => {
+    // Regression coverage for the genre-landing branch: when the view is
+    // server-rendered on a genre surface (`currentGenreSlug` set from SSR
+    // facets), clearing must be a REAL navigation back to /reviewers (not
+    // shallow) so the destination's getServerSideProps emits the right
+    // canonical/robots — mirroring BooksPage's equivalent test.
+    const fetchSpy = mockFetch();
+    const user = userEvent.setup();
+    renderPage({
+      initialFacets: { genre: 'biografia', format: null, page: 1 },
+      initialData: ssrResult(),
+    });
+
+    // SSR data is present, so the mount fetch is skipped, same as any landing.
+    expect(fetchSpy).not.toHaveBeenCalled();
+
+    const clearButton = screen.getByRole('button', { name: /limpiar filtros de reseñadores/i });
+    expect(clearButton).toBeEnabled();
+
+    mockRouterPush.mockClear();
+    await user.click(clearButton);
+
+    await waitFor(() => expect(mockRouterPush).toHaveBeenCalledWith({ pathname: '/reviewers', query: {} }));
+    // Real navigation: no shallow client fetch here — the destination's SSR owns it.
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
 });

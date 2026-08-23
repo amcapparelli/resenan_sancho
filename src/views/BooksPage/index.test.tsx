@@ -27,6 +27,8 @@ import userEvent from '@testing-library/user-event';
 import { ThemeProvider } from 'styled-components';
 
 import { StyledTheme } from '../../store/context/StylesContext/Theme';
+import { ListFacets } from '../../utils/seo/listSeo';
+import { GetBooksResult } from '../../utils/seo/getBooks';
 import BooksPage from './index';
 
 // react-i18next: return the last segment of the key as a plain string, same
@@ -41,15 +43,18 @@ jest.mock('react-i18next', () => ({
 // next/router: the view syncs applied facets into the URL via `router.push`.
 // Without a mounted router `useRouter` throws "NextRouter was not mounted", so
 // supply a router shape with a `push` spy — same precedent as
-// BookDetailCTA/MyBooksSection. `pathname` is '/books' here so no-genre filters
-// stay shallow (the genre → /libros/genero path is a REAL navigation, covered by
-// the genre test below). The spy is hoisted (jest allows out-of-scope refs
-// prefixed with `mock`) so tests can assert the URL-sync contract; it's reset
-// per test in `beforeEach`.
+// BookDetailCTA/MyBooksSection. `pathname` defaults to '/books' so no-genre
+// filters stay shallow (the genre → /libros/genero path is a REAL navigation,
+// covered by the genre test below). It's declared `let` (not `const`) so the
+// genre-landing test can point it at a landing route to exercise the
+// clear-filters-from-a-genre-page real-navigation branch. The spy is hoisted
+// (jest allows out-of-scope refs prefixed with `mock`) so tests can assert the
+// URL-sync contract; both are reset per test in `beforeEach`.
 const mockRouterPush = jest.fn();
+let mockRouterPathname = '/books';
 jest.mock('next/router', () => ({
   useRouter: () => ({
-    pathname: '/books',
+    pathname: mockRouterPathname,
     query: {},
     push: mockRouterPush,
   }),
@@ -76,16 +81,29 @@ function mockFetch(totalPages = 10) {
   return fetchMock;
 }
 
-function renderPage() {
+interface RenderPageProps {
+  initialFacets?: ListFacets;
+  initialData?: GetBooksResult;
+}
+
+function renderPage(props: RenderPageProps = {}) {
   return render(
     <ThemeProvider theme={StyledTheme}>
-      <BooksPage />
+      <BooksPage {...props} />
     </ThemeProvider>,
   );
 }
 
+/** SSR seed for a landing surface: mirrors what getServerSideProps feeds in. */
+function ssrResult(totalPages = 10): GetBooksResult {
+  return {
+    ok: true, books: [], totalElements: 0, totalPages,
+  };
+}
+
 beforeEach(() => {
   jest.clearAllMocks();
+  mockRouterPathname = '/books';
 });
 
 describe('BooksPage — fetch/filter contract', () => {
@@ -225,5 +243,104 @@ describe('BooksPage — fetch/filter contract', () => {
     await user.click(page1Button);
 
     expect(fetchSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('disables "Limpiar filtros" until a filter is picked, applies it, and removes it from the request on clear', async () => {
+    const fetchSpy = mockFetch();
+    const user = userEvent.setup();
+    renderPage();
+
+    await waitFor(() => expect(fetchSpy).toHaveBeenCalledTimes(1));
+
+    const clearButton = screen.getByRole('button', { name: /limpiar filtros de libros/i });
+    expect(clearButton).toBeDisabled();
+
+    const formatSelect = screen.getByLabelText(/formato del libro/i) as HTMLSelectElement;
+    await user.selectOptions(formatSelect, 'papel');
+    expect(clearButton).toBeEnabled();
+
+    // Actually apply the draft pick first — a filter still sitting in the draft
+    // was never sent to the API, so clearing it wouldn't prove anything was
+    // removed from a real request.
+    await user.click(screen.getByRole('button', { name: /filtrar libros/i }));
+    await waitFor(() => expect(fetchSpy).toHaveBeenCalledTimes(2));
+    const appliedCallUrl = fetchSpy.mock.calls[1][0] as string;
+    expect(new URL(appliedCallUrl).searchParams.get('format')).toBe('papel');
+
+    mockRouterPush.mockClear();
+    await user.click(clearButton);
+
+    // Clearing re-fetches (a fresh appliedFilters reference) with the filter gone.
+    await waitFor(() => expect(fetchSpy).toHaveBeenCalledTimes(3));
+    const clearedCallUrl = fetchSpy.mock.calls[2][0] as string;
+    expect(new URL(clearedCallUrl).searchParams.get('format')).toBeNull();
+
+    // The select reflects the cleared draft state.
+    expect(formatSelect.value).toBe('');
+    expect(clearButton).toBeDisabled();
+  });
+
+  it('clears a genre filter that was really applied, navigating back to /books without it', async () => {
+    // Genre is a PATH facet, so applying it is a real navigation (no client
+    // fetch — see the test above). This exercises the full apply→clear cycle
+    // for that case: after a real "Filtrar" navigation to the genre landing,
+    // clearing must navigate back to plain /books with no genre in the query.
+    const fetchSpy = mockFetch();
+    const user = userEvent.setup();
+    renderPage();
+
+    await waitFor(() => expect(fetchSpy).toHaveBeenCalledTimes(1));
+
+    await user.selectOptions(screen.getByLabelText(/género literario/i), 'ADV');
+    await user.click(screen.getByRole('button', { name: /filtrar libros/i }));
+
+    await waitFor(() => expect(mockRouterPush).toHaveBeenCalledWith({
+      pathname: '/libros/genero/[slug]',
+      query: { slug: 'aventura' },
+    }));
+    // The router mock doesn't actually navigate, so the view is still mounted
+    // on /books here — mirroring how the genre-landing route itself is
+    // covered separately below.
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+
+    const clearButton = screen.getByRole('button', { name: /limpiar filtros de libros/i });
+    mockRouterPush.mockClear();
+    await user.click(clearButton);
+
+    await waitFor(() => expect(fetchSpy).toHaveBeenCalledTimes(2));
+    const clearedCallUrl = fetchSpy.mock.calls[1][0] as string;
+    expect(new URL(clearedCallUrl).searchParams.get('genre')).toBeNull();
+    expect(mockRouterPush).toHaveBeenCalledWith(
+      { pathname: '/books', query: {} },
+      undefined,
+      { shallow: true },
+    );
+  });
+
+  it('navigates back to /books (real navigation) when clearing filters from a genre landing route', async () => {
+    // Regression coverage for the genre-landing branch: when the view is
+    // server-rendered on /libros/genero/[slug], `router.pathname` is NOT
+    // '/books', so clearing must be a REAL navigation (not shallow) so the
+    // destination's getServerSideProps emits the right canonical/robots.
+    mockRouterPathname = '/libros/genero/[slug]';
+    const fetchSpy = mockFetch();
+    const user = userEvent.setup();
+    renderPage({
+      initialFacets: { genre: 'aventura', format: null, page: 1 },
+      initialData: ssrResult(),
+    });
+
+    // SSR data is present, so the mount fetch is skipped, same as any landing.
+    expect(fetchSpy).not.toHaveBeenCalled();
+
+    const clearButton = screen.getByRole('button', { name: /limpiar filtros de libros/i });
+    expect(clearButton).toBeEnabled();
+
+    mockRouterPush.mockClear();
+    await user.click(clearButton);
+
+    await waitFor(() => expect(mockRouterPush).toHaveBeenCalledWith({ pathname: '/books', query: {} }));
+    // Real navigation: no shallow client fetch here — the destination's SSR owns it.
+    expect(fetchSpy).not.toHaveBeenCalled();
   });
 });

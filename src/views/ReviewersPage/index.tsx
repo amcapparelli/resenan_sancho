@@ -182,6 +182,7 @@ const ReviewersPage: React.FC<ReviewersPageProps> = ({ initialFacets, initialDat
     setDraftFilter,
     appliedFilters,
     applyFilters,
+    clearFilters,
     goToPage,
   } = useListFilters(facetsToFilterValues(initialFacets));
   const [state, listRequest, loading] = useReviewersListFetch(initialData);
@@ -264,6 +265,7 @@ const ReviewersPage: React.FC<ReviewersPageProps> = ({ initialFacets, initialDat
           onGenreChange={(value) => setDraftFilter('genre', value)}
           onFormatChange={(value) => setDraftFilter('format', value)}
           onFilter={applyFilters}
+          onClear={clearFilters}
         />
 
         <ResultsMeta total={state.totalElements ?? 0} label="reseñadores encontrados" />

@@ -162,6 +162,7 @@ const BooksPage: React.FC<BooksPageProps> = ({ initialFacets, initialData }) => 
     setDraftFilter,
     appliedFilters,
     applyFilters,
+    clearFilters,
     goToPage,
   } = useListFilters(facetsToFilterValues(initialFacets));
 
@@ -233,6 +234,7 @@ const BooksPage: React.FC<BooksPageProps> = ({ initialFacets, initialData }) => 
           onGenreChange={(value) => setDraftFilter('genre', value)}
           onFormatChange={(value) => setDraftFilter('format', value)}
           onFilter={applyFilters}
+          onClear={clearFilters}
         />
 
         <ResultsMeta total={state.totalElements ?? 0} label="libros disponibles" />
