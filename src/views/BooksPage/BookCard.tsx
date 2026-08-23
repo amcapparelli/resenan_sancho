@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import styled, { css } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
@@ -191,11 +192,17 @@ const CTAButton = styled(Link)`
 
 const BookCard: React.FC<BookCardProps> = ({ book }) => {
   const { t } = useTranslation();
+  const router = useRouter();
   const genreName =
     genres.find((g) => g.code === book.genre)?.name;
   // Trim guards against whitespace-only legacy values ("  ") that would render
   // a broken next/image instead of falling back to the placeholder icon.
   const hasCover = Boolean(book.cover?.trim());
+  // Carries the listing's current URL (filters + page) so the detail page's
+  // "Back to books" link can restore it instead of resetting to the default
+  // unfiltered list. `asPath` already reflects genre/format/page, whether the
+  // listing lives on /books or on a genre facet route.
+  const detailHref = `/books/${book._id}?from=${encodeURIComponent(router.asPath)}`;
 
   return (
     <Card>
@@ -242,7 +249,7 @@ const BookCard: React.FC<BookCardProps> = ({ book }) => {
         <Divider />
 
         <CTAButton
-          href={`/books/${book._id}`}
+          href={detailHref}
           aria-label={`Pedir ejemplar de ${book.title}`}
         >
           Pedir ejemplar gratuito →

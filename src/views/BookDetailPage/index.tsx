@@ -3,6 +3,7 @@ import React, {
   useContext, useEffect, useState,
 } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import ReactGA from 'react-ga4';
 
@@ -25,6 +26,31 @@ interface BookDetailPageProps {
 
 /** Long enough to read the confirmation, short enough not to sit on the page. */
 const SUCCESS_TOAST_MS = 6000;
+
+const DEFAULT_BACK_HREF = '/books';
+const GENRE_FACET_PREFIX = '/libros/genero/';
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+/**
+ * Only trusts the `from` query param as a back-link target when it is a
+ * relative, internal path pointing at the listing itself (`/books`, optionally
+ * with a query string) or one of its genre facets. Matching is exact on segment
+ * boundaries rather than a plain prefix check: `/books` alone would also match
+ * `/books/[id]`, so an attacker-controlled `from` pointing at a *different*
+ * book detail page would otherwise sneak past the whitelist and break the
+ * "back to listing" semantics. This also rejects protocol-relative URLs
+ * (`//evil.com`) and any other host, preventing an open redirect.
+ */
+const getSafeBackHref = (from: unknown): string => {
+  if (typeof from !== 'string' || !from.startsWith('/') || from.startsWith('//')) {
+    return DEFAULT_BACK_HREF;
+  }
+  const isSafe = from === DEFAULT_BACK_HREF
+    || from.startsWith(`${DEFAULT_BACK_HREF}?`)
+    || from.startsWith(GENRE_FACET_PREFIX);
+  return isSafe ? from : DEFAULT_BACK_HREF;
+};
 
 // ─── Styled ──────────────────────────────────────────────────────────────────
 
@@ -63,6 +89,8 @@ const BreadcrumbLink = styled(Link)`
 // ─── Component ───────────────────────────────────────────────────────────────
 
 const BookDetailPage: React.FC<BookDetailPageProps> = ({ book }) => {
+  const router = useRouter();
+  const backHref = getSafeBackHref(router.query.from);
   const { isLogged, user } = useContext(UserContext);
   // The book is provided by SSR for the first paint. useFetchBook only drives
   // the client-side refetch after an order, so its reducer state stays empty
@@ -118,7 +146,7 @@ const BookDetailPage: React.FC<BookDetailPageProps> = ({ book }) => {
     <Wrapper>
       {/* Breadcrumb */}
       <BreadcrumbBar aria-label="Migas de pan">
-        <BreadcrumbLink href="/books">← Volver a libros</BreadcrumbLink>
+        <BreadcrumbLink href={backHref}>← Volver a libros</BreadcrumbLink>
       </BreadcrumbBar>
 
       <BookDetailHero

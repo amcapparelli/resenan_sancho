@@ -9,6 +9,7 @@
  */
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+import { useRouter } from 'next/router';
 import { ThemeProvider } from 'styled-components';
 
 import { StyledTheme } from '../../store/context/StylesContext/Theme';
@@ -22,6 +23,12 @@ jest.mock('react-i18next', () => ({
     t: (key: string) => key.split('.').pop() ?? key,
   }),
 }));
+
+jest.mock('next/router', () => ({
+  useRouter: jest.fn(),
+}));
+
+const useRouterMock = useRouter as jest.Mock;
 
 // ─── Fixture ─────────────────────────────────────────────────────────────────
 
@@ -48,6 +55,10 @@ function renderCard(book: Book = BOOK_FIXTURE) {
     </ThemeProvider>,
   );
 }
+
+beforeEach(() => {
+  useRouterMock.mockReturnValue({ asPath: '/books' });
+});
 
 // ─── Content ─────────────────────────────────────────────────────────────────
 
@@ -151,7 +162,7 @@ describe('BookCard — nested-anchor regression', () => {
     renderCard();
 
     const ctaLink = screen.getByRole('link', { name: 'Pedir ejemplar de El Quijote' });
-    expect(ctaLink).toHaveAttribute('href', '/books/book-123');
+    expect(ctaLink).toHaveAttribute('href', '/books/book-123?from=%2Fbooks');
   });
 
   it('preserves the aria-label "Pedir ejemplar de <title>" on the CTA anchor', () => {
@@ -161,5 +172,46 @@ describe('BookCard — nested-anchor regression', () => {
     expect(
       screen.getByRole('link', { name: 'Pedir ejemplar de El Quijote' }),
     ).toBeInTheDocument();
+  });
+});
+
+// ─── "from" query param (preserve listing filters on back navigation) ──────
+// Bug fixed: clicking a card always linked to plain `/books/<id>`, so the
+// "Back to books" link on the detail page lost any applied filters/page.
+// Fix: the CTA now carries `from=<current listing URL>` so the detail page
+// can restore it.
+
+describe('BookCard — "from" query param on the detail link', () => {
+  it('appends the current listing URL as "from" when there are no filters', () => {
+    useRouterMock.mockReturnValue({ asPath: '/books' });
+    renderCard();
+
+    expect(
+      screen.getByRole('link', { name: 'Pedir ejemplar de El Quijote' }),
+    ).toHaveAttribute('href', '/books/book-123?from=%2Fbooks');
+  });
+
+  it('carries applied filters and page from the /books listing', () => {
+    useRouterMock.mockReturnValue({ asPath: '/books?format=papel&page=2' });
+    renderCard();
+
+    expect(
+      screen.getByRole('link', { name: 'Pedir ejemplar de El Quijote' }),
+    ).toHaveAttribute(
+      'href',
+      `/books/book-123?from=${encodeURIComponent('/books?format=papel&page=2')}`,
+    );
+  });
+
+  it('carries the genre facet route when a genre filter is applied', () => {
+    useRouterMock.mockReturnValue({ asPath: '/libros/genero/aventura?format=epub' });
+    renderCard();
+
+    expect(
+      screen.getByRole('link', { name: 'Pedir ejemplar de El Quijote' }),
+    ).toHaveAttribute(
+      'href',
+      `/books/book-123?from=${encodeURIComponent('/libros/genero/aventura?format=epub')}`,
+    );
   });
 });
