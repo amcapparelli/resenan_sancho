@@ -150,5 +150,12 @@
     "authorizationFailed": "We have not been able to verify your identity. This is usually due to a problem with your browser's cookies. Please try from another browser.",
     "noPermissions": "You don´t have permissions to do this operation. Contact support if you think it´s a mistake.",
     "unexpectedTokenFailure": "Somthing went wrong. Please try to login again or contact support."
+  },
+  "cookieConsent": {
+    "title": "Cookies",
+    "body": "We use analytics cookies (Google Analytics) to understand how the site is used. They're optional — you choose whether to accept or decline.",
+    "accept": "Accept",
+    "decline": "Decline",
+    "moreInfo": "More information"
   }
 }

@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import Head from 'next/head';
 import ReactGA from "react-ga4";
 import { trackingId } from '../utils/constants/GATrackingID';
+import { getStoredConsent, setDefaultConsent, updateConsent } from '../utils/analytics/consent';
 
 interface MyProps {
   children: JSX.Element,
@@ -10,7 +11,15 @@ interface MyProps {
 
 const Meta = ({ children }: MyProps): JSX.Element => {
   useEffect(() => {
+    // Consent Mode v2 order matters: default (denied) must be set before the
+    // GA4 script loads, so it never gets storage access without permission.
+    setDefaultConsent();
     ReactGA.initialize(trackingId);
+    // A returning visitor who already accepted shouldn't have to accept again
+    // every session.
+    if (getStoredConsent() === 'granted') {
+      updateConsent('granted');
+    }
   }, []);
   return (
     <>

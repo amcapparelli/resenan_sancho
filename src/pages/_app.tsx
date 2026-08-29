@@ -8,7 +8,7 @@ import { ThemeProvider as ScThemeProvider } from 'styled-components';
 import UserContextProvider from '../store/context/userContext/UserContextProvider';
 import { MuiTheme, StyledTheme } from '../store/context/StylesContext/Theme';
 import createEmotionCache from '../utils/createEmotionCache';
-import { Meta } from '../components';
+import { Meta, CookieConsentBanner } from '../components';
 import '../i18n';
 // Self-hosted @font-face rules (replaces Google Fonts links). Next Pages Router
 // only allows global CSS imports from _app.tsx.
@@ -30,9 +30,12 @@ const MyApp = ({
       <CssBaseline />
       <ScThemeProvider theme={StyledTheme}>
         <UserContextProvider>
-          <Meta>
-            <Component {...pageProps} />
-          </Meta>
+          <>
+            <Meta>
+              <Component {...pageProps} />
+            </Meta>
+            <CookieConsentBanner />
+          </>
         </UserContextProvider>
       </ScThemeProvider>
     </MuiThemeProvider>
