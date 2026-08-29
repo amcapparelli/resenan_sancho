@@ -1,4 +1,5 @@
 export { default as ContactModal } from './ContactModal';
+export { default as CookieConsentBanner } from './CookieConsentBanner';
 export { default as GenresSelector } from './GenresSelector';
 export { default as ErrorBoundary } from './ErrorBoundary';
 export { default as EmptyList } from './EmptyList';

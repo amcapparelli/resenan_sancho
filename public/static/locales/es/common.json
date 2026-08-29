@@ -150,5 +150,12 @@
     "authorizationFailed": "No hemos podido verificar tu identidad. Esto suele deberse a un problema con las cookies del navegador. Por favor, intenta desde otro navegador.",
     "noPermissions": "No tienes permisos para realizar esta operación. Si crees que puede ser un error contacta con nosotros.",
     "unexpectedTokenFailure": "Algo salió mal. Por favor, intenta iniciar sesión otra vez o contacta con nosotros."
+  },
+  "cookieConsent": {
+    "title": "Cookies",
+    "body": "Usamos cookies de analítica (Google Analytics) para entender cómo se usa la web. Son opcionales: acéptalas o recházalas, tú decides.",
+    "accept": "Aceptar",
+    "decline": "Rechazar",
+    "moreInfo": "Más información"
   }
 }
