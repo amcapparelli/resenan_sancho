@@ -118,7 +118,8 @@ const SpacesSection: React.FC = (): JSX.Element => {
     if (!isEditing && !succeeded) {
       ReactGA.event({
         category: 'Nuevo reseñador',
-        action: `Reseñador ${user.name} ${user.lastName || ''}`,
+        action: 'new_reviewer',
+        label: `${user.name} ${user.lastName || ''}`,
       });
     }
     try {

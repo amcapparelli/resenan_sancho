@@ -42,7 +42,8 @@ const Register: React.FC = (): JSX.Element => {
       router.push('/login');
       ReactGA.event({
         category: 'Usuario Registrado',
-        action: `Nuevo Usuario: ${registerForm.name} ${registerForm.lastName}`,
+        action: 'user_registered',
+        label: `${registerForm.name} ${registerForm.lastName}`,
       });
     }
   }, [signupResponse.success]);

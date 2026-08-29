@@ -113,7 +113,8 @@ const AddBookSection: React.FC = (): JSX.Element => {
       registerBookRequest(URL, 'post', bookForm);
       ReactGA.event({
         category: 'Nuevo Libro',
-        action: `Libro ${bookForm.title}`,
+        action: 'new_book',
+        label: bookForm.title,
       });
     } else {
       registerBookRequest(`${URL}/${book}`, 'put', bookForm);
