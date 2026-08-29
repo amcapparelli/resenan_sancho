@@ -181,7 +181,8 @@ describe('BookDetailPage — after a successful order', () => {
 
     await waitFor(() => expect(gaEventMock).toHaveBeenCalledWith({
       category: 'Ejemplar pedido',
-      action: 'Libro pedido: La sombra del viento, reseñador: Lucía Pérez',
+      action: 'book_ordered',
+      label: 'La sombra del viento (reseñador: Lucía Pérez)',
     }));
   });
 });

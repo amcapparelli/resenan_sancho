@@ -92,8 +92,10 @@ const PaymentCheckout: React.FC<MyProps> = ({
         setResponse(resJSON);
         ReactGA.event({
           category: 'payment',
+          action: 'payment_completed',
+          label: bookTitle,
           // Kept in euros so the metric stays comparable with past events.
-          action: `New Payment: ${amountCents / 100}, book: ${bookTitle}`,
+          value: amountCents / 100,
         });
       } catch (err) {
         setResponse(err);

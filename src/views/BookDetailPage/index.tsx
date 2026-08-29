@@ -138,7 +138,8 @@ const BookDetailPage: React.FC<BookDetailPageProps> = ({ book }) => {
     // modal's error banner, which is what a throw before these setters would do.
     ReactGA.event({
       category: 'Ejemplar pedido',
-      action: `Libro pedido: ${currentBook.title}, reseñador: ${user.name} ${user.lastName || ''}`,
+      action: 'book_ordered',
+      label: `${currentBook.title} (reseñador: ${user.name} ${user.lastName || ''})`,
     });
   };
 
