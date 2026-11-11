@@ -11,8 +11,20 @@ interface ChannelRowProps {
   url: string;
   name: string;
   errors: { url?: string; name?: string };
+  // Non-blocking heads-up for the URL field only (currently Amazon-only,
+  // see `AccountField`'s `warning` prop).
+  urlWarning?: string;
   onToggle: () => void;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  // Fires on blur of the URL field only; lets a channel run validation
+  // without re-checking on every keystroke (currently Amazon-only).
+  onUrlBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
+  // Lets the parent focus the URL field programmatically when a blocking
+  // validation error appears on save (currently Amazon-only).
+  urlFieldRef?: React.Ref<HTMLInputElement>;
+  // Lets a specific channel (e.g. Amazon's link help panel) inject extra
+  // content below the fields without hardcoding per-channel logic here.
+  extraContent?: React.ReactNode;
 }
 
 const ChannelRow: React.FC<ChannelRowProps> = ({
@@ -23,8 +35,12 @@ const ChannelRow: React.FC<ChannelRowProps> = ({
   url,
   name,
   errors,
+  urlWarning,
   onToggle,
   onChange,
+  onUrlBlur,
+  urlFieldRef,
+  extraContent,
 }) => (
   <Row $active={selected}>
     <Head>
@@ -51,14 +67,18 @@ const ChannelRow: React.FC<ChannelRowProps> = ({
           placeholder=""
         />
         <AccountField
+          ref={urlFieldRef}
           label="URL"
           name="url"
           id={`${channelKey}-url`}
           type="url"
           value={url || ''}
           onChange={onChange}
+          onBlur={onUrlBlur}
           error={errors.url}
+          warning={urlWarning}
         />
+        {extraContent}
       </Fields>
     )}
   </Row>
