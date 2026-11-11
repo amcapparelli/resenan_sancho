@@ -54,18 +54,18 @@ const AmazonHelp: React.FC<AmazonHelpProps> = ({ helpId = 'amazon-help', forceOp
         <PanelClip>
           <PanelContent>
             <p>
-              Necesitamos el enlace de tu <strong>perfil público de Amazon</strong>, el que
-              enseña tus reseñas. No el de un libro ni el de tu cuenta.
+              Para enseñar tus reseñas publicadas, pega aquí el enlace de tu{' '}
+              <strong>perfil público de Amazon</strong>: la página donde salen todas. No el de un libro.
             </p>
             <ol>
-              <li>Entra en Amazon y busca una reseña que hayas escrito.</li>
-              <li>Pulsa tu nombre, justo encima de la reseña: se abre tu perfil.</li>
-              <li>Copia la dirección de esa página y pégala aquí.</li>
+              <li>Entra en Amazon y abre “Mi cuenta”.</li>
+              <li>Pulsa en “Mi contenido”: verás la página con tus reseñas.</li>
+              <li>Copia la dirección del navegador y pégala aquí.</li>
             </ol>
             <p>Lo sabrás porque la dirección contiene <code>/gp/profile/</code>.</p>
             <Note>
-              ¿No ves tus reseñas en el perfil? En Amazon, revisa que esté marcado como
-              público en tus ajustes de privacidad.
+              ¿No ves tus reseñas en esa página? Revisa en los ajustes de privacidad de Amazon que tu
+              perfil sea público.
             </Note>
           </PanelContent>
         </PanelClip>

@@ -18,6 +18,14 @@ describe('classifyAmazonUrl', () => {
     expect(classifyAmazonUrl('amazon.es/gp/profile/amzn1.account.AE3ABC/ref=cm_cr_dp_d_gw_tr?ie=UTF8')).toBe('profile');
   });
 
+  // Real shape Amazon hands out via "Mi cuenta → Mi contenido" (fake ID).
+  it.each([
+    ['https://www.amazon.es/gp/profile/amzn1.account.AEXAMPLEFAKEID123?ref_=ya_d_l_profile'],
+    ['amazon.es/gp/profile/amzn1.account.AEXAMPLEFAKEID123?ref_=ya_d_l_profile'],
+  ])('classifies a "Mi contenido" profile URL with ?ref_= (%s) as "profile"', (url) => {
+    expect(classifyAmazonUrl(url)).toBe('profile');
+  });
+
   it.each([
     ['https://www.amazon.es/dp/B08XYZ1234'],
     ['https://www.amazon.com/gp/product/B08XYZ1234'],
@@ -56,6 +64,14 @@ describe('normalizeAmazonProfileUrl', () => {
   it('strips ref= and query params from a valid profile URL', () => {
     expect(normalizeAmazonProfileUrl('amazon.es/gp/profile/amzn1.account.AE3ABC/ref=cm_cr_dp_d_gw_tr?ie=UTF8'))
       .toBe('https://www.amazon.es/gp/profile/amzn1.account.AE3ABC');
+  });
+
+  it.each([
+    ['https://www.amazon.es/gp/profile/amzn1.account.AEXAMPLEFAKEID123?ref_=ya_d_l_profile'],
+    ['amazon.es/gp/profile/amzn1.account.AEXAMPLEFAKEID123?ref_=ya_d_l_profile'],
+  ])('strips the ?ref_= query from a "Mi contenido" profile URL (%s)', (url) => {
+    expect(normalizeAmazonProfileUrl(url))
+      .toBe('https://www.amazon.es/gp/profile/amzn1.account.AEXAMPLEFAKEID123');
   });
 
   it('always adds the www. prefix, even if the input omits it', () => {

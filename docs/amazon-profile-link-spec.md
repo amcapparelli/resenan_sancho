@@ -65,28 +65,31 @@ padding: 14px 16px
 font-family: Source Sans 3, 13px; line-height: 1.6; color: tinta #3D3A35
 ```
 
-Contenido (copy provisional; el copywriter puede pulirlo sin cambiar la
-estructura):
+Contenido (texto definitivo aprobado por `copywriter-es`; sustituye al
+provisional de v1):
 
-> **Necesitamos el enlace de tu perfil público de Amazon**, el que muestra tus
-> reseñas. No el de un libro ni el de tu cuenta.
+> Para enseñar tus reseñas publicadas, pega aquí el enlace de tu **perfil
+> público de Amazon**: la página donde salen todas. No el de un libro.
 >
-> 1. Entra en Amazon y busca cualquier reseña que hayas escrito.
-> 2. Pulsa sobre tu nombre, encima de la reseña: se abre tu perfil.
-> 3. Copia la dirección de esa página y pégala aquí.
+> 1. Entra en Amazon y abre “Mi cuenta”.
+> 2. Pulsa en “Mi contenido”: verás la página con tus reseñas.
+> 3. Copia la dirección del navegador y pégala aquí.
 >
-> Lo sabrás porque contiene `/gp/profile/`.
+> Lo sabrás porque la dirección contiene `/gp/profile/`.
 >
-> ¿No ves tus reseñas en el perfil? Revisa en Amazon que tu perfil sea público
-> en los ajustes de privacidad.
+> ¿No ves tus reseñas en esa página? Revisa en los ajustes de privacidad de
+> Amazon que tu perfil sea público.
 
 - Lista numerada con `<ol>`; el fragmento `/gp/profile/` en `<code>` con fondo
   `#efe5c8`, `border-radius: 4px`, `padding: 1px 5px`.
 - La última línea en Source Sans 3, 12px, color marrón `#6B4A16`.
 
-> **Pendiente antes de publicar:** verificar en amazon.es (web y app móvil) que
-> los pasos 1–3 funcionan tal cual. Si aparece una ruta más corta desde el menú
-> de la cuenta, añadirla como alternativa en una línea extra.
+> **Ruta verificada en amazon.es:** Mi cuenta → Mi contenido abre el perfil
+> público en una URL con la forma `/gp/profile/amzn1.account.…?ref_=…` (la
+> normalización de la Fase 2 elimina el `ref_` y la query).
+>
+> Los pasos no están verificados en otros dominios de Amazon (.com, .com.mx,
+> .co.uk, .de…); el nombre de los menús puede variar.
 
 ### Comportamiento
 
