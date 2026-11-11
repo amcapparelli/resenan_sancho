@@ -70,7 +70,7 @@ const Register: React.FC = (): JSX.Element => {
 
   const submit = () => {
     if (!passwordIsValid || !repeatPasswordIsValid) {
-      return setPasswordErrors('la contraeña no es válida');
+      return setPasswordErrors('La contraseña no es válida');
     }
     setPasswordErrors('');
     const requiredFields = fields;

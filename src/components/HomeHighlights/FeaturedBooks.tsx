@@ -6,7 +6,8 @@ import styled from 'styled-components';
 import formatAvailableCopies from '../../utils/formatAvailableCopies';
 import { isOptimizedImageHost } from '../../utils/imageHost';
 import BookCoverFallback from '../BookCoverFallback';
-import SectionHeading, { HeadingAccent } from './SectionHeading';
+import HeadingAccent from '../HeadingAccent';
+import SectionHeading from './SectionHeading';
 import BlockLink from './BlockLink';
 
 /**
