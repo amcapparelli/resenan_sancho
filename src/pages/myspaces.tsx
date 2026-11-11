@@ -10,7 +10,7 @@ const MySpaces = (): JSX.Element => {
     router.replace('/account?section=spaces');
   }, []);
   return (
-    <Seo noindex title="Mis espacios literarios | Reseñan Sancho" description="Área personal de Reseñan Sancho." path="/myspaces" />
+    <Seo noindex title="Mis reseñas literarias | Reseñan Sancho" description="Área personal de Reseñan Sancho." path="/myspaces" />
   );
 };
 

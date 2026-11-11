@@ -49,7 +49,7 @@ interface SectionConfig {
 
 const SECTION_CONFIG: SectionConfig[] = [
   { key: 'profile', label: 'Perfil', Icon: ProfileIcon },
-  { key: 'spaces', label: 'Espacios literarios', Icon: SpacesIcon },
+  { key: 'spaces', label: 'Mis reseñas literarias', Icon: SpacesIcon },
   { key: 'books', label: 'Mis libros', Icon: BooksIcon },
   { key: 'addBook', label: 'Añade libro', Icon: AddBookIcon },
   { key: 'help', label: 'Ayuda', Icon: HelpIcon },
