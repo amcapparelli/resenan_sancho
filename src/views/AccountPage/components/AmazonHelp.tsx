@@ -51,22 +51,24 @@ const AmazonHelp: React.FC<AmazonHelpProps> = ({ helpId = 'amazon-help', forceOp
           order" while still allowing the height transition below (a native
           `hidden` attribute would snap instantly instead of animating). */}
       <Panel id={helpId} $open={isOpen} aria-hidden={!isOpen}>
-        <PanelContent>
-          <p>
-            Necesitamos el enlace de tu <strong>perfil público de Amazon</strong>, el que
-            enseña tus reseñas. No el de un libro ni el de tu cuenta.
-          </p>
-          <ol>
-            <li>Entra en Amazon y busca una reseña que hayas escrito.</li>
-            <li>Pulsa tu nombre, justo encima de la reseña: se abre tu perfil.</li>
-            <li>Copia la dirección de esa página y pégala aquí.</li>
-          </ol>
-          <p>Lo sabrás porque la dirección contiene <code>/gp/profile/</code>.</p>
-          <Note>
-            ¿No ves tus reseñas en el perfil? En Amazon, revisa que esté marcado como
-            público en tus ajustes de privacidad.
-          </Note>
-        </PanelContent>
+        <PanelClip>
+          <PanelContent>
+            <p>
+              Necesitamos el enlace de tu <strong>perfil público de Amazon</strong>, el que
+              enseña tus reseñas. No el de un libro ni el de tu cuenta.
+            </p>
+            <ol>
+              <li>Entra en Amazon y busca una reseña que hayas escrito.</li>
+              <li>Pulsa tu nombre, justo encima de la reseña: se abre tu perfil.</li>
+              <li>Copia la dirección de esa página y pégala aquí.</li>
+            </ol>
+            <p>Lo sabrás porque la dirección contiene <code>/gp/profile/</code>.</p>
+            <Note>
+              ¿No ves tus reseñas en el perfil? En Amazon, revisa que esté marcado como
+              público en tus ajustes de privacidad.
+            </Note>
+          </PanelContent>
+        </PanelClip>
       </Panel>
     </Wrapper>
   );
@@ -108,19 +110,29 @@ const Chevron = styled.span<{ $open: boolean }>`
 // Animates on `grid-template-rows` (0fr -> 1fr) rather than `max-height`:
 // it avoids guessing a fixed max-height for variable-length content and
 // still collapses to zero height for the hidden/tabbable requirement.
+// The grid wrapper and its single child must carry no padding, border or
+// margin: a 0fr track can't shrink below the child's box chrome, so any of
+// those here would leave a visible slice of text when the panel is closed.
 const Panel = styled.div<{ $open: boolean }>`
   display: grid;
   grid-template-rows: ${({ $open }) => ($open ? '1fr' : '0fr')};
   transition: grid-template-rows 0.2s ease;
-  overflow: hidden;
 
   @media (prefers-reduced-motion: reduce) {
     transition: none;
   }
 `;
 
-const PanelContent = styled.div`
+// The only grid item: `min-height: 0` lets the 0fr track reach zero, and
+// `overflow: hidden` clips the visual box below while it collapses.
+const PanelClip = styled.div`
   min-height: 0;
+  overflow: hidden;
+`;
+
+// Visual box. Its top margin lives inside the clip so it collapses with the
+// rest of the panel instead of leaving a gap under the trigger when closed.
+const PanelContent = styled.div`
   margin-top: 8px;
   background: ${({ theme }) => theme.cream};
   border: 1px solid ${({ theme }) => theme.lightBorder};
