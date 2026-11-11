@@ -10,6 +10,10 @@ interface ChannelRowProps {
   selected: boolean;
   url: string;
   name: string;
+  // Optional per-channel hints (e.g. TikTok's `@tuusuario`); omitted for the
+  // original channels, which keep empty fields.
+  namePlaceholder?: string;
+  urlPlaceholder?: string;
   errors: { url?: string; name?: string };
   // Non-blocking heads-up for the URL field only (currently Amazon-only,
   // see `AccountField`'s `warning` prop).
@@ -17,10 +21,10 @@ interface ChannelRowProps {
   onToggle: () => void;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   // Fires on blur of the URL field only; lets a channel run validation
-  // without re-checking on every keystroke (currently Amazon-only).
+  // without re-checking on every keystroke (currently Amazon and TikTok).
   onUrlBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
   // Lets the parent focus the URL field programmatically when a blocking
-  // validation error appears on save (currently Amazon-only).
+  // validation error appears on save (currently Amazon and TikTok).
   urlFieldRef?: React.Ref<HTMLInputElement>;
   // Lets a specific channel (e.g. Amazon's link help panel) inject extra
   // content below the fields without hardcoding per-channel logic here.
@@ -34,6 +38,8 @@ const ChannelRow: React.FC<ChannelRowProps> = ({
   selected,
   url,
   name,
+  namePlaceholder,
+  urlPlaceholder,
   errors,
   urlWarning,
   onToggle,
@@ -64,7 +70,7 @@ const ChannelRow: React.FC<ChannelRowProps> = ({
           value={name || ''}
           onChange={onChange}
           error={errors.name}
-          placeholder=""
+          placeholder={namePlaceholder}
         />
         <AccountField
           ref={urlFieldRef}
@@ -73,6 +79,7 @@ const ChannelRow: React.FC<ChannelRowProps> = ({
           id={`${channelKey}-url`}
           type="url"
           value={url || ''}
+          placeholder={urlPlaceholder}
           onChange={onChange}
           onBlur={onUrlBlur}
           error={errors.url}

@@ -10,13 +10,8 @@ import { registerBlog as URL } from '../../../config/routes';
 import { AvailableMedias } from '../../../interfaces/mediaForm';
 import { Response } from '../../../interfaces/response';
 import { AmazonUrlKind, classifyAmazonUrl, normalizeAmazonProfileUrl } from '../../../utils/amazonProfileUrl';
-import {
-  BlogIcon,
-  YoutubeIcon,
-  InstagramIcon,
-  GoodreadsIcon,
-  AmazonIcon,
-} from '../../../utils/channelIcons';
+import { isTikTokUrl, normalizeTikTokUrl } from '../../../utils/tiktokUrl';
+import REVIEW_CHANNELS from '../../../utils/constants/reviewChannels';
 import SectionHeader from '../SectionHeader';
 import SaveBar from '../components/SaveBar';
 import SelectableChip from '../components/SelectableChip';
@@ -51,14 +46,15 @@ const FORMAT_LABELS: Record<string, string> = {
   audiolibro: 'audiolibro',
 };
 
-// Display order/labels for channels; each maps to a data key in mediaForm.
-const CHANNELS: Array<{ key: string; label: string; Icon: React.FC<{ size?: number }> }> = [
-  { key: 'blog', label: 'Blog', Icon: BlogIcon },
-  { key: 'booktube', label: 'Booktube', Icon: YoutubeIcon },
-  { key: 'bookstagram', label: 'Instagram', Icon: InstagramIcon },
-  { key: 'goodreads', label: 'Goodreads', Icon: GoodreadsIcon },
-  { key: 'amazon', label: 'Amazon', Icon: AmazonIcon }
-];
+const TIKTOK_URL_ERROR_MESSAGE = 'Este enlace no parece de TikTok.';
+
+// Empty when the value is OK. An empty value is left to the generic
+// required-fields check on save.
+const getTikTokUrlError = (url: string): string => (
+  url.trim() && !isTikTokUrl(url) ? TIKTOK_URL_ERROR_MESSAGE : ''
+);
+
+type UrlBlurHandler = (event: React.FocusEvent<HTMLInputElement>) => void;
 
 const defaultMediaValues = {
   blog: { selected: false, url: '', name: '' },
@@ -66,6 +62,8 @@ const defaultMediaValues = {
   bookstagram: { selected: false, url: '', name: '' },
   goodreads: { selected: false, url: '', name: '' },
   amazon: { selected: false, url: '', name: '' },
+  tiktok: { selected: false, url: '', name: '' },
+  podcast: { selected: false, url: '', name: '' },
 };
 
 const SpacesSection: React.FC = (): JSX.Element => {
@@ -103,6 +101,12 @@ const SpacesSection: React.FC = (): JSX.Element => {
   // the rest of this session — no need to keep comparing against the original.
   const amazonUrlEditedRef = useRef(false);
 
+  // Blocking error for the TikTok URL field, checked on blur and on save. No
+  // "saved link" warning path like Amazon's: the channel is new, so there are
+  // no links saved before this validation existed.
+  const [tiktokUrlError, setTikTokUrlError] = useState('');
+  const tiktokUrlFieldRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     const getInitialMediaValues = Object.keys(AvailableMedias).reduce((object, key) => ({
       ...object,
@@ -124,6 +128,8 @@ const SpacesSection: React.FC = (): JSX.Element => {
         bookstagram: getInitialMediaValues.bookstagram,
         goodreads: getInitialMediaValues.goodreads,
         amazon: getInitialMediaValues.amazon,
+        tiktok: getInitialMediaValues.tiktok,
+        podcast: getInitialMediaValues.podcast,
       });
 
       // A link saved before this validation existed doesn't block anything,
@@ -136,6 +142,7 @@ const SpacesSection: React.FC = (): JSX.Element => {
       setAmazonUrlError('');
       initialAmazonUrlRef.current = savedAmazonUrl;
       amazonUrlEditedRef.current = false;
+      setTikTokUrlError('');
     }
   }, [reviewerResponse.author]);
 
@@ -166,6 +173,10 @@ const SpacesSection: React.FC = (): JSX.Element => {
     }
     const kind = classifyAmazonUrl(url);
     setAmazonUrlError(kind === 'profile' ? '' : AMAZON_URL_ERROR_MESSAGES[kind]);
+  };
+
+  const handleTikTokUrlBlur = (event: React.FocusEvent<HTMLInputElement>): void => {
+    setTikTokUrlError(getTikTokUrlError(event.target.value));
   };
 
   const medias = Object.keys(AvailableMedias);
@@ -235,15 +246,37 @@ const SpacesSection: React.FC = (): JSX.Element => {
     setAmazonUrlError('');
     setAmazonUrlWarning('');
 
+    const tiktokUrl = mediaForm.tiktok.url || '';
+    const tiktokError = mediaForm.tiktok.selected ? getTikTokUrlError(tiktokUrl) : '';
+    setTikTokUrlError(tiktokError);
+    if (tiktokError) {
+      tiktokUrlFieldRef.current?.focus();
+      return;
+    }
+
     // Save the canonical form of a valid Amazon link instead of whatever the
     // person pasted (e.g. with a `ref=` tracking param and query string).
     const normalizedAmazonUrl = mediaForm.amazon.selected && amazonUrl.trim()
       ? normalizeAmazonProfileUrl(amazonUrl)
       : null;
-    const effectiveMediaForm = normalizedAmazonUrl && normalizedAmazonUrl !== amazonUrl
-      ? { ...mediaForm, amazon: { ...mediaForm.amazon, url: normalizedAmazonUrl } }
-      : mediaForm;
-    if (effectiveMediaForm !== mediaForm) setMediaForm('amazon', effectiveMediaForm.amazon);
+    // A TikTok link typed without protocol would otherwise be saved as-is and
+    // render as a relative (broken) href on the public reviewer card.
+    const normalizedTikTokUrl = mediaForm.tiktok.selected && tiktokUrl.trim()
+      ? normalizeTikTokUrl(tiktokUrl)
+      : null;
+    let effectiveMediaForm = mediaForm;
+    if (normalizedAmazonUrl && normalizedAmazonUrl !== amazonUrl) {
+      effectiveMediaForm = {
+        ...effectiveMediaForm, amazon: { ...mediaForm.amazon, url: normalizedAmazonUrl },
+      };
+      setMediaForm('amazon', effectiveMediaForm.amazon);
+    }
+    if (normalizedTikTokUrl && normalizedTikTokUrl !== tiktokUrl) {
+      effectiveMediaForm = {
+        ...effectiveMediaForm, tiktok: { ...mediaForm.tiktok, url: normalizedTikTokUrl },
+      };
+      setMediaForm('tiktok', effectiveMediaForm.tiktok);
+    }
 
     const requiredMediaFields: Array<string> = medias.flatMap((media) => [`${media}URL`, `${media}Name`]);
     const requiredFields = ['genres', 'medias', 'description', 'formats', ...requiredMediaFields];
@@ -279,7 +312,36 @@ const SpacesSection: React.FC = (): JSX.Element => {
       : [...current, value]);
   };
 
-  const hasValidationErrors = Object.values(errors).some((error: string) => error.length > 0) || !!amazonUrlError;
+  const hasValidationErrors = Object.values(errors).some((error: string) => error.length > 0)
+    || !!amazonUrlError
+    || !!tiktokUrlError;
+  // Channel-specific URL validation, keyed by channel; channels not listed
+  // only get the generic required-fields check.
+  const channelUrlErrors: Partial<Record<AvailableMedias, string>> = {
+    amazon: amazonUrlError,
+    tiktok: tiktokUrlError,
+  };
+  const channelUrlFieldRefs: Partial<Record<AvailableMedias, React.Ref<HTMLInputElement>>> = {
+    amazon: amazonUrlFieldRef,
+    tiktok: tiktokUrlFieldRef,
+  };
+  const channelUrlBlurHandlers: Partial<Record<AvailableMedias, UrlBlurHandler>> = {
+    amazon: handleAmazonUrlBlur,
+    tiktok: handleTikTokUrlBlur,
+  };
+  // A hidden (switched-off) field must not keep a blocking error around, or
+  // "Revisa el formulario" would stay visible with nothing to fix on screen.
+  const channelUrlErrorClearers: Partial<Record<AvailableMedias, () => void>> = {
+    amazon: () => setAmazonUrlError(''),
+    tiktok: () => setTikTokUrlError(''),
+  };
+
+  const toggleChannel = (key: AvailableMedias): void => {
+    const isSwitchingOff = mediaForm[key].selected;
+    if (isSwitchingOff) channelUrlErrorClearers[key]?.();
+    setMediaForm(key, { ...mediaForm[key], selected: !isSwitchingOff });
+  };
+
   const feedback = response.message
     ? { success: response.success, message: response.message }
     : undefined;
@@ -293,7 +355,9 @@ const SpacesSection: React.FC = (): JSX.Element => {
 
       {errors.medias && <BlockError>Debes seleccionar al menos un canal.</BlockError>}
       <div>
-        {CHANNELS.map(({ key, label, Icon }) => (
+        {REVIEW_CHANNELS.map(({
+          key, label, Icon, namePlaceholder, urlPlaceholder,
+        }) => (
           <ChannelRow
             key={key}
             channelKey={key}
@@ -302,14 +366,16 @@ const SpacesSection: React.FC = (): JSX.Element => {
             selected={mediaForm[key].selected}
             url={mediaForm[key].url}
             name={mediaForm[key].name}
+            namePlaceholder={namePlaceholder}
+            urlPlaceholder={urlPlaceholder}
             errors={{
-              url: key === 'amazon' ? (errors[`${key}URL`] || amazonUrlError) : errors[`${key}URL`],
+              url: errors[`${key}URL`] || channelUrlErrors[key],
               name: errors[`${key}Name`],
             }}
             urlWarning={key === 'amazon' ? amazonUrlWarning : undefined}
-            urlFieldRef={key === 'amazon' ? amazonUrlFieldRef : undefined}
-            onUrlBlur={key === 'amazon' ? handleAmazonUrlBlur : undefined}
-            onToggle={() => setMediaForm(key, { ...mediaForm[key], selected: !mediaForm[key].selected })}
+            urlFieldRef={channelUrlFieldRefs[key]}
+            onUrlBlur={channelUrlBlurHandlers[key]}
+            onToggle={() => toggleChannel(key)}
             onChange={({ target: { name, value } }) => setMediaForm(key, { ...mediaForm[key], [name]: value })}
             extraContent={key === 'amazon'
               ? <AmazonHelp helpId={`${key}-help`} forceOpen={!!amazonUrlError} />

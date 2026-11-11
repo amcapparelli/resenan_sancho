@@ -7,31 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { Reviewer } from '../../interfaces/reviewer';
 import buildFullName from '../../utils/buildFullName';
 import { isOptimizedImageHost } from '../../utils/imageHost';
-import {
-  BlogIcon,
-  YoutubeIcon,
-  InstagramIcon,
-  GoodreadsIcon,
-  AmazonIcon,
-} from '../../utils/channelIcons';
-
-// ─── Channel config ────────────────────────────────────────────────────────
-
-type ChannelKey = 'blog' | 'booktube' | 'bookstagram' | 'goodreads' | 'amazon';
-
-interface ChannelConfig {
-  key: ChannelKey;
-  label: string;
-  Icon: React.FC;
-}
-
-const CHANNEL_CONFIG: ChannelConfig[] = [
-  { key: 'blog', label: 'Blog', Icon: BlogIcon },
-  { key: 'booktube', label: 'YouTube', Icon: YoutubeIcon },
-  { key: 'bookstagram', label: 'Instagram', Icon: InstagramIcon },
-  { key: 'goodreads', label: 'Goodreads', Icon: GoodreadsIcon },
-  { key: 'amazon', label: 'Amazon', Icon: AmazonIcon },
-];
+import REVIEW_CHANNELS from '../../utils/constants/reviewChannels';
 
 // ─── Styled components ─────────────────────────────────────────────────────
 
@@ -308,10 +284,18 @@ const ReviewerCard: React.FC<ReviewerCardProps> = ({ reviewer }) => {
     return () => window.removeEventListener('resize', measure);
   }, [isDescriptionExpanded, description]);
 
-  // Channels: only render those with a non-empty url
-  const activeChannels = CHANNEL_CONFIG.filter(({ key }) => {
+  // Channels: only render those with a non-empty url. Resolve the channel
+  // data up front because newer channels (tiktok, podcast) may be missing
+  // entirely on older reviewer documents.
+  const activeChannels = REVIEW_CHANNELS.flatMap(({
+    key, label, chipLabel, Icon,
+  }) => {
     const channel = reviewer[key];
-    return channel && channel.url && channel.url.trim() !== '';
+    return channel?.url?.trim()
+      ? [{
+        key, label: chipLabel ?? label, Icon, channel,
+      }]
+      : [];
   });
 
   const hasChannels = activeChannels.length > 0;
@@ -356,8 +340,9 @@ const ReviewerCard: React.FC<ReviewerCardProps> = ({ reviewer }) => {
         <SectionDivider>
           <SectionLabel>MIRA SUS RESEÑAS EN</SectionLabel>
           <ChipsRow>
-            {activeChannels.map(({ key, label, Icon }) => {
-              const channel = reviewer[key];
+            {activeChannels.map(({
+              key, label, Icon, channel,
+            }) => {
               const chipLabel = channel.name && channel.name.trim() !== ''
                 ? channel.name
                 : label;

@@ -4,6 +4,8 @@ export enum AvailableMedias {
   bookstagram = 'bookstagram',
   goodreads = 'goodreads',
   amazon = 'amazon',
+  tiktok = 'tiktok',
+  podcast = 'podcast',
 }
 
 export interface Media {
@@ -22,4 +24,6 @@ export interface MediaForm {
   bookstagram: Media,
   goodreads: Media,
   amazon: Media,
+  tiktok: Media,
+  podcast: Media,
 }

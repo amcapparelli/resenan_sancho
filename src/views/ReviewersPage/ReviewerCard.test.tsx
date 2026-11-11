@@ -1,5 +1,6 @@
 /**
- * Regression tests for ReviewerCard's description "Ver más" toggle.
+ * ReviewerCard tests: channel chips, and regression tests for the description
+ * "Ver más" toggle.
  *
  * Bug: the toggle appeared whenever `description.length` exceeded a fixed char
  * threshold (240), decoupled from the real CSS `-webkit-line-clamp: 4`. A
@@ -119,5 +120,84 @@ describe('ReviewerCard — description toggle', () => {
     const collapseToggle = screen.getByRole('button', { name: /ver menos/i });
     expect(collapseToggle).toBeInTheDocument();
     expect(collapseToggle).toHaveAttribute('aria-expanded', 'true');
+  });
+});
+
+describe('ReviewerCard — channel chips', () => {
+  const CHANNEL_REVIEWER: Reviewer = {
+    ...REVIEWER_FIXTURE,
+    description: 'Reseñas cortas y sinceras.',
+  };
+
+  const chipFor = (label: string): HTMLElement => screen.getByRole('link', {
+    name: `Ver reseñas en ${label} de María López`,
+  });
+
+  it('renders TikTok and Podcast chips with their link, label and new-tab attributes', () => {
+    renderCard({
+      ...CHANNEL_REVIEWER,
+      tiktok: { name: '', url: 'https://www.tiktok.com/@marialee' },
+      podcast: { name: '', url: 'https://www.ivoox.com/podcast-maria_sq_f1.html' },
+    });
+
+    const tiktokChip = chipFor('TikTok');
+    expect(tiktokChip).toHaveTextContent('TikTok');
+    expect(tiktokChip).toHaveAttribute('href', 'https://www.tiktok.com/@marialee');
+    expect(tiktokChip).toHaveAttribute('target', '_blank');
+    expect(tiktokChip).toHaveAttribute('rel', 'noopener noreferrer');
+    expect(tiktokChip.querySelector('svg')).toBeInTheDocument();
+
+    const podcastChip = chipFor('Podcast');
+    expect(podcastChip).toHaveTextContent('Podcast');
+    expect(podcastChip).toHaveAttribute('href', 'https://www.ivoox.com/podcast-maria_sq_f1.html');
+    expect(podcastChip).toHaveAttribute('target', '_blank');
+    expect(podcastChip).toHaveAttribute('rel', 'noopener noreferrer');
+    expect(podcastChip.querySelector('svg')).toBeInTheDocument();
+  });
+
+  it('shows the channels section for a reviewer whose only channel is TikTok', () => {
+    renderCard({
+      ...CHANNEL_REVIEWER,
+      tiktok: { name: '', url: 'https://www.tiktok.com/@marialee' },
+    });
+
+    expect(screen.getByText('MIRA SUS RESEÑAS EN')).toBeInTheDocument();
+    expect(screen.getAllByRole('link')).toEqual([chipFor('TikTok')]);
+  });
+
+  it('renders chips in the same order as the account form', () => {
+    renderCard({
+      ...CHANNEL_REVIEWER,
+      blog: { name: '', url: 'https://blog.example.com' },
+      booktube: { name: '', url: 'https://youtube.com/@maria' },
+      bookstagram: { name: '', url: 'https://instagram.com/maria' },
+      goodreads: { name: '', url: 'https://goodreads.com/maria' },
+      amazon: { name: '', url: 'https://www.amazon.es/gp/profile/amzn1.account.ABC' },
+      tiktok: { name: '', url: 'https://www.tiktok.com/@marialee' },
+      podcast: { name: '', url: 'https://open.spotify.com/show/abc' },
+    });
+
+    expect(screen.getAllByRole('link').map((chip) => chip.textContent)).toEqual([
+      'Amazon', 'Goodreads', 'Instagram', 'TikTok', 'YouTube', 'Blog', 'Podcast',
+    ]);
+  });
+
+  it('renders reviewers without the new channel fields as before', () => {
+    // Older documents don't have `tiktok`/`podcast` at all.
+    renderCard({
+      ...CHANNEL_REVIEWER,
+      bookstagram: { name: 'maria.lee', url: 'https://instagram.com/maria' },
+    });
+
+    expect(screen.getAllByRole('link')).toEqual([chipFor('Instagram')]);
+    expect(chipFor('Instagram')).toHaveTextContent('maria.lee');
+    expect(screen.queryByText('TikTok')).not.toBeInTheDocument();
+    expect(screen.queryByText('Podcast')).not.toBeInTheDocument();
+  });
+
+  it('omits the channels section when no channel has a URL', () => {
+    renderCard(CHANNEL_REVIEWER);
+
+    expect(screen.queryByText('MIRA SUS RESEÑAS EN')).not.toBeInTheDocument();
   });
 });
