@@ -27,6 +27,11 @@ Este repo es el FRONTEND. El backend (API) vive en un repo aparte.
 - Antes de proponer un merge a `master`, verificar a mano el flujo crítico:
   registro/alta de usuario, alta de libro, modal de contacto (que el email
   llegue), y un pago de prueba en Stripe (modo test).
+- El merge a `master` lo hace SIEMPRE manualmente el usuario (Alejandro), nunca
+  Claude. Como mucho, deja la PR abierta y lista (rama subida, PR creada) y
+  pide confirmación; no ejecutes `gh pr merge` ni ningún merge directo a
+  `master` aunque el usuario ya haya dicho que el flujo crítico está
+  verificado.
 - Hacer commits pequeños y descriptivos.
 - NO commitear secretos (.env, claves de Stripe/Mailchimp/Mongo).
 
