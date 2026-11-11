@@ -21,6 +21,7 @@ import SaveBar from '../components/SaveBar';
 import SelectableChip from '../components/SelectableChip';
 import CharCounter from '../../../components/CharCounter';
 import ChannelRow from '../components/ChannelRow';
+import AmazonHelp from '../components/AmazonHelp';
 import { fieldBase } from '../../../components/styles';
 
 // Keep the previously enforced cap (the old input used maxLength 1000) to avoid
@@ -217,6 +218,7 @@ const SpacesSection: React.FC = (): JSX.Element => {
             errors={{ url: errors[`${key}URL`], name: errors[`${key}Name`] }}
             onToggle={() => setMediaForm(key, { ...mediaForm[key], selected: !mediaForm[key].selected })}
             onChange={({ target: { name, value } }) => setMediaForm(key, { ...mediaForm[key], [name]: value })}
+            extraContent={key === 'amazon' ? <AmazonHelp helpId={`${key}-help`} /> : undefined}
           />
         ))}
       </div>

@@ -13,6 +13,9 @@ interface ChannelRowProps {
   errors: { url?: string; name?: string };
   onToggle: () => void;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  // Lets a specific channel (e.g. Amazon's link help panel) inject extra
+  // content below the fields without hardcoding per-channel logic here.
+  extraContent?: React.ReactNode;
 }
 
 const ChannelRow: React.FC<ChannelRowProps> = ({
@@ -25,6 +28,7 @@ const ChannelRow: React.FC<ChannelRowProps> = ({
   errors,
   onToggle,
   onChange,
+  extraContent,
 }) => (
   <Row $active={selected}>
     <Head>
@@ -59,6 +63,7 @@ const ChannelRow: React.FC<ChannelRowProps> = ({
           onChange={onChange}
           error={errors.url}
         />
+        {extraContent}
       </Fields>
     )}
   </Row>
