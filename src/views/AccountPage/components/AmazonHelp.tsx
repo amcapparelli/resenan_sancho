@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 interface AmazonHelpProps {
@@ -6,14 +6,24 @@ interface AmazonHelpProps {
   // time), but lets a caller pass a channel-derived id (e.g. `${channelKey}-help`)
   // to keep the DOM unique if this panel is ever reused for more than one row.
   helpId?: string;
+  // Lets a validation error force the panel open (Phase 2) without taking
+  // over the open/close state entirely: once forced open, the user can still
+  // close it manually, and a later re-validation that fails again should
+  // force it open once more (hence the `useEffect` below instead of simply
+  // deriving `isOpen` from this prop).
+  forceOpen?: boolean;
 }
 
 // Help panel for the Amazon channel: explains how to find the public
 // profile URL (the one that lists the person's reviews) instead of a
 // product page or a private account page. Collapsed by default, toggled
 // by the trigger button below.
-const AmazonHelp: React.FC<AmazonHelpProps> = ({ helpId = 'amazon-help' }) => {
+const AmazonHelp: React.FC<AmazonHelpProps> = ({ helpId = 'amazon-help', forceOpen = false }) => {
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    if (forceOpen) setIsOpen(true);
+  }, [forceOpen]);
 
   return (
     <Wrapper>

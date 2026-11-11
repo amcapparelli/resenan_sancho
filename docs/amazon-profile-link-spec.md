@@ -161,10 +161,12 @@ Ejemplo:
 Usan el estado de error de campo ya definido en `account-spec.md` (borde
 `#DE4A10`, icono ⚠, texto 12px debajo del campo).
 
+Texto definitivo aprobado por `copywriter-es` (sustituye al provisional de v1):
+
 | Tipo | Mensaje |
 | --- | --- |
-| `product` | Este es el enlace de un producto. Necesitamos el de tu perfil, donde se ven tus reseñas. |
-| `account` | Este enlace es de tu cuenta privada y nadie más puede verlo. Necesitamos tu perfil público. |
+| `product` | Este es el enlace de un producto, no de tu perfil. Necesitamos el que enseña tus reseñas. |
+| `account` | Este es el enlace de tu cuenta privada: nadie más puede verlo. Necesitamos tu perfil público. |
 | `short` | Es un enlace acortado. Ábrelo en el navegador y copia la dirección completa. |
 | `other` | Este enlace no parece un perfil de Amazon. |
 
