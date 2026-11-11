@@ -2,13 +2,13 @@ import React from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
 
-type Variant = 'writer' | 'reviewer';
+export type HeroCardVariant = 'writer' | 'reviewer';
 
 interface HeroCardProps {
-  variant: Variant;
+  variant: HeroCardVariant;
 }
 
-const CARD_CONTENT: Record<Variant, {
+const CARD_CONTENT: Record<HeroCardVariant, {
   label: string;
   title: string;
   description: string;
@@ -37,10 +37,10 @@ const HeroCard: React.FC<HeroCardProps> = ({ variant }) => {
   const { label, title, description, buttonText, href } = CARD_CONTENT[variant];
 
   return (
-    <StyledCard variant={variant}>
-      <StyledLabel variant={variant}>{label}</StyledLabel>
-      <StyledTitle variant={variant}>{title}</StyledTitle>
-      <StyledDescription variant={variant}>{description}</StyledDescription>
+    <StyledCard $variant={variant}>
+      <StyledLabel $variant={variant}>{label}</StyledLabel>
+      <StyledTitle $variant={variant}>{title}</StyledTitle>
+      <StyledDescription $variant={variant}>{description}</StyledDescription>
       <StyledButton href={href} aria-label={buttonText}>
         {buttonText}
       </StyledButton>
@@ -48,42 +48,43 @@ const HeroCard: React.FC<HeroCardProps> = ({ variant }) => {
   );
 };
 
-const StyledCard = styled.article<{ variant: Variant }>`
+const StyledCard = styled.article<{ $variant: HeroCardVariant }>`
   display: flex;
   flex-direction: column;
   border-radius: 12px;
   padding: 22px 20px 20px;
-  background-color: ${({ variant, theme }) =>
-    variant === 'writer' ? theme.terracotta : theme.ink};
+  background-color: ${({ $variant, theme }) =>
+    $variant === 'writer' ? theme.terracotta : theme.ink};
 `;
 
-const StyledLabel = styled.span<{ variant: Variant }>`
+const StyledLabel = styled.span<{ $variant: HeroCardVariant }>`
   font-family: 'Source Sans 3', sans-serif;
   font-size: 10px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: ${({ variant }) => (variant === 'writer' ? '#f7d8c8' : '#a89880')};
+  color: ${({ $variant }) => ($variant === 'writer' ? '#f7d8c8' : '#a89880')};
   margin-bottom: 8px;
 `;
 
-const StyledTitle = styled.h2<{ variant: Variant }>`
+/* h3: each card sits under its strip headline (the page h1 or a section h2). */
+const StyledTitle = styled.h3<{ $variant: HeroCardVariant }>`
   font-family: 'Fraunces', serif;
   font-weight: 600;
   font-size: 17px;
   line-height: 1.25;
-  color: ${({ variant, theme }) =>
-    variant === 'writer' ? theme.white : theme.cream};
+  color: ${({ $variant, theme }) =>
+    $variant === 'writer' ? theme.white : theme.cream};
   margin: 0 0 10px 0;
 `;
 
 /* flex: 1 guarantees the description fills remaining space so the button
    always aligns to the card bottom regardless of text length. */
-const StyledDescription = styled.p<{ variant: Variant }>`
+const StyledDescription = styled.p<{ $variant: HeroCardVariant }>`
   font-family: 'Source Sans 3', sans-serif;
   font-size: 13px;
   line-height: 1.55;
-  color: ${({ variant }) => (variant === 'writer' ? '#f7d8c8' : '#c2b49e')};
+  color: ${({ $variant }) => ($variant === 'writer' ? '#f7d8c8' : '#c2b49e')};
   margin: 0 0 20px 0;
   flex: 1;
 `;

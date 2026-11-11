@@ -6,7 +6,7 @@ interface SectionHeadingProps {
   eyebrow?: string;
   /**
    * Title content. It is a node (not a string) because the accent word can sit
-   * anywhere in the sentence — see `HeadingAccent`.
+   * anywhere in the sentence — see `components/HeadingAccent`.
    */
   children: React.ReactNode;
   subtitle?: string;
@@ -61,12 +61,6 @@ const Subtitle = styled.p`
   line-height: 1.5;
   color: ${({ theme }) => theme.brown};
   margin: 10px 0 0;
-`;
-
-/** font-style: normal keeps the semantic <em> from italicizing the accent. */
-export const HeadingAccent = styled.em`
-  font-style: normal;
-  color: ${({ theme }) => theme.terracotta};
 `;
 
 export default SectionHeading;

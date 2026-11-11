@@ -37,7 +37,7 @@ const reset = () => {
 
   const resetPassword = (): void => {
     if (!passwordIsValid || !repeatPasswordIsValid) {
-      return setPasswordErrors('la contraeña no es válida');
+      return setPasswordErrors('La contraseña no es válida');
     }
     setPasswordErrors('');
     return resetRequest(`${resetPassURL}/${resetToken}/${user}`, 'post', resetForm);

@@ -4,7 +4,8 @@ import styled from 'styled-components';
 
 import formatBookCount from '../../utils/formatBookCount';
 import { GENRE_FACETS } from '../../utils/seo/facets';
-import SectionHeading, { HeadingAccent } from './SectionHeading';
+import HeadingAccent from '../HeadingAccent';
+import SectionHeading from './SectionHeading';
 import BlockLink from './BlockLink';
 
 /** Tile view-model: name and slug are resolved from the DB code in SSR. */

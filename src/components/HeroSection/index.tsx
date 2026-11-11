@@ -1,82 +1,60 @@
 import React from 'react';
 import styled from 'styled-components';
-import HeroCard from './HeroCard';
+import HeroStrip, { HERO_COLUMNS } from './HeroStrip';
 import SocialProof from './SocialProof';
 
+// One strip per audience, with the same visual weight. The writer strip keeps
+// the page's only h1; the reviewer strip hangs from it as an h2. DOM order is
+// writer → reviewer: stacked on mobile, left → right on desktop.
 const HeroSection: React.FC = () => (
   <>
     <StyledHero>
-      <StyledHeadline>
-        Qué hablen de{' '}
-        {/* font-style: normal evita que el <em> semántico italice el texto */}
-        <StyledAccent>tu libro.</StyledAccent>
-      </StyledHeadline>
-
-      <StyledTagline>
-        Un libro sin reseñas es un libro aún sin publicar.
-      </StyledTagline>
-
-      <StyledCardsGrid>
-        <HeroCard variant="writer" />
-        <HeroCard variant="reviewer" />
-      </StyledCardsGrid>
+      <HeroStrip
+        headingLevel="h1"
+        lead="Que hablen de"
+        accent="tu libro."
+        tagline="Un libro sin reseñas es un libro aún sin publicar."
+        cardVariant="writer"
+      />
+      <StyledReviewerStrip
+        headingLevel="h2"
+        lead="Que descubran"
+        accent="tus reseñas literarias."
+        tagline="Colabora con autores y editoriales."
+        cardVariant="reviewer"
+      />
     </StyledHero>
 
     <SocialProof />
   </>
 );
 
-const StyledHero = styled.section`
+/* Cream behind both strips so, while stacked, the reviewer strip's rounded top
+   corners reveal the writer strip's colour: a soft "tab" between audiences.
+   On desktop the grid's default stretch makes both columns equally tall, which
+   is what lets each card sit at the same height at the bottom of its column. */
+const StyledHero = styled.div`
   background-color: ${({ theme }) => theme.cream};
-  padding: 36px 20px;
-  text-align: center;
 
-  @media (min-width: 480px) {
-    padding: 52px 28px 48px;
-  }
-`;
-
-const StyledHeadline = styled.h1`
-  font-family: 'Fraunces', serif;
-  font-weight: 600;
-  font-size: 28px;
-  line-height: 1.12;
-  color: ${({ theme }) => theme.ink};
-  margin: 0 0 16px 0;
-
-  @media (min-width: 480px) {
-    font-size: 42px;
-  }
-`;
-
-const StyledAccent = styled.em`
-  font-style: normal;
-  color: ${({ theme }) => theme.terracotta};
-`;
-
-const StyledTagline = styled.p`
-  font-family: 'Fraunces', serif;
-  font-weight: 600;
-  font-size: 15px;
-  line-height: 1.5;
-  color: ${({ theme }) => theme.brown};
-  max-width: 420px;
-  margin: 0 auto 40px;
-
-  @media (min-width: 480px) {
-    font-size: 18px;
-  }
-`;
-
-const StyledCardsGrid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 14px;
-  max-width: 540px;
-  margin: 0 auto;
-
-  @media (min-width: 480px) {
+  ${HERO_COLUMNS} {
+    display: grid;
     grid-template-columns: 1fr 1fr;
+  }
+`;
+
+/* Side by side, the tab no longer reads as one strip tucked under another: a
+   rounded top-left corner would only nick the corner next to the header. The
+   colour change alone splits the two halves, so the corners go square. */
+const StyledReviewerStrip = styled(HeroStrip)`
+  background-color: ${({ theme }) => theme.sand};
+  border-radius: 24px 24px 0 0;
+
+  @media (min-width: 768px) {
+    border-radius: 40px 40px 0 0;
+  }
+
+  ${HERO_COLUMNS} {
+    border-radius: 0;
   }
 `;
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import HeadingAccent from './HeadingAccent';
 
 interface PageHeaderProps {
   eyebrow: string;
@@ -42,11 +43,6 @@ const Title = styled.h1`
   }
 `;
 
-const TitleAccent = styled.em`
-  font-style: normal;
-  color: ${({ theme }) => theme.terracotta};
-`;
-
 const Subtitle = styled.p`
   font-family: 'Source Sans 3', sans-serif;
   font-size: 15px;
@@ -65,7 +61,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   <Wrapper>
     <Eyebrow>{eyebrow}</Eyebrow>
     <Title>
-      {titleBefore} <TitleAccent>{titleAccent}</TitleAccent>
+      {titleBefore} <HeadingAccent>{titleAccent}</HeadingAccent>
     </Title>
     <Subtitle>{subtitle}</Subtitle>
   </Wrapper>

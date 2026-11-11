@@ -20,6 +20,10 @@ enum Palette {
   danger = '#DE4A10',
   muted = '#9a8c7e',
   terracottaSoft = '#fdf3ee',
+  // Warm sand that sits next to `cream` as a distinct block (home hero, reviewer
+  // strip). Holds the ink card without merging into it: ink 8.6:1, brown 6.1:1;
+  // terracotta reaches 3.2:1, so only use it here for large headline text.
+  sand = '#F3DFB0',
 }
 
 const {
@@ -40,6 +44,7 @@ const {
   danger,
   muted,
   terracottaSoft,
+  sand,
 } = Palette;
 
 export const StyledTheme = {
@@ -62,6 +67,7 @@ export const StyledTheme = {
   danger,
   muted,
   terracottaSoft,
+  sand,
 };
 
 export const MuiTheme = createTheme({

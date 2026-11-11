@@ -14,7 +14,7 @@ const STATS: [Stat, Stat] = [
 const SocialProof: React.FC = () => (
   <StyledWrapper>
     {STATS.map((stat, index) => (
-      <StyledCell key={stat.label} isFirst={index === 0}>
+      <StyledCell key={stat.label} $isFirst={index === 0}>
         <StyledValue>{stat.value}</StyledValue>
         <StyledLabel>{stat.label}</StyledLabel>
       </StyledCell>
@@ -30,11 +30,11 @@ const StyledWrapper = styled.div`
   border-bottom: 0.5px solid ${({ theme }) => theme.lightBorder};
 `;
 
-const StyledCell = styled.div<{ isFirst: boolean }>`
+const StyledCell = styled.div<{ $isFirst: boolean }>`
   padding: 22px 16px;
   text-align: center;
-  border-right: ${({ isFirst, theme }) =>
-    isFirst ? `0.5px solid ${theme.lightBorder}` : 'none'};
+  border-right: ${({ $isFirst, theme }) =>
+    $isFirst ? `0.5px solid ${theme.lightBorder}` : 'none'};
 `;
 
 const StyledValue = styled.p`

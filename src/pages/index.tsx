@@ -45,7 +45,7 @@ const HomePage: React.FC<HomePageProps> = ({ featuredBooks, topGenres }) => (
     </Head>
     <PublicZoneLayout showFooter>
       <HeroSection />
-      {/* Backgrounds alternate cream/white down the page: hero (cream) →
+      {/* Backgrounds alternate cream/white down the page: hero (cream + sand) →
           SocialProof (white) → AboutPlatform (cream) → FeaturedBooks (white) →
           TopGenres (cream). Two adjacent blocks of the same colour would merge
           into one visual section. */}
