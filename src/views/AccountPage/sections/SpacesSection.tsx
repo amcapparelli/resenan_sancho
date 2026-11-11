@@ -200,7 +200,7 @@ const SpacesSection: React.FC = (): JSX.Element => {
     <>
       <SectionHeader
         title="¿Dónde publicas tus reseñas literarias?"
-        subtitle="Añade tus canales para aparecer en el listado de reseñadores."
+        subtitle="Añade dónde publicas tus reseñas. Con Amazon ya es suficiente."
       />
 
       {errors.medias && <BlockError>Debes seleccionar al menos un canal.</BlockError>}

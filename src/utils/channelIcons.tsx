@@ -1,7 +1,7 @@
 import React from 'react';
 
 // Reviewer channel icons, shared between the public ReviewerCard (chips, 12px)
-// and the account "Espacios literarios" section (channel rows, 18px). The data
+// and the account "Mis reseñas literarias" section (channel rows, 18px). The data
 // keys they map to are: blog, booktube, bookstagram, goodreads, amazon.
 
 interface IconProps {

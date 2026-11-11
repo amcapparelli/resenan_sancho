@@ -12,7 +12,7 @@ import { deleteUser as URL } from '../../../config/routes';
 import AccountField from './AccountField';
 import { primaryButton, secondaryButton } from '../../../components/styles';
 
-const DELETE_DESCRIPTION = 'Se borrarán tu perfil, tus espacios literarios y los '
+const DELETE_DESCRIPTION = 'Se borrarán tu perfil, los enlaces a tus reseñas y los '
   + 'libros que hayas publicado. Esta acción no se puede deshacer.';
 
 interface DangerZoneProps {
