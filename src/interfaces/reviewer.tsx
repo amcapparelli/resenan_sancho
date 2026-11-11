@@ -28,6 +28,16 @@ export interface Reviewer {
     name: string,
     url: string,
   },
+  // Added after the original five channels: documents saved before then
+  // don't have these fields at all.
+  tiktok?: {
+    name: string,
+    url: string,
+  },
+  podcast?: {
+    name: string,
+    url: string,
+  },
   genres: Array<AvailableGenres>,
   formats: Array<AvailableFormats>,
   description: string,

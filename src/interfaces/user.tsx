@@ -25,6 +25,8 @@ export interface UserLogged extends User {
     bookstagram?: Media,
     goodreads?: Media,
     amazon?: Media,
+    tiktok?: Media,
+    podcast?: Media,
   }
 }
 
